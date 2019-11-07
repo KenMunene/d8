@@ -24,14 +24,9 @@ abstract class DateTestBase extends BrowserTestBase {
   public static $modules = ['node', 'entity_test', 'datetime', 'field_ui'];
 
   /**
-   * An array of display options.
-   *
-   * An array of display options to pass to
-   * EntityDisplayRepositoryInterface::getViewDisplay()
+   * An array of display options to pass to entity_get_display()
    *
    * @var array
-   *
-   * @see \Drupal\Core\Entity\EntityDisplayRepositoryInterface::getViewDisplay()
    */
   protected $displayOptions;
 

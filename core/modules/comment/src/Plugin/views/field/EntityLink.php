@@ -16,7 +16,7 @@ use Drupal\views\ResultRow;
 class EntityLink extends FieldPluginBase {
 
   /**
-   * Stores the result of parent entities build for all rows to reuse it later.
+   * Stores the result of node_view_multiple for all rows to reuse it later.
    *
    * @var array
    */
@@ -61,11 +61,7 @@ class EntityLink extends FieldPluginBase {
       $entities[$entity->id()] = $entity;
     }
     if ($entities) {
-      $entityTypeId = reset($entities)->getEntityTypeId();
-      $viewMode = $this->options['teaser'] ? 'teaser' : 'full';
-      $this->build = \Drupal::entityTypeManager()
-        ->getViewBuilder($entityTypeId)
-        ->viewMultiple($entities, $viewMode);
+      $this->build = entity_view_multiple($entities, $this->options['teaser'] ? 'teaser' : 'full');
     }
   }
 

@@ -2,9 +2,8 @@
 
 namespace Drupal\language\Plugin\LanguageNegotiation;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\PathProcessor\OutboundPathProcessorInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -28,12 +27,6 @@ use Symfony\Component\Routing\Route;
  * )
  */
 class LanguageNegotiationContentEntity extends LanguageNegotiationMethodBase implements OutboundPathProcessorInterface, LanguageSwitcherInterface, ContainerFactoryPluginInterface {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The language negotiation method ID.
@@ -69,20 +62,20 @@ class LanguageNegotiationContentEntity extends LanguageNegotiationMethodBase imp
   protected $paths;
 
   /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
    * Constructs a new LanguageNegotiationContentEntity instance.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
-    $this->entityTypeManager = $entity_type_manager;
+  public function __construct(EntityManagerInterface $entity_manager) {
+    $this->entityManager = $entity_manager;
     $this->paths = new \SplObjectStorage();
   }
 
@@ -90,7 +83,7 @@ class LanguageNegotiationContentEntity extends LanguageNegotiationMethodBase imp
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($container->get('entity_type.manager'));
+    return new static($container->get('entity.manager'));
   }
 
   /**
@@ -268,7 +261,7 @@ class LanguageNegotiationContentEntity extends LanguageNegotiationMethodBase imp
   protected function getContentEntityPaths() {
     if (!isset($this->contentEntityPaths)) {
       $this->contentEntityPaths = [];
-      $entity_types = $this->entityTypeManager->getDefinitions();
+      $entity_types = $this->entityManager->getDefinitions();
       foreach ($entity_types as $entity_type_id => $entity_type) {
         if ($entity_type->entityClassImplements(ContentEntityInterface::class)) {
           $entity_paths = array_fill_keys($entity_type->getLinkTemplates(), $entity_type_id);

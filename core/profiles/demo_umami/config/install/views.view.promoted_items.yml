@@ -16,6 +16,7 @@ description: 'A view to list the items promoted to the top of the homepage.'
 tag: ''
 base_table: node_field_data
 base_field: nid
+core: 8.x
 display:
   default:
     display_plugin: default
@@ -119,8 +120,6 @@ display:
           id: status
           expose:
             operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
           group: 1
         promote:
           id: promote
@@ -145,8 +144,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -188,8 +185,6 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -278,8 +273,6 @@ display:
           id: status
           expose:
             operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
           group: 1
         promote:
           id: promote
@@ -304,8 +297,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -346,8 +337,6 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -363,15 +352,16 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        default_langcode:
-          id: default_langcode
+        langcode:
+          id: langcode
           table: node_field_data
-          field: default_langcode
+          field: langcode
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value: '1'
+          operator: in
+          value:
+            '***LANGUAGE_language_content***': '***LANGUAGE_language_content***'
           group: 1
           exposed: false
           expose:
@@ -380,14 +370,13 @@ display:
             description: ''
             use_operator: false
             operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -401,16 +390,16 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           entity_type: node
-          entity_field: default_langcode
-          plugin_id: boolean
+          entity_field: langcode
+          plugin_id: language
       filter_groups:
         operator: AND
         groups:
           1: AND
-      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
         - user.permissions
@@ -439,8 +428,6 @@ display:
           id: status
           expose:
             operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
           group: 1
         promote:
           id: promote
@@ -465,8 +452,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -507,8 +492,6 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -524,15 +507,16 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        default_langcode:
-          id: default_langcode
+        langcode:
+          id: langcode
           table: node_field_data
-          field: default_langcode
+          field: langcode
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value: '1'
+          operator: in
+          value:
+            '***LANGUAGE_language_content***': '***LANGUAGE_language_content***'
           group: 1
           exposed: false
           expose:
@@ -541,14 +525,13 @@ display:
             description: ''
             use_operator: false
             operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -562,16 +545,16 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           entity_type: node
-          entity_field: default_langcode
-          plugin_id: boolean
+          entity_field: langcode
+          plugin_id: language
       filter_groups:
         operator: AND
         groups:
           1: AND
-      rendering_language: '***LANGUAGE_language_interface***'
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
         - user.permissions

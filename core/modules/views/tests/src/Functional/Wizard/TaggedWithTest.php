@@ -91,21 +91,19 @@ class TaggedWithTest extends WizardTestBase {
     ];
     $this->createEntityReferenceField('node', $this->nodeTypeWithTags->id(), $this->tagFieldName, NULL, 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-    $display_repository->getFormDisplay('node', $this->nodeTypeWithTags->id())
+    entity_get_form_display('node', $this->nodeTypeWithTags->id(), 'default')
       ->setComponent($this->tagFieldName, [
         'type' => 'entity_reference_autocomplete_tags',
       ])
       ->save();
 
-    $display_repository->getViewDisplay('node', $this->nodeTypeWithTags->id())
+    entity_get_display('node', $this->nodeTypeWithTags->id(), 'default')
       ->setComponent($this->tagFieldName, [
         'type' => 'entity_reference_label',
         'weight' => 10,
       ])
       ->save();
-    $display_repository->getViewDisplay('node', $this->nodeTypeWithTags->id(), 'teaser')
+    entity_get_display('node', $this->nodeTypeWithTags->id(), 'teaser')
       ->setComponent('field_views_testing_tags', [
         'type' => 'entity_reference_label',
         'weight' => 10,
@@ -214,8 +212,7 @@ class TaggedWithTest extends WizardTestBase {
         ],
       ],
     ])->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('node', $this->nodeTypeWithoutTags->id())
+    entity_get_form_display('node', $this->nodeTypeWithoutTags->id(), 'default')
       ->setComponent($this->tagFieldName, [
         'type' => 'entity_reference_autocomplete_tags',
       ])

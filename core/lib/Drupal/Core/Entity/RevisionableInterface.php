@@ -108,7 +108,7 @@ interface RevisionableInterface extends EntityInterface {
    *
    * @param EntityStorageInterface $storage
    *   The entity storage object.
-   * @param object $record
+   * @param \stdClass $record
    *   The revision object.
    */
   public function preSaveRevision(EntityStorageInterface $storage, \stdClass $record);

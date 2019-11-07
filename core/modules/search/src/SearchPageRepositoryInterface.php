@@ -34,8 +34,8 @@ interface SearchPageRepositoryInterface {
   /**
    * Returns the default search page.
    *
-   * @return string|false
-   *   The default search page entity ID, or FALSE if no pages are active.
+   * @return \Drupal\search\SearchPageInterface|bool
+   *   The search page entity, or FALSE if no pages are active.
    */
   public function getDefaultSearchPage();
 

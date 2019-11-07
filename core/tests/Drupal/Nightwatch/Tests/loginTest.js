@@ -17,8 +17,7 @@ module.exports = {
       })
       .drupalLogin({ name: 'user', password: '123' })
       .drupalRelativeURL('/admin/reports')
-      .waitForElementVisible('body', 1000)
-      .assert.containsText('h1', 'Reports')
-      .assert.noDeprecationErrors();
+      .expect.element('h1.page-title')
+      .text.to.contain('Reports');
   },
 };

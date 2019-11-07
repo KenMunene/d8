@@ -42,7 +42,8 @@ class ContentTranslationMetadataFieldsTest extends ContentTranslationTestBase {
    */
   public function testSkipUntranslatable() {
     $this->drupalLogin($this->translator);
-    $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($this->entityTypeId, $this->bundle);
+    $entity_manager = \Drupal::entityManager();
+    $fields = $entity_manager->getFieldDefinitions($this->entityTypeId, $this->bundle);
 
     // Turn off translatability for the metadata fields on the current bundle.
     $metadata_fields = ['created', 'changed', 'uid', 'status'];
@@ -56,7 +57,7 @@ class ContentTranslationMetadataFieldsTest extends ContentTranslationTestBase {
     // Create a new test entity with original values in the default language.
     $default_langcode = $this->langcodes[0];
     $entity_id = $this->createEntity(['title' => $this->randomString()], $default_langcode);
-    $storage = \Drupal::entityTypeManager()->getStorage($this->entityTypeId);
+    $storage = $entity_manager->getStorage($this->entityTypeId);
     $storage->resetCache();
     $entity = $storage->load($entity_id);
 
@@ -98,7 +99,8 @@ class ContentTranslationMetadataFieldsTest extends ContentTranslationTestBase {
    */
   public function testSetTranslatable() {
     $this->drupalLogin($this->translator);
-    $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($this->entityTypeId, $this->bundle);
+    $entity_manager = \Drupal::entityManager();
+    $fields = $entity_manager->getFieldDefinitions($this->entityTypeId, $this->bundle);
 
     // Turn off translatability for the metadata fields on the current bundle.
     $metadata_fields = ['created', 'changed', 'uid', 'status'];
@@ -112,7 +114,7 @@ class ContentTranslationMetadataFieldsTest extends ContentTranslationTestBase {
     // Create a new test entity with original values in the default language.
     $default_langcode = $this->langcodes[0];
     $entity_id = $this->createEntity(['title' => $this->randomString(), 'status' => FALSE], $default_langcode);
-    $storage = \Drupal::entityTypeManager()->getStorage($this->entityTypeId);
+    $storage = $entity_manager->getStorage($this->entityTypeId);
     $storage->resetCache();
     $entity = $storage->load($entity_id);
 

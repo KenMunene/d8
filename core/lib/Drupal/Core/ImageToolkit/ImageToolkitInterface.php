@@ -52,7 +52,7 @@ interface ImageToolkitInterface extends ContainerFactoryPluginInterface, PluginI
    * @param string $source
    *   The source path of the image file.
    *
-   * @return $this
+   * @return \Drupal\Core\ImageToolkit\ImageToolkitInterface
    *   An instance of the current toolkit object.
    *
    * @throws \BadMethodCallException

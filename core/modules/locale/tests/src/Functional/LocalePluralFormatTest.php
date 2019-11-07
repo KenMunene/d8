@@ -3,7 +3,6 @@
 namespace Drupal\Tests\locale\Functional;
 
 use Drupal\Component\Gettext\PoItem;
-use Drupal\Core\Database\Database;
 use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\Tests\BrowserTestBase;
 
@@ -188,7 +187,7 @@ class LocalePluralFormatTest extends BrowserTestBase {
     // not save our source string for performance optimization if we do not ask
     // specifically for a language.
     \Drupal::translation()->formatPlural(1, '1 second', '@count seconds', [], ['langcode' => 'fr'])->render();
-    $lid = Database::getConnection()->query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 second" . PoItem::DELIMITER . "@count seconds"])->fetchField();
+    $lid = db_query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 second" . PoItem::DELIMITER . "@count seconds"])->fetchField();
     // Look up editing page for this plural string and check fields.
     $search = [
       'string' => '1 second',
@@ -271,9 +270,8 @@ class LocalePluralFormatTest extends BrowserTestBase {
     $this->assertText('@count sata');
     $this->assertText('@count sati');
 
-    $connection = Database::getConnection();
     // Edit langcode hr translations and see if that took effect.
-    $lid = $connection->query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 hour" . PoItem::DELIMITER . "@count hours"])->fetchField();
+    $lid = db_query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 hour" . PoItem::DELIMITER . "@count hours"])->fetchField();
     $edit = [
       "strings[$lid][translations][1]" => '@count sata edited',
     ];
@@ -299,7 +297,7 @@ class LocalePluralFormatTest extends BrowserTestBase {
     // not save our source string for performance optimization if we do not ask
     // specifically for a language.
     \Drupal::translation()->formatPlural(1, '1 day', '@count days', [], ['langcode' => 'fr'])->render();
-    $lid = $connection->query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 day" . PoItem::DELIMITER . "@count days"])->fetchField();
+    $lid = db_query("SELECT lid FROM {locales_source} WHERE source = :source AND context = ''", [':source' => "1 day" . PoItem::DELIMITER . "@count days"])->fetchField();
     // Look up editing page for this plural string and check fields.
     $search = [
       'string' => '1 day',
@@ -354,12 +352,11 @@ class LocalePluralFormatTest extends BrowserTestBase {
    *   Additional options to pass to the translation import form.
    */
   public function importPoFile($contents, array $options = []) {
-    $file_system = \Drupal::service('file_system');
-    $name = $file_system->tempnam('temporary://', "po_") . '.po';
+    $name = \Drupal::service('file_system')->tempnam('temporary://', "po_") . '.po';
     file_put_contents($name, $contents);
     $options['files[file]'] = $name;
     $this->drupalPostForm('admin/config/regional/translate/import', $options, t('Import'));
-    $file_system->unlink($name);
+    drupal_unlink($name);
   }
 
   /**

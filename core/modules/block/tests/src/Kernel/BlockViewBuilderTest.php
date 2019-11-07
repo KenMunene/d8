@@ -83,8 +83,7 @@ class BlockViewBuilderTest extends KernelTestBase {
 
     // Test the rendering of a block.
     $entity = Block::load('test_block1');
-    $builder = \Drupal::entityTypeManager()->getViewBuilder('block');
-    $output = $builder->view($entity, 'block');
+    $output = entity_view($entity, 'block');
     $expected = [];
     $expected[] = '<div id="block-test-block1">';
     $expected[] = '  ';
@@ -108,7 +107,7 @@ class BlockViewBuilderTest extends KernelTestBase {
       ],
     ]);
     $entity->save();
-    $output = $builder->view($entity, 'block');
+    $output = entity_view($entity, 'block');
     $expected = [];
     $expected[] = '<div id="block-test-block2">';
     $expected[] = '  ';

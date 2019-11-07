@@ -173,7 +173,7 @@ interface StorageInterface {
    *   configuration in a way that allows retrieval of configuration for a
    *   particular collection.
    *
-   * @return $this
+   * @return \Drupal\Core\Config\StorageInterface
    *   A new instance of the storage backend with the collection set.
    */
   public function createCollection($collection);

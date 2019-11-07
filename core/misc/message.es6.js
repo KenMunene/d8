@@ -22,11 +22,7 @@
    */
   Drupal.Message = class {
     constructor(messageWrapper = null) {
-      if (!messageWrapper) {
-        this.messageWrapper = Drupal.Message.defaultWrapper();
-      } else {
-        this.messageWrapper = messageWrapper;
-      }
+      this.messageWrapper = messageWrapper;
     }
 
     /**
@@ -88,6 +84,9 @@
      *   ID of message.
      */
     add(message, options = {}) {
+      if (!this.messageWrapper) {
+        this.messageWrapper = Drupal.Message.defaultWrapper();
+      }
       if (!options.hasOwnProperty('type')) {
         options.type = 'status';
       }
@@ -110,9 +109,10 @@
 
       // Throw an error if an unexpected message type is used.
       if (!Drupal.Message.getMessageTypeLabels().hasOwnProperty(options.type)) {
-        const { type } = options;
         throw new Error(
-          `The message type, ${type}, is not present in Drupal.Message.getMessageTypeLabels().`,
+          `The message type, ${
+            options.type
+          }, is not present in Drupal.Message.getMessageTypeLabels().`,
         );
       }
 

@@ -84,7 +84,7 @@ class UniqueFieldConstraintTest extends KernelTestBase {
 
     $message = new FormattableMarkup('A @entity_type with @field_name %value already exists.', [
       '%value' => $value,
-      '@entity_type' => $entity->getEntityType()->getSingularLabel(),
+      '@entity_type' => $entity->getEntityType()->getLowercaseLabel(),
       '@field_name' => 'name',
     ]);
 

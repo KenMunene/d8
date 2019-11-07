@@ -50,13 +50,6 @@ class StyleSerializerTest extends ViewTestBase {
    */
   protected $adminUser;
 
-  /**
-   * The renderer.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
-   */
-  protected $renderer;
-
   protected function setUp($import_test_views = TRUE) {
     parent::setUp($import_test_views);
 
@@ -70,7 +63,6 @@ class StyleSerializerTest extends ViewTestBase {
     }
 
     $this->enableViewsTestModule();
-    $this->renderer = \Drupal::service('renderer');
   }
 
   /**
@@ -121,7 +113,7 @@ class StyleSerializerTest extends ViewTestBase {
     // propagation of cache max-age.
 
     // Test the http Content-type.
-    $headers = $this->getSession()->getResponseHeaders();
+    $headers = $this->drupalGetHeaders();
     $this->assertSame(['application/json'], $headers['Content-Type']);
 
     $expected = [];
@@ -141,7 +133,7 @@ class StyleSerializerTest extends ViewTestBase {
     // Mock the request content type by setting it on the display handler.
     $view->display_handler->setContentType('json');
     $output = $view->preview();
-    $this->assertIdentical($actual_json, (string) $this->renderer->renderRoot($output), 'The expected JSON preview output was found.');
+    $this->assertIdentical($actual_json, (string) drupal_render_root($output), 'The expected JSON preview output was found.');
 
     // Test a 403 callback.
     $this->drupalGet('test/serialize/denied', ['query' => ['_format' => 'json']]);
@@ -702,6 +694,8 @@ class StyleSerializerTest extends ViewTestBase {
    * Tests the "Grouped rows" functionality.
    */
   public function testGroupRows() {
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $this->container->get('renderer');
     $this->drupalCreateContentType(['type' => 'page']);
     // Create a text field with cardinality set to unlimited.
     $field_name = 'field_group_rows';
@@ -744,7 +738,7 @@ class StyleSerializerTest extends ViewTestBase {
     // Check if the field_group_rows field is grouped.
     $expected = [];
     $expected[] = [$field_name => implode(', ', $grouped_field_values)];
-    $this->assertEqual($serializer->serialize($expected, 'json'), (string) $this->renderer->renderRoot($build));
+    $this->assertEqual($serializer->serialize($expected, 'json'), (string) $renderer->renderRoot($build));
     // Set the group rows setting to false.
     $view = Views::getView('test_serializer_node_display_field');
     $view->setDisplay('rest_export_1');
@@ -756,7 +750,7 @@ class StyleSerializerTest extends ViewTestBase {
     foreach ($grouped_field_values as $grouped_field_value) {
       $expected[] = [$field_name => $grouped_field_value];
     }
-    $this->assertEqual($serializer->serialize($expected, 'json'), (string) $this->renderer->renderRoot($build));
+    $this->assertEqual($serializer->serialize($expected, 'json'), (string) $renderer->renderRoot($build));
   }
 
   /**

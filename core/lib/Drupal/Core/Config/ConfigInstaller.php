@@ -4,7 +4,6 @@ namespace Drupal\Core\Config;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Config\Entity\ConfigDependencyManager;
-use Drupal\Core\Installer\InstallerKernel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConfigInstaller implements ConfigInstallerInterface {
@@ -123,14 +122,10 @@ class ConfigInstaller implements ConfigInstallerInterface {
       $collection_info = $this->configManager->getConfigCollectionInfo();
       foreach ($collection_info->getCollectionNames() as $collection) {
         $config_to_create = $this->getConfigToCreate($storage, $collection, $prefix, $profile_storages);
+        // If we're installing a profile ensure configuration that is overriding
+        // is excluded.
         if ($name == $this->drupalGetProfile()) {
-          // If we're installing a profile ensure simple configuration that
-          // already exists is excluded as it will have already been written.
-          // This means that if the configuration is changed by something else
-          // during the install it will not be overwritten again.
-          $existing_configuration = array_filter($this->getActiveStorages($collection)->listAll(), function ($config_name) {
-            return !$this->configManager->getEntityTypeIdByName($config_name);
-          });
+          $existing_configuration = $this->getActiveStorages($collection)->listAll();
           $config_to_create = array_diff_key($config_to_create, array_flip($existing_configuration));
         }
         if (!empty($config_to_create)) {
@@ -142,7 +137,7 @@ class ConfigInstaller implements ConfigInstallerInterface {
     // During a drupal installation optional configuration is installed at the
     // end of the installation process.
     // @see install_install_profile()
-    if (!$this->isSyncing() && !InstallerKernel::installationAttempted()) {
+    if (!$this->isSyncing() && !$this->drupalInstallationAttempted()) {
       $optional_install_path = $extension_path . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
       if (is_dir($optional_install_path)) {
         // Install any optional config the module provides.
@@ -270,35 +265,12 @@ class ConfigInstaller implements ConfigInstallerInterface {
     }
     $data = $storage->readMultiple($storage->listAll($prefix));
 
-    // Check to see if configuration provided by the install profile has any
-    // overrides.
+    // Check to see if the corresponding override storage has any overrides.
     foreach ($profile_storages as $profile_storage) {
       if ($profile_storage->getCollectionName() != $collection) {
         $profile_storage = $profile_storage->createCollection($collection);
       }
-      $profile_overrides = $profile_storage->readMultiple(array_keys($data));
-      if (InstallerKernel::installationAttempted()) {
-        // During installation overrides of simple configuration are applied
-        // immediately. Configuration entities that are overridden will be
-        // updated when the profile is installed. This allows install profiles
-        // to provide configuration entity overrides that have dependencies that
-        // cannot be met when the module provided configuration entity is
-        // created.
-        foreach ($profile_overrides as $name => $override_data) {
-          // The only way to determine if they are configuration entities is the
-          // presence of a dependencies key.
-          if (!isset($override_data['dependencies'])) {
-            $data[$name] = $override_data;
-          }
-        }
-      }
-      else {
-        // Allow install profiles to provide overridden configuration for new
-        // extensions that are being enabled after Drupal has already been
-        // installed. This allows profiles to ship new extensions in version
-        // updates without requiring additional code to apply the overrides.
-        $data = $profile_overrides + $data;
-      }
+      $data = $profile_storage->readMultiple(array_keys($data)) + $data;
     }
     return $data;
   }
@@ -384,7 +356,7 @@ class ConfigInstaller implements ConfigInstallerInterface {
    * {@inheritdoc}
    */
   public function installCollectionDefaultConfig($collection) {
-    $storage = new ExtensionInstallStorage($this->getActiveStorages(StorageInterface::DEFAULT_COLLECTION), InstallStorage::CONFIG_INSTALL_DIRECTORY, $collection, InstallerKernel::installationAttempted(), $this->installProfile);
+    $storage = new ExtensionInstallStorage($this->getActiveStorages(StorageInterface::DEFAULT_COLLECTION), InstallStorage::CONFIG_INSTALL_DIRECTORY, $collection, $this->drupalInstallationAttempted(), $this->installProfile);
     // Only install configuration for enabled extensions.
     $enabled_extensions = $this->getEnabledExtensions();
     $config_to_install = array_filter($storage->listAll(), function ($config_name) use ($enabled_extensions) {
@@ -729,17 +701,9 @@ class ConfigInstaller implements ConfigInstallerInterface {
    *
    * @return bool
    *   TRUE if a Drupal installation is currently being attempted.
-   *
-   * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0.
-   *   Use \Drupal\Core\Installer\InstallerKernel::installationAttempted()
-   *   instead.
-   *
-   * @see https://www.drupal.org/node/3035275
-   * @see \Drupal\Core\Installer\InstallerKernel::installationAttempted()
    */
   protected function drupalInstallationAttempted() {
-    @trigger_error(__METHOD__ . '() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Installer\InstallerKernel::installationAttempted() instead. See https://www.drupal.org/node/3035275', E_USER_DEPRECATED);
-    return InstallerKernel::installationAttempted();
+    return drupal_installation_attempted();
   }
 
 }

@@ -22,8 +22,7 @@ class CountableResourceTypeRepository extends ResourceTypeRepository {
       $entity_type->isInternal(),
       static::isLocatableResourceType($entity_type, $bundle),
       static::isMutableResourceType($entity_type, $bundle),
-      static::isVersionableResourceType($entity_type),
-      static::getFields($raw_fields, $entity_type, $bundle)
+      static::getFieldMapping($raw_fields, $entity_type, $bundle)
     );
   }
 

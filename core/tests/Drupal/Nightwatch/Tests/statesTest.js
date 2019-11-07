@@ -18,7 +18,6 @@ module.exports = {
     browser
       .drupalRelativeURL('/form-test/javascript-states-form')
       .waitForElementVisible('body', 1000)
-      .waitForElementNotVisible('input[name="textfield"]', 1000)
-      .assert.noDeprecationErrors();
+      .waitForElementNotVisible('input[name="textfield"]', 1000);
   },
 };

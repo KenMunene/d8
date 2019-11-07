@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\views\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\views\Views;
 
@@ -25,7 +24,7 @@ class BulkFormTest extends BrowserTestBase {
    * Tests the bulk form.
    */
   public function testBulkForm() {
-    $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $node_storage = $this->container->get('entity.manager')->getStorage('node');
 
     // First, test an empty bulk form with the default style plugin to make sure
     // the empty region is rendered correctly.
@@ -55,7 +54,7 @@ class BulkFormTest extends BrowserTestBase {
     // Make sure a checkbox appears on all rows.
     $edit = [];
     for ($i = 0; $i < 10; $i++) {
-      $this->assertFieldById('edit-node-bulk-form-' . $i, NULL, new FormattableMarkup('The checkbox on row @row appears.', ['@row' => $i]));
+      $this->assertFieldById('edit-node-bulk-form-' . $i, NULL, format_string('The checkbox on row @row appears.', ['@row' => $i]));
       $edit["node_bulk_form[$i]"] = TRUE;
     }
 
@@ -73,7 +72,7 @@ class BulkFormTest extends BrowserTestBase {
 
     foreach ($nodes as $node) {
       $changed_node = $node_storage->load($node->id());
-      $this->assertTrue($changed_node->isSticky(), new FormattableMarkup('Node @nid got marked as sticky.', ['@nid' => $node->id()]));
+      $this->assertTrue($changed_node->isSticky(), format_string('Node @nid got marked as sticky.', ['@nid' => $node->id()]));
     }
 
     $this->assertText('Make content sticky was applied to 10 items.');

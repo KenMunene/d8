@@ -68,7 +68,7 @@
             }
           });
 
-          $('#media-library-content :tabbable:first').focus();
+          document.getElementById('media-library-content').focus();
 
           this.settings = null;
         };

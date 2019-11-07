@@ -26,8 +26,7 @@ class NodeViewLanguageTest extends NodeTestBase {
     ConfigurableLanguage::createFromLangcode('es')->save();
 
     // Set language field visible.
-    \Drupal::service('entity_display.repository')
-      ->getViewDisplay('node', 'page', 'full')
+    entity_get_display('node', 'page', 'full')
       ->setComponent('langcode')
       ->save();
 

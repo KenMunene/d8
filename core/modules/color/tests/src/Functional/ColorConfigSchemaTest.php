@@ -30,7 +30,7 @@ class ColorConfigSchemaTest extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    \Drupal::service('theme_installer')->install(['bartik']);
+    \Drupal::service('theme_handler')->install(['bartik']);
 
     // Create user.
     $this->adminUser = $this->drupalCreateUser(['administer themes']);

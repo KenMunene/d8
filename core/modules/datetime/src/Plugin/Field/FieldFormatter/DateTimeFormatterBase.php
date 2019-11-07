@@ -75,7 +75,7 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('date.formatter'),
-      $container->get('entity_type.manager')->getStorage('date_format')
+      $container->get('entity.manager')->getStorage('date_format')
     );
   }
 
@@ -160,6 +160,8 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
    * zone applied to it.  This method will apply the time zone for the current
    * user, based on system and user settings.
    *
+   * @see drupal_get_user_timezone()
+   *
    * @param \Drupal\Core\Datetime\DrupalDateTime $date
    *   A DrupalDateTime object.
    */
@@ -169,7 +171,7 @@ abstract class DateTimeFormatterBase extends FormatterBase implements ContainerF
       $timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
     }
     else {
-      $timezone = date_default_timezone_get();
+      $timezone = drupal_get_user_timezone();
     }
     $date->setTimeZone(timezone_open($timezone));
   }

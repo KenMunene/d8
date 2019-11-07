@@ -149,7 +149,7 @@ class OverridesSectionStorageTest extends UnitTestCase {
     }
 
     if (!$success) {
-      $this->expectException(\InvalidArgumentException::class);
+      $this->setExpectedException(\InvalidArgumentException::class);
     }
 
     $result = $this->plugin->getSectionListFromId($id);

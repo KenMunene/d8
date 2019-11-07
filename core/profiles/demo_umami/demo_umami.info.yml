@@ -24,7 +24,6 @@ install:
   - help
   - image
   - media
-  - media_library
   - menu_ui
   - options
   - path
@@ -49,6 +48,7 @@ install:
   - locale
   - config_translation
   - content_translation
+  - demo_umami_tour
 themes:
   - seven
   - umami

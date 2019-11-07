@@ -80,7 +80,7 @@ class TextField extends FieldPluginBase {
             'method' => 'process',
           ],
           [
-            'plugin' => 'migration_lookup',
+            'plugin' => 'migration',
             'migration' => [
               'd6_filter_format',
               'd7_filter_format',

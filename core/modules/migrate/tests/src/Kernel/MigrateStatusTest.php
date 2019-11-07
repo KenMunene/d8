@@ -17,7 +17,7 @@ class MigrateStatusTest extends MigrateTestBase {
   public function testStatus() {
     // Create a minimally valid migration.
     $definition = [
-      'id' => 'migrate_status_test',
+      'id' => 'migration_status_test',
       'migration_tags' => ['Testing'],
       'source' => ['plugin' => 'empty'],
       'destination' => [

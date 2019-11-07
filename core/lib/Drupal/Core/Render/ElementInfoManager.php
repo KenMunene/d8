@@ -65,7 +65,6 @@ class ElementInfoManager extends DefaultPluginManager implements ElementInfoMana
     $this->cacheTagInvalidator = $cache_tag_invalidator;
 
     parent::__construct('Element', $namespaces, $module_handler, 'Drupal\Core\Render\Element\ElementInterface', 'Drupal\Core\Render\Annotation\RenderElement');
-    $this->alterInfo('element_plugin');
   }
 
   /**

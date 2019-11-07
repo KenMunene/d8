@@ -44,7 +44,7 @@ abstract class InstallerExistingConfigTestBase extends InstallerTestBase {
     $path = $this->siteDirectory . '/profiles/' . $this->profile;
     if ($this->existingSyncDirectory) {
       $config_sync_directory = $this->siteDirectory . '/config/sync';
-      $this->settings['settings']['config_sync_directory'] = (object) [
+      $this->settings['config_directories'][CONFIG_SYNC_DIRECTORY] = (object) [
         'value' => $config_sync_directory,
         'required' => TRUE,
       ];

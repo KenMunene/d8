@@ -20,9 +20,10 @@ class ProfileFieldTranslation extends ProfileField {
   public function query() {
     $query = parent::query();
     $query->fields('i18n', ['property'])
-      ->fields('lt', ['lid', 'translation', 'language']);
+      ->fields('lt', ['lid', 'translation', 'language'])
+      ->isNotNull('language');
     $query->leftJoin('i18n_strings', 'i18n', 'i18n.objectid = pf.name');
-    $query->innerJoin('locales_target', 'lt', 'lt.lid = i18n.lid');
+    $query->leftJoin('locales_target', 'lt', 'lt.lid = i18n.lid');
     return $query;
   }
 

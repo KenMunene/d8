@@ -3,7 +3,6 @@
 namespace Drupal\KernelTests\Core\Ajax;
 
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\InsertCommand;
 use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
 use Drupal\KernelTests\KernelTestBase;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,15 +54,6 @@ class CommandsTest extends KernelTestBase {
 
     $config->set('js.preprocess', TRUE)->save();
     $assert('Settings command exists when JS aggregation is enabled.');
-  }
-
-  /**
-   * Checks empty content in commands does not throw exceptions.
-   *
-   * @doesNotPerformAssertions
-   */
-  public function testEmptyInsertCommand() {
-    (new InsertCommand('foobar', []))->render();
   }
 
   /**

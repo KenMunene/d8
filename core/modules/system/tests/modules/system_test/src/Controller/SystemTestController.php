@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Session\AccountInterface;
@@ -20,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Controller routines for system_test routes.
  */
-class SystemTestController extends ControllerBase implements TrustedCallbackInterface {
+class SystemTestController extends ControllerBase {
 
   /**
    * The lock service.
@@ -397,13 +396,6 @@ class SystemTestController extends ControllerBase implements TrustedCallbackInte
    */
   public function getCacheableResponseWithCustomCacheControl() {
     return new CacheableResponse('Foo', 200, ['Cache-Control' => 'bar']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderCacheTags'];
   }
 
 }

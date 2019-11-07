@@ -51,20 +51,21 @@ abstract class BlockContentTestBase extends ViewTestBase {
   /**
    * Creates a custom block.
    *
-   * @param array $values
-   *   (optional) The values for the block_content entity.
+   * @param array $settings
+   *   (optional) An associative array of settings for the block_content, as
+   *   used in entity_create().
    *
    * @return \Drupal\block_content\Entity\BlockContent
    *   Created custom block.
    */
-  protected function createBlockContent(array $values = []) {
+  protected function createBlockContent(array $settings = []) {
     $status = 0;
-    $values += [
+    $settings += [
       'info' => $this->randomMachineName(),
       'type' => 'basic',
       'langcode' => 'en',
     ];
-    if ($block_content = BlockContent::create($values)) {
+    if ($block_content = BlockContent::create($settings)) {
       $status = $block_content->save();
     }
     $this->assertEqual($status, SAVED_NEW, new FormattableMarkup('Created block content %info.', ['%info' => $block_content->label()]));

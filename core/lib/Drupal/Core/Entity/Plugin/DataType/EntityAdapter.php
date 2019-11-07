@@ -168,10 +168,7 @@ class EntityAdapter extends TypedData implements \IteratorAggregate, ComplexData
    * Returns the wrapped entity object.
    *
    * @return \Drupal\Core\Entity\EntityInterface
-   *   The wrapped entity object. If the entity is translatable and a specific
-   *   translation is required, always request it by calling ::getTranslation()
-   *   or ::getUntranslated() as the language of the returned object is not
-   *   defined.
+   *   The wrapped entity object.
    */
   public function getEntity() {
     return $this->entity;

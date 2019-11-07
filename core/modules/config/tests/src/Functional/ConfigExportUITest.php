@@ -3,7 +3,6 @@
 namespace Drupal\Tests\config\Functional;
 
 use Drupal\Core\Archiver\Tar;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Tests\BrowserTestBase;
 
@@ -58,10 +57,7 @@ class ConfigExportUITest extends BrowserTestBase {
     $this->assertTrue($header_match, "Header with filename matches the expected format.");
 
     // Extract the archive and verify it's not empty.
-    $file_system = \Drupal::service('file_system');
-    assert($file_system instanceof FileSystemInterface);
-    $temp_directory = $file_system->getTempDirectory();
-    $file_path = $temp_directory . '/config.tar.gz';
+    $file_path = file_directory_temp() . '/config.tar.gz';
     $archiver = new Tar($file_path);
     $archive_contents = $archiver->listContents();
     $this->assert(!empty($archive_contents), 'Downloaded archive file is not empty.');
@@ -79,8 +75,8 @@ class ConfigExportUITest extends BrowserTestBase {
 
     // Ensure the test configuration override is in effect but was not exported.
     $this->assertIdentical(\Drupal::config('system.maintenance')->get('message'), 'Foo');
-    $archiver->extract($temp_directory, ['system.maintenance.yml']);
-    $file_contents = file_get_contents($temp_directory . '/' . 'system.maintenance.yml');
+    $archiver->extract(file_directory_temp(), ['system.maintenance.yml']);
+    $file_contents = file_get_contents(file_directory_temp() . '/' . 'system.maintenance.yml');
     $exported = Yaml::decode($file_contents);
     $this->assertNotIdentical($exported['message'], 'Foo');
 

@@ -42,8 +42,8 @@ class PathLanguageUiTest extends PathTestBase {
   public function testLanguageNeutralUrl() {
     $name = $this->randomMachineName(8);
     $edit = [];
-    $edit['path[0][value]'] = '/admin/config/search/path';
-    $edit['alias[0][value]'] = '/' . $name;
+    $edit['source'] = '/admin/config/search/path';
+    $edit['alias'] = '/' . $name;
     $this->drupalPostForm('admin/config/search/path/add', $edit, t('Save'));
 
     $this->drupalGet($name);
@@ -56,9 +56,9 @@ class PathLanguageUiTest extends PathTestBase {
   public function testDefaultLanguageUrl() {
     $name = $this->randomMachineName(8);
     $edit = [];
-    $edit['path[0][value]'] = '/admin/config/search/path';
-    $edit['alias[0][value]'] = '/' . $name;
-    $edit['langcode[0][value]'] = 'en';
+    $edit['source'] = '/admin/config/search/path';
+    $edit['alias'] = '/' . $name;
+    $edit['langcode'] = 'en';
     $this->drupalPostForm('admin/config/search/path/add', $edit, t('Save'));
 
     $this->drupalGet($name);
@@ -71,9 +71,9 @@ class PathLanguageUiTest extends PathTestBase {
   public function testNonDefaultUrl() {
     $name = $this->randomMachineName(8);
     $edit = [];
-    $edit['path[0][value]'] = '/admin/config/search/path';
-    $edit['alias[0][value]'] = '/' . $name;
-    $edit['langcode[0][value]'] = 'fr';
+    $edit['source'] = '/admin/config/search/path';
+    $edit['alias'] = '/' . $name;
+    $edit['langcode'] = 'fr';
     $this->drupalPostForm('admin/config/search/path/add', $edit, t('Save'));
 
     $this->drupalGet('fr/' . $name);
@@ -90,14 +90,14 @@ class PathLanguageUiTest extends PathTestBase {
     // Create a language-unspecific alias in the admin UI, ensure that is
     // displayed and the langcode is not changed when saving.
     $edit = [
-      'path[0][value]' => '/node/' . $node->id(),
-      'alias[0][value]' => '/' . $this->getRandomGenerator()->word(8),
-      'langcode[0][value]' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+      'source' => '/node/' . $node->id(),
+      'alias' => '/' . $this->getRandomGenerator()->word(8),
+      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ];
     $this->drupalPostForm('admin/config/search/path/add', $edit, t('Save'));
 
     $this->drupalGet($node->toUrl('edit-form'));
-    $this->assertSession()->fieldValueEquals('path[0][alias]', $edit['alias[0][value]']);
+    $this->assertSession()->fieldValueEquals('path[0][alias]', $edit['alias']);
     $this->drupalPostForm(NULL, [], t('Save'));
 
     $this->drupalGet('admin/config/search/path');

@@ -50,16 +50,14 @@ trait ImageFieldCreationTrait {
     ]);
     $field_config->save();
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-    $display_repository->getFormDisplay('node', $type_name)
+    entity_get_form_display('node', $type_name, 'default')
       ->setComponent($name, [
         'type' => 'image_image',
         'settings' => $widget_settings,
       ])
       ->save();
 
-    $display_repository->getViewDisplay('node', $type_name)
+    entity_get_display('node', $type_name, 'default')
       ->setComponent($name, [
         'type' => 'image',
         'settings' => $formatter_settings,

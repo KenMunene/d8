@@ -15,7 +15,7 @@ class StandardTest extends UnitTestCase {
   /**
    * The mocked text format configuration entity.
    *
-   * @var \Drupal\filter\Entity\FilterFormat|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\filter\Entity\FilterFormat|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $format;
 

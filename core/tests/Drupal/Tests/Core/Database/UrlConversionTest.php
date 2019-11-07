@@ -136,8 +136,7 @@ class UrlConversionTest extends UnitTestCase {
    * @dataProvider providerInvalidArgumentsUrlConversion
    */
   public function testGetInvalidArgumentExceptionInUrlConversion($url, $root, $expected_exception_message) {
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage($expected_exception_message);
+    $this->setExpectedException(\InvalidArgumentException::class, $expected_exception_message);
     Database::convertDbUrlToConnectionInfo($url, $root);
   }
 
@@ -240,8 +239,7 @@ class UrlConversionTest extends UnitTestCase {
    */
   public function testGetInvalidArgumentGetConnectionInfoAsUrl(array $connection_options, $expected_exception_message) {
     Database::addConnectionInfo('default', 'default', $connection_options);
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage($expected_exception_message);
+    $this->setExpectedException(\InvalidArgumentException::class, $expected_exception_message);
     $url = Database::getConnectionInfoAsUrl();
   }
 

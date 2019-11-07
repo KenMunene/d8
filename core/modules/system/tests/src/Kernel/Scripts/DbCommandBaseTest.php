@@ -50,7 +50,7 @@ class DbCommandBaseTest extends KernelTestBase {
     $command_tester->execute([
       '--database' => 'dne',
     ]);
-    $this->expectException(ConnectionNotDefinedException::class);
+    $this->setExpectedException(ConnectionNotDefinedException::class);
     $command->getDatabaseConnection($command_tester->getInput());
   }
 
@@ -129,7 +129,6 @@ class DbCommandBaseTester extends DbCommandBase {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     // Empty implementation for testing.
-    return 0;
   }
 
 }

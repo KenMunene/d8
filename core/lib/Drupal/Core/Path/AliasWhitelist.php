@@ -4,7 +4,6 @@ namespace Drupal\Core\Path;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheCollector;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 
@@ -12,13 +11,6 @@ use Drupal\Core\Lock\LockBackendInterface;
  * Extends CacheCollector to build the path alias whitelist over time.
  */
 class AliasWhitelist extends CacheCollector implements AliasWhitelistInterface {
-
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['aliasStorage' => 'path.alias_storage'];
 
   /**
    * The Key/Value Store to use for state.
@@ -28,11 +20,11 @@ class AliasWhitelist extends CacheCollector implements AliasWhitelistInterface {
   protected $state;
 
   /**
-   * The path alias repository.
+   * The Path CRUD service.
    *
-   * @var \Drupal\Core\Path\AliasRepositoryInterface
+   * @var \Drupal\Core\Path\AliasStorageInterface
    */
-  protected $pathAliasRepository;
+  protected $aliasStorage;
 
   /**
    * Constructs an AliasWhitelist object.
@@ -45,18 +37,13 @@ class AliasWhitelist extends CacheCollector implements AliasWhitelistInterface {
    *   The lock backend.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state keyvalue store.
-   * @param \Drupal\Core\Path\AliasRepositoryInterface $alias_repository
-   *   The path alias repository.
+   * @param \Drupal\Core\Path\AliasStorageInterface $alias_storage
+   *   The alias storage service.
    */
-  public function __construct($cid, CacheBackendInterface $cache, LockBackendInterface $lock, StateInterface $state, $alias_repository) {
+  public function __construct($cid, CacheBackendInterface $cache, LockBackendInterface $lock, StateInterface $state, AliasStorageInterface $alias_storage) {
     parent::__construct($cid, $cache, $lock);
     $this->state = $state;
-
-    if (!$alias_repository instanceof AliasRepositoryInterface) {
-      @trigger_error('Passing the path.alias_storage service to AliasWhitelist::__construct() is deprecated in drupal:8.8.0 and will be removed before drupal:9.0.0. Pass the new dependencies instead. See https://www.drupal.org/node/3013865.', E_USER_DEPRECATED);
-      $alias_repository = \Drupal::service('path.alias_repository');
-    }
-    $this->pathAliasRepository = $alias_repository;
+    $this->aliasStorage = $alias_storage;
   }
 
   /**
@@ -114,7 +101,7 @@ class AliasWhitelist extends CacheCollector implements AliasWhitelistInterface {
    * {@inheritdoc}
    */
   public function resolveCacheMiss($root) {
-    $exists = $this->pathAliasRepository->pathHasMatchingAlias('/' . $root);
+    $exists = $this->aliasStorage->pathHasMatchingAlias('/' . $root);
     $this->storage[$root] = $exists;
     $this->persist($root);
     if ($exists) {

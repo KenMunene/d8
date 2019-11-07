@@ -96,14 +96,12 @@ class Cache {
    * @param string[] $tags
    *   An array of cache tags.
    *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use
-   *   assert(\Drupal\Component\Assertion\Inspector::assertAllStrings($tags))
-   *   instead.
+   * @deprecated
+   *   Use assert(Inspector::assertAllStrings($tags));
    *
    * @throws \LogicException
    */
   public static function validateTags(array $tags) {
-    @trigger_error(__NAMESPACE__ . '\Cache::validateTags() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use assert(\Drupal\Component\Assertion\Inspector::assertAllStrings($tags)) instead.', E_USER_DEPRECATED);
     if (empty($tags)) {
       return;
     }

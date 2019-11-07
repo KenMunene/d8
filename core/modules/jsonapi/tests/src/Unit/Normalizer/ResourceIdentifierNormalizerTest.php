@@ -13,7 +13,6 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\jsonapi\JsonApiResource\ResourceIdentifier;
 use Drupal\jsonapi\Normalizer\ResourceIdentifierNormalizer;
 use Drupal\jsonapi\ResourceType\ResourceType;
-use Drupal\jsonapi\ResourceType\ResourceTypeRelationship;
 use Drupal\jsonapi\ResourceType\ResourceTypeRepository;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
@@ -46,11 +45,7 @@ class ResourceIdentifierNormalizerTest extends UnitTestCase {
    */
   public function setUp() {
     $target_resource_type = new ResourceType('lorem', 'dummy_bundle', NULL);
-    $relationship_fields = [
-      'field_dummy' => new ResourceTypeRelationship('field_dummy'),
-      'field_dummy_single' => new ResourceTypeRelationship('field_dummy_single'),
-    ];
-    $this->resourceType = new ResourceType('fake_entity_type', 'dummy_bundle', NULL, FALSE, TRUE, TRUE, FALSE, $relationship_fields);
+    $this->resourceType = new ResourceType('fake_entity_type', 'dummy_bundle', NULL);
     $this->resourceType->setRelatableResourceTypes([
       'field_dummy' => [$target_resource_type],
       'field_dummy_single' => [$target_resource_type],
@@ -154,7 +149,7 @@ class ResourceIdentifierNormalizerTest extends UnitTestCase {
       'related' => $field_name,
       'target_entity' => $this->prophesize(FieldableEntityInterface::class)->reveal(),
     ];
-    $this->expectException(BadRequestHttpException::class);
+    $this->setExpectedException(BadRequestHttpException::class);
     $this->normalizer->denormalize($data, NULL, 'api_json', $context);
   }
 

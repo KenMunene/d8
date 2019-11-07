@@ -524,7 +524,7 @@ class EntityCrudHookTest extends EntityKernelTestBase {
     ]);
 
     $GLOBALS['entity_crud_hook_test'] = [];
-    $account->delete();
+    user_delete($account->id());
 
     $this->assertHookMessageOrder([
       'entity_crud_hook_test_user_predelete called',

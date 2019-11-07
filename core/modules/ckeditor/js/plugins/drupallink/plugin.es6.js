@@ -61,35 +61,6 @@
     };
   }
 
-  const registeredLinkableWidgets = [];
-
-  /**
-   * Registers a widget name as linkable.
-   *
-   * @param {string} widgetName
-   *   The name of the widget to register as linkable.
-   */
-  function registerLinkableWidget(widgetName) {
-    registeredLinkableWidgets.push(widgetName);
-  }
-
-  /**
-   * Gets the focused widget, if one of the registered linkable widget names.
-   *
-   * @param {CKEDITOR.editor} editor
-   *   A CKEditor instance.
-   *
-   * @return {?CKEDITOR.plugins.widget}
-   *   The focused linkable widget instance, or null.
-   */
-  function getFocusedLinkableWidget(editor) {
-    const widget = editor.widgets.focused;
-    if (widget && registeredLinkableWidgets.indexOf(widget.name) !== -1) {
-      return widget;
-    }
-    return null;
-  }
-
   /**
    * Get the surrounding link element of current selection.
    *
@@ -150,7 +121,9 @@
         modes: { wysiwyg: 1 },
         canUndo: true,
         exec(editor) {
-          const focusedLinkableWidget = getFocusedLinkableWidget(editor);
+          const drupalImageUtils = CKEDITOR.plugins.drupalimage;
+          const focusedImageWidget =
+            drupalImageUtils && drupalImageUtils.getFocusedWidget(editor);
           let linkElement = getSelectedLink(editor);
 
           // Set existing values based on selected element.
@@ -160,22 +133,20 @@
           }
           // Or, if an image widget is focused, we're editing a link wrapping
           // an image widget.
-          else if (focusedLinkableWidget && focusedLinkableWidget.data.link) {
-            existingValues = CKEDITOR.tools.clone(
-              focusedLinkableWidget.data.link,
-            );
+          else if (focusedImageWidget && focusedImageWidget.data.link) {
+            existingValues = CKEDITOR.tools.clone(focusedImageWidget.data.link);
           }
 
           // Prepare a save callback to be used upon saving the dialog.
           const saveCallback = function(returnValues) {
             // If an image widget is focused, we're not editing an independent
             // link, but we're wrapping an image widget in a link.
-            if (focusedLinkableWidget) {
-              focusedLinkableWidget.setData(
+            if (focusedImageWidget) {
+              focusedImageWidget.setData(
                 'link',
                 CKEDITOR.tools.extend(
                   returnValues.attributes,
-                  focusedLinkableWidget.data.link,
+                  focusedImageWidget.data.link,
                 ),
               );
               editor.fire('saveSnapshot');
@@ -359,6 +330,5 @@
   CKEDITOR.plugins.drupallink = {
     parseLinkAttributes: parseAttributes,
     getLinkAttributes: getAttributes,
-    registerLinkableWidget,
   };
 })(jQuery, Drupal, drupalSettings, CKEDITOR);

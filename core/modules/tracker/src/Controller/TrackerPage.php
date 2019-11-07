@@ -2,18 +2,19 @@
 
 namespace Drupal\tracker\Controller;
 
-@trigger_error(__NAMESPACE__ . '\TrackerPage is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\tracker\Controller\TrackerController instead. See https://www.drupal.org/node/3030645', E_USER_DEPRECATED);
+use Drupal\Core\Controller\ControllerBase;
 
 /**
  * Controller for tracker.page route.
  */
-class TrackerPage extends TrackerController {
+class TrackerPage extends ControllerBase {
 
   /**
    * Content callback for the tracker.page route.
    */
   public function getContent() {
-    return $this->buildContent();
+    module_load_include('inc', 'tracker', 'tracker.pages');
+    return tracker_page();
   }
 
 }

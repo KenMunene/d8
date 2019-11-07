@@ -35,7 +35,7 @@ trait FormatSpecificGetBcRouteTestTrait {
    * @see \Drupal\rest\Plugin\ResourceBase::routes
    */
   public function testNoFormatSpecificGetBcRouteForOtherFormats() {
-    $this->expectException(RouteNotFoundException::class);
+    $this->setExpectedException(RouteNotFoundException::class);
 
     $this->provisionEntityResource();
     $url = $this->getEntityResourceUrl();

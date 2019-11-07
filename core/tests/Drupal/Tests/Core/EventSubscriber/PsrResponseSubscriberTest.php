@@ -21,7 +21,7 @@ class PsrResponseSubscriberTest extends UnitTestCase {
   /**
    * The tested path root subscriber.
    *
-   * @var \Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $httpFoundationFactoryMock;
 
@@ -29,13 +29,11 @@ class PsrResponseSubscriberTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $factory = $this->getMockBuilder('Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $factory = $this->getMock('Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface', [], [], '', NULL);
     $factory
       ->expects($this->any())
       ->method('createResponse')
-      ->willReturn($this->createMock('Symfony\Component\HttpFoundation\Response'));
+      ->willReturn($this->getMock('Symfony\Component\HttpFoundation\Response'));
 
     $this->httpFoundationFactoryMock = $factory;
 
@@ -48,7 +46,7 @@ class PsrResponseSubscriberTest extends UnitTestCase {
    * @covers ::onKernelView
    */
   public function testConvertsControllerResult() {
-    $event = $this->createEventMock($this->createMock('Psr\Http\Message\ResponseInterface'));
+    $event = $this->createEventMock($this->getMock('Psr\Http\Message\ResponseInterface'));
     $event
       ->expects($this->once())
       ->method('setResponse')
@@ -80,13 +78,11 @@ class PsrResponseSubscriberTest extends UnitTestCase {
    * @param mixed $controller_result
    *   The return Object.
    *
-   * @return \Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent|\PHPUnit\Framework\MockObject\MockObject
+   * @return \Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent|\PHPUnit_Framework_MockObject_MockObject
    *   A mock object to test.
    */
   protected function createEventMock($controller_result) {
-    $event = $this->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $event = $this->getMock('Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent', [], [], '', NULL);
     $event
       ->expects($this->once())
       ->method('getControllerResult')

@@ -4,7 +4,6 @@ namespace Drupal\node\Tests;
 
 @trigger_error(__NAMESPACE__ . '\NodeTestBase is deprecated for removal before Drupal 9.0.0. Use Drupal\Tests\node\Functional\NodeTestBase instead. See https://www.drupal.org/node/2999939', E_USER_DEPRECATED);
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\simpletest\WebTestBase;
@@ -48,7 +47,7 @@ abstract class NodeTestBase extends WebTestBase {
       ]);
       $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     }
-    $this->accessHandler = \Drupal::entityTypeManager()->getAccessControlHandler('node');
+    $this->accessHandler = \Drupal::entityManager()->getAccessControlHandler('node');
   }
 
   /**
@@ -105,7 +104,7 @@ abstract class NodeTestBase extends WebTestBase {
    *   about the node access permission test that was performed.
    */
   public function nodeAccessAssertMessage($operation, $result, $langcode = NULL) {
-    return new FormattableMarkup(
+    return format_string(
       'Node access returns @result with operation %op, language code %langcode.',
       [
         '@result' => $result ? 'true' : 'false',

@@ -3,7 +3,6 @@
 namespace Drupal\views\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Url as CoreUrl;
 use Drupal\views\ResultRow;
 
@@ -47,7 +46,7 @@ class Url extends FieldPluginBase {
     if (!empty($this->options['display_as_link'])) {
       // @todo Views should expect and store a leading /. See:
       //   https://www.drupal.org/node/2423913
-      return Link::fromTextAndUrl($this->sanitizeValue($value), CoreUrl::fromUserInput('/' . $value))->toString();
+      return \Drupal::l($this->sanitizeValue($value), CoreUrl::fromUserInput('/' . $value));
     }
     else {
       return $this->sanitizeValue($value, 'url');

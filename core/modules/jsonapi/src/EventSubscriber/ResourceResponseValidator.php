@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Response subscriber that validates a JSON:API response.
@@ -26,6 +27,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @see \Drupal\rest\EventSubscriber\ResourceResponseSubscriber
  */
 class ResourceResponseValidator implements EventSubscriberInterface {
+
+  /**
+   * The serializer.
+   *
+   * @var \Symfony\Component\Serializer\SerializerInterface
+   */
+  protected $serializer;
 
   /**
    * The JSON:API logger channel.
@@ -60,6 +68,8 @@ class ResourceResponseValidator implements EventSubscriberInterface {
   /**
    * Constructs a ResourceResponseValidator object.
    *
+   * @param \Symfony\Component\Serializer\SerializerInterface $serializer
+   *   The serializer.
    * @param \Psr\Log\LoggerInterface $logger
    *   The JSON:API logger channel.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -67,7 +77,8 @@ class ResourceResponseValidator implements EventSubscriberInterface {
    * @param string $app_root
    *   The application's root file path.
    */
-  public function __construct(LoggerInterface $logger, ModuleHandlerInterface $module_handler, $app_root) {
+  public function __construct(SerializerInterface $serializer, LoggerInterface $logger, ModuleHandlerInterface $module_handler, $app_root) {
+    $this->serializer = $serializer;
     $this->logger = $logger;
     $this->moduleHandler = $module_handler;
     $this->appRoot = $app_root;
@@ -114,7 +125,9 @@ class ResourceResponseValidator implements EventSubscriberInterface {
    * @see self::validateResponse
    */
   public function doValidateResponse(Response $response, Request $request) {
-    assert($this->validateResponse($response, $request), 'A JSON:API response failed validation (see the logs for details). Please report this in the issue queue on drupal.org');
+    if (PHP_MAJOR_VERSION >= 7 || assert_options(ASSERT_ACTIVE)) {
+      assert($this->validateResponse($response, $request), 'A JSON:API response failed validation (see the logs for details). Please report this in the issue queue on drupal.org');
+    }
   }
 
   /**

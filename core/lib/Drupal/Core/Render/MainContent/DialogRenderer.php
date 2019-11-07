@@ -7,7 +7,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenDialogCommand;
 use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Render\RendererInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -23,27 +22,13 @@ class DialogRenderer implements MainContentRendererInterface {
   protected $titleResolver;
 
   /**
-   * The renderer.
-   *
-   * @var \Drupal\Core\Render\RendererInterface
-   */
-  protected $renderer;
-
-  /**
    * Constructs a new DialogRenderer.
    *
    * @param \Drupal\Core\Controller\TitleResolverInterface $title_resolver
    *   The title resolver.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
    */
-  public function __construct(TitleResolverInterface $title_resolver, RendererInterface $renderer = NULL) {
+  public function __construct(TitleResolverInterface $title_resolver) {
     $this->titleResolver = $title_resolver;
-    if ($renderer === NULL) {
-      @trigger_error('The renderer service must be passed to ' . __METHOD__ . ' and will be required before Drupal 9.0.0. See https://www.drupal.org/node/3009400', E_USER_DEPRECATED);
-      $renderer = \Drupal::service('renderer');
-    }
-    $this->renderer = $renderer;
   }
 
   /**
@@ -53,7 +38,7 @@ class DialogRenderer implements MainContentRendererInterface {
     $response = new AjaxResponse();
 
     // First render the main content, because it might provide a title.
-    $content = $this->renderer->renderRoot($main_content);
+    $content = drupal_render_root($main_content);
 
     // Attach the library necessary for using the OpenDialogCommand and set the
     // attachments for this Ajax response.

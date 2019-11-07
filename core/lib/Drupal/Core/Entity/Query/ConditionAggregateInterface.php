@@ -24,7 +24,7 @@ interface ConditionAggregateInterface extends \Countable {
    * @param string $operator
    * @param string $langcode
    *
-   * @return $this
+   * @return \Drupal\Core\Entity\Query\ConditionAggregateInterface
    *   The called object.
    * @see \Drupal\Core\Entity\Query\QueryInterface::condition()
    */

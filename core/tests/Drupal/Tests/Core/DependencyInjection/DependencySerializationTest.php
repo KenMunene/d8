@@ -93,7 +93,7 @@ class DependencySerializationTestDummy implements ContainerAwareInterface {
   /**
    * Constructs a new TestClass object.
    *
-   * @param object $service
+   * @param \stdClass $service
    *   A test service.
    */
   public function __construct(\stdClass $service) {

@@ -5,8 +5,6 @@
  * These are the global variables that Drupal uses.
  */
 
-use Drupal\Component\Utility\DeprecatedArray;
-
 /**
  * The insecure base URL of the Drupal installation.
  *
@@ -64,10 +62,7 @@ global $config;
 /**
  * The location of file system directories used for site configuration data.
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use
- *   \Drupal\Core\Site\Settings::get('config_sync_directory') instead.
- *
- * @see https://www.drupal.org/node/3018145
+ * @see drupal_install_config_directories()
  */
 global $config_directories;
 
@@ -83,53 +78,33 @@ global $install_state;
  *
  * The array index is the pager element index (0 by default).
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Do not
- *   directly set or get values from this array. Use the pager.manager service
- *   instead.
- *
- * @see https://www.drupal.org/node/2779457
- * @see \Drupal\Core\Pager\PagerManagerInterface
+ * @see pager_default_initialize()
  */
-$GLOBALS['pager_limits'] = new DeprecatedArray([], 'Global variable $pager_limits is deprecated in drupal:8.8.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Pager\PagerManagerInterface instead. See https://www.drupal.org/node/2779457');
+global $pager_limits;
 
 /**
  * Array of current page numbers for each pager.
  *
  * The array index is the pager element index (0 by default).
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Do not
- *   directly set or get values from this array. Use the pager.manager service
- *   instead.
- *
- * @see https://www.drupal.org/node/2779457
- * @see \Drupal\Core\Pager\PagerManagerInterface
+ * @see pager_default_initialize()
  */
-$GLOBALS['pager_page_array'] = new DeprecatedArray([], 'Global variable $pager_page_array is deprecated in drupal:8.8.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Pager\PagerManagerInterface instead. See https://www.drupal.org/node/2779457');
+global $pager_page_array;
 
 /**
  * Array of the total number of pages for each pager.
  *
  * The array index is the pager element index (0 by default).
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Do not
- *   directly set or get values from this array. Use the pager.manager service
- *   instead.
- *
- * @see https://www.drupal.org/node/2779457
- * @see \Drupal\Core\Pager\PagerManagerInterface
+ * @see pager_default_initialize()
  */
-$GLOBALS['pager_total'] = new DeprecatedArray([], 'Global variable $pager_total is deprecated in drupal:8.8.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Pager\PagerManagerInterface instead. See https://www.drupal.org/node/2779457');
+global $pager_total;
 
 /**
  * Array of the total number of items for each pager.
  *
  * The array index is the pager element index (0 by default).
  *
- * @deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Do not
- *   directly set or get values from this array. Use the pager.manager service
- *   instead.
- *
- * @see https://www.drupal.org/node/2779457
- * @see \Drupal\Core\Pager\PagerManagerInterface
+ * @see pager_default_initialize()
  */
-$GLOBALS['pager_total_items'] = new DeprecatedArray([], 'Global variable $pager_total_items is deprecated in drupal:8.8.0 and is removed in drupal:9.0.0. Use \Drupal\Core\Pager\PagerManagerInterface instead. See https://www.drupal.org/node/2779457');
+global $pager_total_items;

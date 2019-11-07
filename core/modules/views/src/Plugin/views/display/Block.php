@@ -5,8 +5,7 @@ namespace Drupal\views\Plugin\views\display;
 use Drupal\Core\Url;
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Core\Block\BlockManagerInterface;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\Block\ViewsBlock;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,12 +30,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\views\Plugin\Derivative\ViewsBlock
  */
 class Block extends DisplayPluginBase {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * Whether the display allows attachments.
@@ -46,11 +39,11 @@ class Block extends DisplayPluginBase {
   protected $usesAttachments = TRUE;
 
   /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
    * The block manager.
@@ -68,15 +61,15 @@ class Block extends DisplayPluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
    *   The block manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, BlockManagerInterface $block_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager, BlockManagerInterface $block_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entity_type_manager;
+    $this->entityManager = $entity_manager;
     $this->blockManager = $block_manager;
   }
 
@@ -88,7 +81,7 @@ class Block extends DisplayPluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
+      $container->get('entity.manager'),
       $container->get('plugin.manager.block')
     );
   }
@@ -379,9 +372,9 @@ class Block extends DisplayPluginBase {
   public function remove() {
     parent::remove();
 
-    if ($this->entityTypeManager->hasDefinition('block')) {
+    if ($this->entityManager->hasDefinition('block')) {
       $plugin_id = 'views_block:' . $this->view->storage->id() . '-' . $this->display['id'];
-      foreach ($this->entityTypeManager->getStorage('block')->loadByProperties(['plugin' => $plugin_id]) as $block) {
+      foreach ($this->entityManager->getStorage('block')->loadByProperties(['plugin' => $plugin_id]) as $block) {
         $block->delete();
       }
     }

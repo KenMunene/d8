@@ -25,7 +25,7 @@ class ContentTranslationPermissions implements ContainerInjectionInterface {
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityTypeManager;
 
@@ -85,7 +85,7 @@ class ContentTranslationPermissions implements ContainerInjectionInterface {
     // bundle.
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       if ($permission_granularity = $entity_type->getPermissionGranularity()) {
-        $t_args = ['@entity_label' => $entity_type->getSingularLabel()];
+        $t_args = ['@entity_label' => $entity_type->getLowercaseLabel()];
 
         switch ($permission_granularity) {
           case 'bundle':

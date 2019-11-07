@@ -2,7 +2,6 @@
 
 namespace Drupal\KernelTests\Core\Database;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Database\Database;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -76,7 +75,7 @@ class ConnectionUnitTest extends KernelTestBase {
    */
   protected function assertConnection($id) {
     $list = $this->monitor->query('SHOW PROCESSLIST')->fetchAllKeyed(0, 0);
-    return $this->assertTrue(isset($list[$id]), new FormattableMarkup('Connection ID @id found.', ['@id' => $id]));
+    return $this->assertTrue(isset($list[$id]), format_string('Connection ID @id found.', ['@id' => $id]));
   }
 
   /**
@@ -87,7 +86,7 @@ class ConnectionUnitTest extends KernelTestBase {
    */
   protected function assertNoConnection($id) {
     $list = $this->monitor->query('SHOW PROCESSLIST')->fetchAllKeyed(0, 0);
-    return $this->assertFalse(isset($list[$id]), new FormattableMarkup('Connection ID @id not found.', ['@id' => $id]));
+    return $this->assertFalse(isset($list[$id]), format_string('Connection ID @id not found.', ['@id' => $id]));
   }
 
   /**

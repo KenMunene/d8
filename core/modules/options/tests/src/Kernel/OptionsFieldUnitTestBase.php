@@ -71,8 +71,7 @@ abstract class OptionsFieldUnitTestBase extends FieldKernelTestBase {
     ]);
     $this->field->save();
 
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->fieldName, [
         'type' => 'options_buttons',
       ])

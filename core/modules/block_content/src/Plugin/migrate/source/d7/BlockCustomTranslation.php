@@ -11,7 +11,7 @@ use Drupal\content_translation\Plugin\migrate\source\I18nQueryTrait;
  *
  * @MigrateSource(
  *   id = "d7_block_custom_translation",
- *   source_module = "i18n_block"
+ *   source_module = "block"
  * )
  */
 class BlockCustomTranslation extends DrupalSqlBase {
@@ -36,7 +36,8 @@ class BlockCustomTranslation extends DrupalSqlBase {
       ->fields('b', ['bid', 'format', 'body'])
       ->fields('i18n', ['property'])
       ->fields('lt', ['lid', 'translation', 'language'])
-      ->orderBy('b.bid');
+      ->orderBy('b.bid')
+      ->isNotNull('lt.lid');
 
     // Use 'title' for the info field to match the property name in
     // i18nStringTable.
@@ -48,7 +49,7 @@ class BlockCustomTranslation extends DrupalSqlBase {
     $query->condition('i18n.type', 'block');
 
     // Add in the translation for the property.
-    $query->innerJoin('locales_target', 'lt', 'lt.lid = i18n.lid');
+    $query->leftJoin('locales_target', 'lt', 'lt.lid = i18n.lid');
     return $query;
   }
 

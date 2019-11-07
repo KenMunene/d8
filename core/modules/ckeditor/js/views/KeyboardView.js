@@ -89,7 +89,9 @@
         Drupal.ckeditor.registerButtonMove(this, $button, function (result) {
           if (!result && $originalGroup) {
             $originalGroup.find('.ckeditor-buttons').append($button);
-          }
+          } else {
+              view.$el.find('.ui-sortable').sortable('refresh');
+            }
 
           $target.trigger('focus');
         });

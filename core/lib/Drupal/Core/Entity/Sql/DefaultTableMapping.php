@@ -443,10 +443,9 @@ class DefaultTableMapping implements TableMappingInterface {
    *
    * @return $this
    *
-   * @internal
-   *
-   * @todo Make this method protected in drupal:9.0.0.
-   * @see https://www.drupal.org/node/3067336
+   * @deprecated in Drupal 8.6.0 and will be changed to a protected method
+   *   before Drupal 9.0.0. There will be no replacement for it because the
+   *   default table mapping is now able to be initialized on its own.
    */
   public function setFieldNames($table_name, array $field_names) {
     $this->fieldNames[$table_name] = $field_names;
@@ -475,10 +474,9 @@ class DefaultTableMapping implements TableMappingInterface {
    *
    * @return $this
    *
-   * @internal
-   *
-   * @todo Make this method protected in drupal:9.0.0.
-   * @see https://www.drupal.org/node/3067336
+   * @deprecated in Drupal 8.6.0 and will be changed to a protected method
+   *   before Drupal 9.0.0. There will be no replacement for it because the
+   *   default table mapping is now able to be initialized on its own.
    */
   public function setExtraColumns($table_name, array $column_names) {
     $this->extraColumns[$table_name] = $column_names;

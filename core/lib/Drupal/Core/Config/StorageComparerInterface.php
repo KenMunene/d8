@@ -57,7 +57,7 @@ interface StorageComparerInterface {
   /**
    * Recalculates the differences.
    *
-   * @return $this
+   * @return \Drupal\Core\Config\StorageComparerInterface
    *   An object which implements the StorageComparerInterface.
    */
   public function reset();

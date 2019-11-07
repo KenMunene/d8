@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 /**
  * @coversDefaultClass \Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery
  * @group Annotation
- * @runTestsInSeparateProcesses
  */
 class AnnotatedClassDiscoveryCachedTest extends TestCase {
 

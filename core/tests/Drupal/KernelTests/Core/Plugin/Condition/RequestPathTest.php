@@ -47,7 +47,7 @@ class RequestPathTest extends KernelTestBase {
   /**
    * The current path.
    *
-   * @var \Drupal\Core\Path\CurrentPathStack|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Path\CurrentPathStack|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $currentPath;
 

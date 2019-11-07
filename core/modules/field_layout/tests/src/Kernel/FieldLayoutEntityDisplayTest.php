@@ -29,10 +29,8 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
       'status' => TRUE,
       'content' => [
         'foo' => ['type' => 'visible'],
+        'bar' => ['type' => 'hidden'],
         'name' => ['type' => 'hidden', 'region' => 'content'],
-      ],
-      'hidden' => [
-        'bar' => TRUE,
       ],
     ]);
 
@@ -43,9 +41,7 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
       'third_party_settings' => [
         'field_layout' => [
           'id' => 'layout_onecol',
-          'settings' => [
-            'label' => '',
-          ],
+          'settings' => [],
         ],
       ],
       'id' => 'entity_test.entity_test.default',
@@ -56,10 +52,11 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
         'foo' => [
           'type' => 'visible',
         ],
+        'bar' => [
+          'type' => 'hidden',
+        ],
       ],
-      'hidden' => [
-        'bar' => TRUE,
-      ],
+      'hidden' => [],
     ];
     $this->assertEntityValues($expected, $entity_display->toArray());
 
@@ -77,6 +74,10 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
     $expected['third_party_settings']['entity_test'] = ['foo' => 'bar'];
     // The visible field is assigned the default region.
     $expected['content']['foo']['region'] = 'content';
+    // The hidden field is removed from the list of visible fields, and marked
+    // as hidden.
+    unset($expected['content']['bar']);
+    $expected['hidden'] = ['bar' => TRUE];
 
     $this->assertEntityValues($expected, $entity_display->toArray());
 
@@ -143,9 +144,7 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
     // The layout has been updated.
     $expected['third_party_settings']['field_layout'] = [
       'id' => 'test_layout_content_and_footer',
-      'settings' => [
-        'label' => '',
-      ],
+      'settings' => [],
     ];
     // The field remains in its current region instead of moving to the default.
     $this->assertEntityValues($expected, $entity_display->toArray());

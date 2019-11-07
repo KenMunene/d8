@@ -15,11 +15,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       _classCallCheck(this, _class);
 
-      if (!messageWrapper) {
-        this.messageWrapper = Drupal.Message.defaultWrapper();
-      } else {
-        this.messageWrapper = messageWrapper;
-      }
+      this.messageWrapper = messageWrapper;
     }
 
     _createClass(_class, [{
@@ -27,6 +23,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function add(message) {
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+        if (!this.messageWrapper) {
+          this.messageWrapper = Drupal.Message.defaultWrapper();
+        }
         if (!options.hasOwnProperty('type')) {
           options.type = 'status';
         }
@@ -40,9 +39,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         options.id = options.id ? String(options.id) : options.type + '-' + Math.random().toFixed(15).replace('0.', '');
 
         if (!Drupal.Message.getMessageTypeLabels().hasOwnProperty(options.type)) {
-          var type = options.type;
-
-          throw new Error('The message type, ' + type + ', is not present in Drupal.Message.getMessageTypeLabels().');
+          throw new Error('The message type, ' + options.type + ', is not present in Drupal.Message.getMessageTypeLabels().');
         }
 
         this.messageWrapper.appendChild(Drupal.theme('message', { text: message }, options));

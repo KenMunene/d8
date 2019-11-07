@@ -78,11 +78,4 @@ class SessionWorkspaceNegotiator implements WorkspaceNegotiatorInterface {
     $this->session->set('active_workspace_id', $workspace->id());
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function unsetActiveWorkspace() {
-    $this->session->remove('active_workspace_id');
-  }
-
 }

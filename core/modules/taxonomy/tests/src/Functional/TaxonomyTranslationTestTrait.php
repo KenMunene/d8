@@ -65,6 +65,8 @@ trait TaxonomyTranslationTestTrait {
     // picked up.
     \Drupal::service('content_translation.manager')->setEnabled('node', 'article', TRUE);
     \Drupal::service('content_translation.manager')->setEnabled('taxonomy_term', $this->vocabulary->id(), TRUE);
+    drupal_static_reset();
+    \Drupal::service('router.builder')->rebuild();
   }
 
   /**
@@ -82,15 +84,12 @@ trait TaxonomyTranslationTestTrait {
     $field_storage->setTranslatable(FALSE);
     $field_storage->save();
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $display_repository->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($this->termFieldName, [
         'type' => 'entity_reference_autocomplete_tags',
       ])
       ->save();
-    $display_repository->getViewDisplay('node', 'article')
+    entity_get_display('node', 'article', 'default')
       ->setComponent($this->termFieldName, [
         'type' => 'entity_reference_label',
       ])

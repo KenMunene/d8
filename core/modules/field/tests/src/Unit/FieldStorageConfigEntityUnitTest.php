@@ -8,6 +8,7 @@
 namespace Drupal\Tests\field\Unit;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldException;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -25,7 +26,7 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
   /**
    * The entity type manager used for testing.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $entityTypeManager;
 
@@ -39,14 +40,14 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
   /**
    * The UUID generator used for testing.
    *
-   * @var \Drupal\Component\Uuid\UuidInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Component\Uuid\UuidInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $uuid;
 
   /**
    * The field type manager.
    *
-   * @var \Drupal\Core\Field\FieldTypePluginManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Field\FieldTypePluginManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $fieldTypeManager;
 
@@ -54,14 +55,19 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
    * {@inheritdoc}
    */
   protected function setUp() {
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $this->uuid = $this->createMock('\Drupal\Component\Uuid\UuidInterface');
-    $this->fieldTypeManager = $this->createMock(FieldTypePluginManagerInterface::class);
+    $entity_manager = new EntityManager();
+    $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);
+    $this->uuid = $this->getMock('\Drupal\Component\Uuid\UuidInterface');
+    $this->fieldTypeManager = $this->getMock(FieldTypePluginManagerInterface::class);
 
     $container = new ContainerBuilder();
+    $container->set('entity.manager', $entity_manager);
     $container->set('entity_type.manager', $this->entityTypeManager);
     $container->set('uuid', $this->uuid);
     $container->set('plugin.manager.field.field_type', $this->fieldTypeManager);
+    // Inject the container into entity.manager so it can defer to
+    // entity_type.manager.
+    $entity_manager->setContainer($container);
     \Drupal::setContainer($container);
   }
 
@@ -70,14 +76,14 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
    */
   public function testCalculateDependencies() {
     // Create a mock entity type for FieldStorageConfig.
-    $fieldStorageConfigentityType = $this->createMock('\Drupal\Core\Config\Entity\ConfigEntityTypeInterface');
+    $fieldStorageConfigentityType = $this->getMock('\Drupal\Core\Config\Entity\ConfigEntityTypeInterface');
     $fieldStorageConfigentityType->expects($this->any())
       ->method('getProvider')
       ->will($this->returnValue('field'));
 
     // Create a mock entity type to attach the field to.
     $attached_entity_type_id = $this->randomMachineName();
-    $attached_entity_type = $this->createMock('\Drupal\Core\Entity\EntityTypeInterface');
+    $attached_entity_type = $this->getMock('\Drupal\Core\Entity\EntityTypeInterface');
     $attached_entity_type->expects($this->any())
       ->method('getProvider')
       ->will($this->returnValue('entity_provider_module'));
@@ -192,8 +198,7 @@ class FieldStorageConfigEntityUnitTest extends UnitTestCase {
       'module' => 'test_module',
     ]);
 
-    $this->expectException(FieldException::class);
-    $this->expectExceptionMessage("Invalid enforced cardinality '$enforced_cardinality'. Allowed values: a positive integer or -1.");
+    $this->setExpectedException(FieldException::class, "Invalid enforced cardinality '$enforced_cardinality'. Allowed values: a positive integer or -1.");
     $field_storage->getCardinality();
   }
 

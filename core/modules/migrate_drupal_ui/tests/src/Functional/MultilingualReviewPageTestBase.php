@@ -36,11 +36,11 @@ abstract class MultilingualReviewPageTestBase extends MigrateUpgradeTestBase {
    * Overlay.
    *
    * To do this all modules in the source fixtures are enabled, except test and
-   * example modules. This means that we can test that the modules that do not
-   * need any migrations, such as Overlay, since there will be no available
-   * migrations which declare those modules as their source_module. It is
-   * assumed that the test fixtures include all modules that have moved to or
-   * dropped from core.
+   * example modules. This means that we can test that the modules listed in the
+   * the $noUpgradePath property of the update form class are correct, since
+   * there will be no available migrations which declare those modules as their
+   * source_module. It is assumed that the test fixtures include all modules
+   * that have moved to or dropped from core.
    *
    * The upgrade review form will also display errors for each migration that
    * does not have a source_module definition. That function is not tested here.
@@ -68,9 +68,10 @@ abstract class MultilingualReviewPageTestBase extends MigrateUpgradeTestBase {
     $missing_paths = $this->getMissingPaths();
     $this->assertUpgradePaths($session, $available_paths, $missing_paths);
 
-    // Check there are no errors when a module does not have any migrations and
-    // does not need any. Test with a module that is was in both Drupal 6 and
-    // Drupal 7 core.
+    // Check there are no errors when a module in noUpgradePaths is not in the
+    // source system tables. Test with a module that is listed in noUpgradePaths
+    // for both Drupal 6 and Drupal 7.
+    // @see \Drupal\migrate_drupal_ui\Form\ReviewForm::$noUpgradePaths
     $module = 'help';
     $query = $this->sourceDatabase->delete('system');
     $query->condition('type', 'module');
@@ -83,8 +84,7 @@ abstract class MultilingualReviewPageTestBase extends MigrateUpgradeTestBase {
     $this->drupalPostForm(NULL, $this->edits, t('Review upgrade'));
     $this->drupalPostForm(NULL, [], t('I acknowledge I may lose data. Continue anyway.'));
 
-    // Test the upgrade paths. First remove the module from the available paths
-    // list.
+    // Test the upgrade paths.
     $available_paths = $this->getAvailablePaths();
     $available_paths = array_diff($available_paths, [$module]);
     $missing_paths = $this->getMissingPaths();
@@ -138,16 +138,6 @@ abstract class MultilingualReviewPageTestBase extends MigrateUpgradeTestBase {
     $conditions->condition('name', 'simpletest');
     $update->condition($conditions);
     $update->execute();
-
-    // Create entries for D8 test modules.
-    $insert = $this->sourceDatabase->insert('system')
-      ->fields([
-        'filename' => 'migrate_status_active_test',
-        'name' => 'migrate_status_active_test',
-        'type' => 'module',
-        'status' => 1,
-      ]);
-    $insert->execute();
   }
 
   /**

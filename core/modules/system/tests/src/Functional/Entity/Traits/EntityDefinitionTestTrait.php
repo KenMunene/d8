@@ -456,6 +456,7 @@ trait EntityDefinitionTestTrait {
     $this->container->get('entity_type.manager')->clearCachedDefinitions();
     $this->container->get('entity_type.bundle.info')->clearCachedBundles();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('entity_type.repository')->clearCachedDefinitions();
 
     return $entity_type;
   }

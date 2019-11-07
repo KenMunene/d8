@@ -11,7 +11,6 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Theme\Registry;
 use Drupal\Core\TypedData\TranslatableInterface as TranslatableDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup entity_api
  */
-class EntityViewBuilder extends EntityHandlerBase implements EntityHandlerInterface, EntityViewBuilderInterface, TrustedCallbackInterface {
+class EntityViewBuilder extends EntityHandlerBase implements EntityHandlerInterface, EntityViewBuilderInterface {
   use DeprecatedServicePropertyTrait;
 
   /**
@@ -141,13 +140,6 @@ class EntityViewBuilder extends EntityHandlerBase implements EntityHandlerInterf
     $build['#pre_render'][] = [$this, 'build'];
 
     return $build;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['build', 'buildMultiple'];
   }
 
   /**

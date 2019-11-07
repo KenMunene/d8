@@ -4,6 +4,7 @@ namespace Drupal\path\Plugin\Field\FieldType;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\ComputedItemListTrait;
 
@@ -26,15 +27,21 @@ class PathFieldItemList extends FieldItemList {
 
     $entity = $this->getEntity();
     if (!$entity->isNew()) {
-      /** @var \Drupal\Core\Path\AliasRepositoryInterface $path_alias_repository */
-      $path_alias_repository = \Drupal::service('path.alias_repository');
+      $conditions = [
+        'source' => '/' . $entity->toUrl()->getInternalPath(),
+        'langcode' => $this->getLangcode(),
+      ];
+      $alias = \Drupal::service('path.alias_storage')->load($conditions);
+      if ($alias === FALSE) {
+        // Fall back to non-specific language.
+        if ($this->getLangcode() !== LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+          $conditions['langcode'] = LanguageInterface::LANGCODE_NOT_SPECIFIED;
+          $alias = \Drupal::service('path.alias_storage')->load($conditions);
+        }
+      }
 
-      if ($path_alias = $path_alias_repository->lookupBySystemPath('/' . $entity->toUrl()->getInternalPath(), $this->getLangcode())) {
-        $value = [
-          'alias' => $path_alias['alias'],
-          'pid' => $path_alias['id'],
-          'langcode' => $path_alias['langcode'],
-        ];
+      if ($alias) {
+        $value = $alias;
       }
     }
 
@@ -57,12 +64,11 @@ class PathFieldItemList extends FieldItemList {
   public function delete() {
     // Delete all aliases associated with this entity in the current language.
     $entity = $this->getEntity();
-    $path_alias_storage = \Drupal::entityTypeManager()->getStorage('path_alias');
-    $entities = $path_alias_storage->loadByProperties([
-      'path' => '/' . $entity->toUrl()->getInternalPath(),
+    $conditions = [
+      'source' => '/' . $entity->toUrl()->getInternalPath(),
       'langcode' => $entity->language()->getId(),
-    ]);
-    $path_alias_storage->delete($entities);
+    ];
+    \Drupal::service('path.alias_storage')->delete($conditions);
   }
 
 }

@@ -3,7 +3,6 @@
 namespace Drupal\Tests\Component;
 
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -145,7 +144,7 @@ class DrupalComponentTest extends TestCase {
       $pass = TRUE;
       $this->assertNoCoreUsage($file_uri);
     }
-    catch (AssertionFailedError $e) {
+    catch (\PHPUnit_Framework_AssertionFailedError $e) {
       $pass = FALSE;
     }
     $this->assertEquals($expected_pass, $pass, $expected_pass ?

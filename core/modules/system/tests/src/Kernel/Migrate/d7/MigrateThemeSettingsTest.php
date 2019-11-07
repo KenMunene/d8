@@ -17,8 +17,10 @@ class MigrateThemeSettingsTest extends MigrateDrupal7TestBase {
   protected function setUp() {
     parent::setUp();
 
-    // Install bartik and seven themes.
-    \Drupal::service('theme_installer')->install(['bartik', 'seven']);
+    // Install bartik theme.
+    \Drupal::service('theme_handler')->install(['bartik']);
+    // Install seven theme.
+    \Drupal::service('theme_handler')->install(['seven']);
     $this->executeMigration('d7_theme_settings');
   }
 

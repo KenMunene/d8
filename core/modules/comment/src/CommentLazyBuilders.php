@@ -8,8 +8,6 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Render\Element\Link;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -17,7 +15,7 @@ use Drupal\Core\Url;
 /**
  * Defines a service for comment #lazy_builder callbacks.
  */
-class CommentLazyBuilders implements TrustedCallbackInterface {
+class CommentLazyBuilders {
   use DeprecatedServicePropertyTrait;
 
   /**
@@ -137,7 +135,7 @@ class CommentLazyBuilders implements TrustedCallbackInterface {
   public function renderLinks($comment_entity_id, $view_mode, $langcode, $is_in_preview) {
     $links = [
       '#theme' => 'links__comment',
-      '#pre_render' => [[Link::class, 'preRenderLinks']],
+      '#pre_render' => ['drupal_pre_render_links'],
       '#attributes' => ['class' => ['links', 'inline']],
     ];
 
@@ -231,13 +229,6 @@ class CommentLazyBuilders implements TrustedCallbackInterface {
    */
   protected function access(EntityInterface $entity) {
     return content_translation_translate_access($entity);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['renderLinks', 'renderForm'];
   }
 
 }

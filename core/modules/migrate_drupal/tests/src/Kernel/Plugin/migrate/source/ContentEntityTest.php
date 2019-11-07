@@ -188,8 +188,7 @@ class ContentEntityTest extends KernelTestBase {
     $plugin_definition = [
       'entity_type' => '',
     ];
-    $this->expectException(InvalidPluginDefinitionException::class);
-    $this->expectExceptionMessage('Missing required "entity_type" definition.');
+    $this->setExpectedException(InvalidPluginDefinitionException::class, 'Missing required "entity_type" definition.');
     ContentEntity::create($this->container, $configuration, 'content_entity', $plugin_definition, $migration);
   }
 
@@ -202,8 +201,7 @@ class ContentEntityTest extends KernelTestBase {
     $plugin_definition = [
       'entity_type' => 'node_type',
     ];
-    $this->expectException(InvalidPluginDefinitionException::class);
-    $this->expectExceptionMessage('The entity type (node_type) is not supported. The "content_entity" source plugin only supports content entities.');
+    $this->setExpectedException(InvalidPluginDefinitionException::class, 'The entity type (node_type) is not supported. The "content_entity" source plugin only supports content entities.');
     ContentEntity::create($this->container, $configuration, 'content_entity:node_type', $plugin_definition, $migration);
   }
 
@@ -218,8 +216,7 @@ class ContentEntityTest extends KernelTestBase {
     $plugin_definition = [
       'entity_type' => 'user',
     ];
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('A bundle was provided but the entity type (user) is not bundleable');
+    $this->setExpectedException(\InvalidArgumentException::class, 'A bundle was provided but the entity type (user) is not bundleable');
     ContentEntity::create($this->container, $configuration, 'content_entity:user', $plugin_definition, $migration);
   }
 
@@ -234,8 +231,7 @@ class ContentEntityTest extends KernelTestBase {
     $plugin_definition = [
       'entity_type' => 'node',
     ];
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The provided bundle (foo) is not valid for the (node) entity type.');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The provided bundle (foo) is not valid for the (node) entity type.');
     ContentEntity::create($this->container, $configuration, 'content_entity:node', $plugin_definition, $migration);
   }
 

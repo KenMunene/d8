@@ -11,6 +11,7 @@ description: 'This view is used to test the argument validator schema.'
 tag: ''
 base_table: views_test_data
 base_field: ''
+core: '8'
 display:
   default:
     display_options:

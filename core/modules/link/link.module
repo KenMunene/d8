@@ -5,7 +5,6 @@
  * Defines simple link field types.
  */
 
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 
@@ -63,5 +62,5 @@ function link_theme() {
  *   - url: A \Drupal\Core\Url object.
  */
 function template_preprocess_link_formatter_link_separate(&$variables) {
-  $variables['link'] = Link::fromTextAndUrl($variables['url_title'], $variables['url'])->toString();
+  $variables['link'] = \Drupal::l($variables['url_title'], $variables['url']);
 }

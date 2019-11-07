@@ -5,7 +5,7 @@
 * @preserve
 **/
 
-(function (Drupal, Backbone, $, Sortable) {
+(function (Drupal, Backbone, $) {
   Drupal.ckeditor.VisualView = Backbone.View.extend({
     events: {
       'click .ckeditor-toolbar-group-name': 'onGroupNameClick',
@@ -59,52 +59,53 @@
 
       event.preventDefault();
     },
-    endGroupDrag: function endGroupDrag(event) {
-      var $item = $(event.item);
-      Drupal.ckeditor.registerGroupMove(this, $item);
+    endGroupDrag: function endGroupDrag(event, ui) {
+      var view = this;
+      Drupal.ckeditor.registerGroupMove(this, ui.item, function (success) {
+        if (!success) {
+          view.$el.find('.ckeditor-toolbar-configuration').find('.ui-sortable').sortable('cancel');
+        }
+      });
     },
-    startButtonDrag: function startButtonDrag(event) {
+    startButtonDrag: function startButtonDrag(event, ui) {
       this.$el.find('a:focus').trigger('blur');
 
       this.model.set('groupNamesVisible', true);
     },
-    endButtonDrag: function endButtonDrag(event) {
-      var $item = $(event.item);
+    endButtonDrag: function endButtonDrag(event, ui) {
+      var view = this;
+      Drupal.ckeditor.registerButtonMove(this, ui.item, function (success) {
+        if (!success) {
+          view.$el.find('.ui-sortable').sortable('cancel');
+        }
 
-      Drupal.ckeditor.registerButtonMove(this, $item, function (success) {
-        $item.find('a').trigger('focus');
+        ui.item.find('a').trigger('focus');
       });
     },
     applySorting: function applySorting() {
-      var _this = this;
+      this.$el.find('.ckeditor-buttons').not('.ui-sortable').sortable({
+        connectWith: '.ckeditor-buttons',
+        placeholder: 'ckeditor-button-placeholder',
+        forcePlaceholderSize: true,
+        tolerance: 'pointer',
+        cursor: 'move',
+        start: this.startButtonDrag.bind(this),
 
-      Array.prototype.forEach.call(this.el.querySelectorAll('.ckeditor-buttons:not(.js-sortable)'), function (buttons) {
-        buttons.classList.add('js-sortable');
-        Sortable.create(buttons, {
-          ghostClass: 'ckeditor-button-placeholder',
-          group: 'ckeditor-buttons',
-          onStart: _this.startButtonDrag.bind(_this),
-          onEnd: _this.endButtonDrag.bind(_this)
-        });
+        stop: this.endButtonDrag.bind(this)
+      }).disableSelection();
+
+      this.$el.find('.ckeditor-toolbar-groups').not('.ui-sortable').sortable({
+        connectWith: '.ckeditor-toolbar-groups',
+        cancel: '.ckeditor-add-new-group',
+        placeholder: 'ckeditor-toolbar-group-placeholder',
+        forcePlaceholderSize: true,
+        cursor: 'move',
+        stop: this.endGroupDrag.bind(this)
       });
 
-      Array.prototype.forEach.call(this.el.querySelectorAll('.ckeditor-toolbar-groups:not(.js-sortable)'), function (buttons) {
-        buttons.classList.add('js-sortable');
-        Sortable.create(buttons, {
-          ghostClass: 'ckeditor-toolbar-group-placeholder',
-          onEnd: _this.endGroupDrag.bind(_this)
-        });
-      });
-
-      Array.prototype.forEach.call(this.el.querySelectorAll('.ckeditor-multiple-buttons:not(.js-sortable)'), function (buttons) {
-        buttons.classList.add('js-sortable');
-        Sortable.create(buttons, {
-          group: {
-            name: 'ckeditor-buttons',
-            pull: 'clone'
-          },
-          onEnd: _this.endButtonDrag.bind(_this)
-        });
+      this.$el.find('.ckeditor-multiple-buttons li').draggable({
+        connectToSortable: '.ckeditor-toolbar-active .ckeditor-buttons',
+        helper: 'clone'
       });
     },
     insertPlaceholders: function insertPlaceholders() {
@@ -141,4 +142,4 @@
       });
     }
   });
-})(Drupal, Backbone, jQuery, Sortable);
+})(Drupal, Backbone, jQuery);

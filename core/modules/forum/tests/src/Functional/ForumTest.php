@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\forum\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityInterface;
@@ -258,9 +257,7 @@ class ForumTest extends BrowserTestBase {
     $tids = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', $vid)
       ->execute();
-    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-    $terms = $term_storage->loadMultiple($tids);
-    $term_storage->delete($terms);
+    entity_delete_multiple('taxonomy_term', $tids);
 
     // Create an orphan forum item.
     $edit = [];
@@ -428,7 +425,7 @@ class ForumTest extends BrowserTestBase {
         'Created new @type @term.',
         ['@term' => $name, '@type' => t($type)]
       ),
-      new FormattableMarkup('@type was created', ['@type' => ucfirst($type)])
+      format_string('@type was created', ['@type' => ucfirst($type)])
     );
 
     // Verify that the creation message contains a link to a term.
@@ -579,7 +576,7 @@ class ForumTest extends BrowserTestBase {
 
     // Retrieve node object, ensure that the topic was created and in the proper forum.
     $node = $this->drupalGetNodeByTitle($title);
-    $this->assertTrue($node != NULL, new FormattableMarkup('Node @title was loaded', ['@title' => $title]));
+    $this->assertTrue($node != NULL, format_string('Node @title was loaded', ['@title' => $title]));
     $this->assertEqual($node->taxonomy_forums->target_id, $tid, 'Saved forum topic was in the expected forum');
 
     // View forum topic.

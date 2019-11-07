@@ -17,14 +17,11 @@ namespace Drupal\Core\Render\Element;
  * Properties:
  * - #links: An array of links to actions. See template_preprocess_links() for
  *   documentation the properties of links in this array.
- * - #dropbutton_type: A string defining a type of dropbutton variant for
- *   styling proposes. Renders as class `dropbutton--#dropbutton_type`.
  *
  * Usage Example:
  * @code
  * $form['actions']['extra_actions'] = array(
  *   '#type' => 'dropbutton',
- *   '#dropbutton_type' => 'small',
  *   '#links' => array(
  *     'simple_form' => array(
  *       'title' => $this->t('Simple Form'),
@@ -63,11 +60,6 @@ class Dropbutton extends RenderElement {
   public static function preRenderDropbutton($element) {
     $element['#attached']['library'][] = 'core/drupal.dropbutton';
     $element['#attributes']['class'][] = 'dropbutton';
-
-    if (!empty($element['#dropbutton_type'])) {
-      $element['#attributes']['class'][] = 'dropbutton--' . $element['#dropbutton_type'];
-    }
-
     if (!isset($element['#theme_wrappers'])) {
       $element['#theme_wrappers'] = [];
     }

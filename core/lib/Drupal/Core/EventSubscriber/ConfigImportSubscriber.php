@@ -7,9 +7,7 @@ use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Config\ConfigImporterEvent;
 use Drupal\Core\Config\ConfigImportValidateEventSubscriberBase;
 use Drupal\Core\Config\ConfigNameException;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ThemeHandlerInterface;
-use Drupal\Core\Installer\InstallerKernel;
 
 /**
  * Config import subscriber for config import events.
@@ -24,11 +22,11 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
   protected $themeData;
 
   /**
-   * Module extension list.
+   * Module data.
    *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
+   * @var \Drupal\Core\Extension\Extension[]
    */
-  protected $moduleExtensionList;
+  protected $moduleData;
 
   /**
    * The theme handler.
@@ -42,12 +40,9 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
    *
    * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
    *   The theme handler.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
-   *   The module extension list.
    */
-  public function __construct(ThemeHandlerInterface $theme_handler, ModuleExtensionList $extension_list_module) {
+  public function __construct(ThemeHandlerInterface $theme_handler) {
     $this->themeHandler = $theme_handler;
-    $this->moduleExtensionList = $extension_list_module;
   }
 
   /**
@@ -96,7 +91,7 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
 
     // Ensure the profile is not changing.
     if ($install_profile !== $core_extension['profile']) {
-      if (InstallerKernel::installationAttempted()) {
+      if (drupal_installation_attempted()) {
         $config_importer->logError($this->t('The selected installation profile %install_profile does not match the profile stored in configuration %config_profile.', [
           '%install_profile' => $install_profile,
           '%config_profile' => $core_extension['profile'],
@@ -113,7 +108,7 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
     }
 
     // Get a list of modules with dependency weights as values.
-    $module_data = $this->moduleExtensionList->getList();
+    $module_data = $this->getModuleData();
     $nonexistent_modules = array_keys(array_diff_key($core_extension['module'], $module_data));
     foreach ($nonexistent_modules as $module) {
       $config_importer->logError($this->t('Unable to install the %module module since it does not exist.', ['%module' => $module]));
@@ -219,7 +214,7 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
     ];
 
     $theme_data = $this->getThemeData();
-    $module_data = $this->moduleExtensionList->getList();
+    $module_data = $this->getModuleData();
 
     // Validate the dependencies of all the configuration. We have to validate
     // the entire tree because existing configuration might depend on
@@ -313,6 +308,18 @@ class ConfigImportSubscriber extends ConfigImportValidateEventSubscriberBase {
       $this->themeData = $this->themeHandler->rebuildThemeData();
     }
     return $this->themeData;
+  }
+
+  /**
+   * Gets module data.
+   *
+   * @return \Drupal\Core\Extension\Extension[]
+   */
+  protected function getModuleData() {
+    if (!isset($this->moduleData)) {
+      $this->moduleData = system_rebuild_module_data();
+    }
+    return $this->moduleData;
   }
 
   /**

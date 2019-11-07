@@ -33,13 +33,12 @@ trait UrlGeneratorTrait {
    * @return string
    *   The generated URL for the given route.
    *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
-   *   Use \Drupal\Core\Url::fromUri() instead.
+   * @deprecated in Drupal 8.0.0 and will be removed before Drupal 9.0.0.
+   *   Use \Drupal\Core\Url instead.
    *
    * @see \Drupal\Core\Routing\UrlGeneratorInterface::generateFromRoute()
    */
   protected function url($route_name, $route_parameters = [], $options = []) {
-    @trigger_error(__NAMESPACE__ . "\UrlGeneratorTrait::url() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Url::fromUri() instead. See https://www.drupal.org/node/2614344", E_USER_DEPRECATED);
     return $this->getUrlGenerator()->generateFromRoute($route_name, $route_parameters, $options);
   }
 
@@ -58,14 +57,10 @@ trait UrlGeneratorTrait {
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response object that may be returned by the controller.
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
-   *   Use new RedirectResponse(Url::fromRoute()) instead.
    */
   protected function redirect($route_name, array $route_parameters = [], array $options = [], $status = 302) {
-    @trigger_error(__NAMESPACE__ . "\UrlGeneratorTrait::redirect() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use new RedirectResponse(Url::fromRoute()) instead. See https://www.drupal.org/node/2614344", E_USER_DEPRECATED);
     $options['absolute'] = TRUE;
-    $url = $this->getUrlGenerator()->generateFromRoute($route_name, $route_parameters, $options);
+    $url = $this->url($route_name, $route_parameters, $options);
     return new RedirectResponse($url, $status);
   }
 
@@ -74,12 +69,8 @@ trait UrlGeneratorTrait {
    *
    * @return \Drupal\Core\Routing\UrlGeneratorInterface
    *   The URL generator service.
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
-   *   Use the url_generator service instead.
    */
   protected function getUrlGenerator() {
-    @trigger_error(__NAMESPACE__ . "\UrlGeneratorTrait::getUrlGenerator() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the url_generator service instead. See https://www.drupal.org/node/2614344", E_USER_DEPRECATED);
     if (!$this->urlGenerator) {
       $this->urlGenerator = \Drupal::service('url_generator');
     }
@@ -93,11 +84,8 @@ trait UrlGeneratorTrait {
    *   The url generator service.
    *
    * @return $this
-   *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0.
    */
   public function setUrlGenerator(UrlGeneratorInterface $generator) {
-    @trigger_error(__NAMESPACE__ . "\UrlGeneratorTrait::setUrlGenerator() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. See https://www.drupal.org/node/2614344", E_USER_DEPRECATED);
     $this->urlGenerator = $generator;
 
     return $this;

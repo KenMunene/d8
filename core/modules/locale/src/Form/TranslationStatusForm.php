@@ -6,7 +6,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -131,7 +130,7 @@ class TranslationStatusForm extends FormBase {
 
     if (!$languages) {
       $empty = $this->t('No translatable languages available. <a href=":add_language">Add a language</a> first.', [
-        ':add_language' => Url::fromRoute('entity.configurable_language.collection')->toString(),
+        ':add_language' => $this->url('entity.configurable_language.collection'),
       ]);
     }
     elseif ($status) {
@@ -139,7 +138,7 @@ class TranslationStatusForm extends FormBase {
     }
     else {
       $empty = $this->t('No translation status available. <a href=":check">Check manually</a>.', [
-        ':check' => Url::fromRoute('locale.check_translation')->toString(),
+        ':check' => $this->url('locale.check_translation'),
       ]);
     }
 

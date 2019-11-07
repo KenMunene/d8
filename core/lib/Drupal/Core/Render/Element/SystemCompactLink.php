@@ -2,7 +2,6 @@
 
 namespace Drupal\Core\Render\Element;
 
-use Drupal\Core\Link as BaseLink;
 use Drupal\Core\Url as BaseUrl;
 use Drupal\Component\Utility\NestedArray;
 
@@ -79,7 +78,7 @@ class SystemCompactLink extends Link {
     }
 
     $options = NestedArray::mergeDeep($element['#url']->getOptions(), $element['#options']);
-    $element['#markup'] = BaseLink::fromTextAndUrl($element['#title'], $element['#url']->setOptions($options))->toString();
+    $element['#markup'] = \Drupal::l($element['#title'], $element['#url']->setOptions($options));
 
     return $element;
   }

@@ -5,7 +5,6 @@ namespace Drupal\media;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -37,26 +36,16 @@ class MediaTypeForm extends EntityForm {
   protected $entityFieldManager;
 
   /**
-   * Entity display repository service.
-   *
-   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
-   */
-  protected $entityDisplayRepository;
-
-  /**
    * Constructs a new class instance.
    *
    * @param \Drupal\Component\Plugin\PluginManagerInterface $source_manager
    *   Media source plugin manager.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   Entity field manager service.
-   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entityDisplayRepository
-   *   Entity display repository service.
    */
-  public function __construct(PluginManagerInterface $source_manager, EntityFieldManagerInterface $entity_field_manager, EntityDisplayRepositoryInterface $entityDisplayRepository) {
+  public function __construct(PluginManagerInterface $source_manager, EntityFieldManagerInterface $entity_field_manager) {
     $this->sourceManager = $source_manager;
     $this->entityFieldManager = $entity_field_manager;
-    $this->entityDisplayRepository = $entityDisplayRepository;
   }
 
   /**
@@ -65,8 +54,7 @@ class MediaTypeForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.media.source'),
-      $container->get('entity_field.manager'),
-      $container->get('entity_display.repository')
+      $container->get('entity_field.manager')
     );
   }
 
@@ -357,17 +345,16 @@ class MediaTypeForm extends EntityForm {
       // Add the new field to the default form and view displays for this
       // media type.
       if ($source_field->isDisplayConfigurable('form')) {
-        $display = $this->entityDisplayRepository->getFormDisplay('media', $media_type->id());
+        // @todo Replace entity_get_form_display() when #2367933 is done.
+        // https://www.drupal.org/node/2872159.
+        $display = entity_get_form_display('media', $media_type->id(), 'default');
         $source->prepareFormDisplay($media_type, $display);
         $display->save();
       }
       if ($source_field->isDisplayConfigurable('view')) {
-        $display = $this->entityDisplayRepository->getViewDisplay('media', $media_type->id());
-
-        // Remove all default components.
-        foreach (array_keys($display->getComponents()) as $name) {
-          $display->removeComponent($name);
-        }
+        // @todo Replace entity_get_display() when #2367933 is done.
+        // https://www.drupal.org/node/2872159.
+        $display = entity_get_display('media', $media_type->id(), 'default');
         $source->prepareViewDisplay($media_type, $display);
         $display->save();
       }

@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\node\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\content_translation\Functional\ContentTranslationUITestBase;
 use Drupal\Core\Language\LanguageInterface;
@@ -233,7 +231,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
     $article = $this->drupalCreateNode(['type' => 'article', 'langcode' => $this->langcodes[0]]);
 
     // Set up Seven as the admin theme and use it for node editing.
-    $this->container->get('theme_installer')->install(['seven']);
+    $this->container->get('theme_handler')->install(['seven']);
     $edit = [];
     $edit['admin_theme'] = 'seven';
     $edit['use_admin_theme'] = TRUE;
@@ -266,7 +264,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
     ]);
 
     // Make sure that nothing was inserted into the {content_translation} table.
-    $rows = Database::getConnection()->query('SELECT nid, count(nid) AS count FROM {node_field_data} WHERE type <> :type GROUP BY nid HAVING count(nid) >= 2', [':type' => $this->bundle])->fetchAll();
+    $rows = db_query('SELECT nid, count(nid) AS count FROM {node_field_data} WHERE type <> :type GROUP BY nid HAVING count(nid) >= 2', [':type' => $this->bundle])->fetchAll();
     $this->assertEqual(0, count($rows));
 
     // Ensure the translation tab is not accessible.
@@ -281,7 +279,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
     $default_langcode = $this->langcodes[0];
     $values[$default_langcode] = $this->getNewEntityValues($default_langcode);
     $this->entityId = $this->createEntity($values[$default_langcode], $default_langcode);
-    $node = \Drupal::entityTypeManager()->getStorage($this->entityTypeId)->load($this->entityId);
+    $node = \Drupal::entityManager()->getStorage($this->entityTypeId)->load($this->entityId);
     $node->setPromoted(TRUE);
 
     // Create translations.
@@ -300,7 +298,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
     $this->doTestTranslations('node', $values);
 
     // Enable the translation language renderer.
-    $view = \Drupal::entityTypeManager()->getStorage('view')->load('frontpage');
+    $view = \Drupal::entityManager()->getStorage('view')->load('frontpage');
     $display = &$view->getDisplay('default');
     $display['display_options']['rendering_language'] = '***LANGUAGE_entity_translation***';
     $view->save();
@@ -373,7 +371,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
     $languages = $this->container->get('language_manager')->getLanguages();
     foreach ($this->langcodes as $langcode) {
       $this->drupalGet($path, ['language' => $languages[$langcode]]);
-      $this->assertText($values[$langcode]['title'][0]['value'], new FormattableMarkup('The %langcode node translation is correctly displayed.', ['%langcode' => $langcode]));
+      $this->assertText($values[$langcode]['title'][0]['value'], format_string('The %langcode node translation is correctly displayed.', ['%langcode' => $langcode]));
     }
   }
 
@@ -397,7 +395,7 @@ class NodeTranslationUITest extends ContentTranslationUITestBase {
         // Retrieve desired link elements from the HTML head.
         $links = $this->xpath('head/link[@rel = "alternate" and @href = :href and @hreflang = :hreflang]',
           [':href' => $language_url->toString(), ':hreflang' => $alternate_langcode]);
-        $this->assert(isset($links[0]), new FormattableMarkup('The %langcode node translation has the correct alternate hreflang link for %alternate_langcode: %link.', ['%langcode' => $langcode, '%alternate_langcode' => $alternate_langcode, '%link' => $url->toString()]));
+        $this->assert(isset($links[0]), format_string('The %langcode node translation has the correct alternate hreflang link for %alternate_langcode: %link.', ['%langcode' => $langcode, '%alternate_langcode' => $alternate_langcode, '%link' => $url->toString()]));
       }
     }
   }

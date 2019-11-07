@@ -18,8 +18,6 @@
     },
     multiple: [],
   };
-  // Ensure clear() can be called on a newly created message object.
-  messageObjects.default.zone.clear();
 
   testMessages.selectors.filter(Boolean).forEach(selector => {
     messageObjects[selector] = {

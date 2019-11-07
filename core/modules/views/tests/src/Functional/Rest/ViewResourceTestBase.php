@@ -48,6 +48,7 @@ abstract class ViewResourceTestBase extends EntityResourceTestBase {
     return [
       'base_field' => 'nid',
       'base_table' => 'node',
+      'core' => '8.x',
       'dependencies' => [],
       'description' => '',
       'display' => [

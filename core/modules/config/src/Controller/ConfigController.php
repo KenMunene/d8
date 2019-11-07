@@ -4,7 +4,6 @@ namespace Drupal\config\Controller;
 
 use Drupal\Core\Archiver\ArchiveTar;
 use Drupal\Core\Config\ConfigManagerInterface;
-use Drupal\Core\Config\ImportStorageTransformer;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Diff\DiffFormatter;
@@ -29,18 +28,11 @@ class ConfigController implements ContainerInjectionInterface {
   protected $targetStorage;
 
   /**
-   * The sync storage.
+   * The source storage.
    *
    * @var \Drupal\Core\Config\StorageInterface
    */
-  protected $syncStorage;
-
-  /**
-   * The import transformer service.
-   *
-   * @var \Drupal\Core\Config\ImportStorageTransformer
-   */
-  protected $importTransformer;
+  protected $sourceStorage;
 
   /**
    * The configuration manager.
@@ -48,13 +40,6 @@ class ConfigController implements ContainerInjectionInterface {
    * @var \Drupal\Core\Config\ConfigManagerInterface
    */
   protected $configManager;
-
-  /**
-   * The export storage.
-   *
-   * @var \Drupal\Core\Config\StorageInterface
-   */
-  protected $exportStorage;
 
   /**
    * The file download controller.
@@ -85,11 +70,9 @@ class ConfigController implements ContainerInjectionInterface {
       $container->get('config.storage'),
       $container->get('config.storage.sync'),
       $container->get('config.manager'),
-      FileDownloadController::create($container),
+      new FileDownloadController(),
       $container->get('diff.formatter'),
-      $container->get('file_system'),
-      $container->get('config.storage.export'),
-      $container->get('config.import_transformer')
+      $container->get('file_system')
     );
   }
 
@@ -98,8 +81,8 @@ class ConfigController implements ContainerInjectionInterface {
    *
    * @param \Drupal\Core\Config\StorageInterface $target_storage
    *   The target storage.
-   * @param \Drupal\Core\Config\StorageInterface $sync_storage
-   *   The sync storage.
+   * @param \Drupal\Core\Config\StorageInterface $source_storage
+   *   The source storage.
    * @param \Drupal\Core\Config\ConfigManagerInterface $config_manager
    *   The config manager.
    * @param \Drupal\system\FileDownloadController $file_download_controller
@@ -108,28 +91,14 @@ class ConfigController implements ContainerInjectionInterface {
    *   The diff formatter.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   The file system.
-   * @param \Drupal\Core\Config\StorageInterface $export_storage
-   *   The export storage.
-   * @param \Drupal\Core\Config\ImportStorageTransformer $import_transformer
-   *   The import transformer service.
    */
-  public function __construct(StorageInterface $target_storage, StorageInterface $sync_storage, ConfigManagerInterface $config_manager, FileDownloadController $file_download_controller, DiffFormatter $diff_formatter, FileSystemInterface $file_system, StorageInterface $export_storage = NULL, ImportStorageTransformer $import_transformer = NULL) {
+  public function __construct(StorageInterface $target_storage, StorageInterface $source_storage, ConfigManagerInterface $config_manager, FileDownloadController $file_download_controller, DiffFormatter $diff_formatter, FileSystemInterface $file_system) {
     $this->targetStorage = $target_storage;
-    $this->syncStorage = $sync_storage;
+    $this->sourceStorage = $source_storage;
     $this->configManager = $config_manager;
     $this->fileDownloadController = $file_download_controller;
     $this->diffFormatter = $diff_formatter;
     $this->fileSystem = $file_system;
-    if (is_null($export_storage)) {
-      @trigger_error('The config.storage.export service must be passed to ConfigController::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/3037022.', E_USER_DEPRECATED);
-      $export_storage = \Drupal::service('config.storage.export');
-    }
-    $this->exportStorage = $export_storage;
-    if (is_null($import_transformer)) {
-      @trigger_error('The config.import_transformer service must be passed to ConfigController::__construct(), it is required before Drupal 9.0.0. See https://www.drupal.org/node/3066005.', E_USER_DEPRECATED);
-      $import_transformer = \Drupal::service('config.import_transformer');
-    }
-    $this->importTransformer = $import_transformer;
   }
 
   /**
@@ -137,20 +106,20 @@ class ConfigController implements ContainerInjectionInterface {
    */
   public function downloadExport() {
     try {
-      $this->fileSystem->delete($this->fileSystem->getTempDirectory() . '/config.tar.gz');
+      $this->fileSystem->delete(file_directory_temp() . '/config.tar.gz');
     }
     catch (FileException $e) {
       // Ignore failed deletes.
     }
 
-    $archiver = new ArchiveTar($this->fileSystem->getTempDirectory() . '/config.tar.gz', 'gz');
-    // Add all contents of the export storage to the archive.
-    foreach ($this->exportStorage->listAll() as $name) {
-      $archiver->addString("$name.yml", Yaml::encode($this->exportStorage->read($name)));
+    $archiver = new ArchiveTar(file_directory_temp() . '/config.tar.gz', 'gz');
+    // Get raw configuration data without overrides.
+    foreach ($this->configManager->getConfigFactory()->listAll() as $name) {
+      $archiver->addString("$name.yml", Yaml::encode($this->configManager->getConfigFactory()->get($name)->getRawData()));
     }
-    // Get all  data from the remaining collections.
-    foreach ($this->exportStorage->getAllCollectionNames() as $collection) {
-      $collection_storage = $this->exportStorage->createCollection($collection);
+    // Get all override data from the remaining collections.
+    foreach ($this->targetStorage->getAllCollectionNames() as $collection) {
+      $collection_storage = $this->targetStorage->createCollection($collection);
       foreach ($collection_storage->listAll() as $name) {
         $archiver->addString(str_replace('.', '/', $collection) . "/$name.yml", Yaml::encode($collection_storage->read($name)));
       }
@@ -172,15 +141,14 @@ class ConfigController implements ContainerInjectionInterface {
    *   (optional) The configuration collection name. Defaults to the default
    *   collection.
    *
-   * @return array
+   * @return string
    *   Table showing a two-way diff between the active and staged configuration.
    */
   public function diff($source_name, $target_name = NULL, $collection = NULL) {
     if (!isset($collection)) {
       $collection = StorageInterface::DEFAULT_COLLECTION;
     }
-    $syncStorage = $this->importTransformer->transform($this->syncStorage);
-    $diff = $this->configManager->diff($this->targetStorage, $syncStorage, $source_name, $target_name, $collection);
+    $diff = $this->configManager->diff($this->targetStorage, $this->sourceStorage, $source_name, $target_name, $collection);
     $this->diffFormatter->show_header = FALSE;
 
     $build = [];

@@ -33,9 +33,9 @@ class BlockContent extends DeriverBase implements ContainerDeriverInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    $entity_type_manager = $container->get('entity_type.manager');
+    $entity_manager = $container->get('entity.manager');
     return new static(
-      $entity_type_manager->getStorage('block_content')
+      $entity_manager->getStorage('block_content')
     );
   }
 

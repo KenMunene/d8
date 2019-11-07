@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Pager\PagerManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\VocabularyInterface;
@@ -37,9 +36,9 @@ class OverviewTerms extends FormBase {
   protected $moduleHandler;
 
   /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityTypeManager;
 
@@ -72,13 +71,6 @@ class OverviewTerms extends FormBase {
   protected $entityRepository;
 
   /**
-   * The pager manager.
-   *
-   * @var \Drupal\Core\Pager\PagerManagerInterface
-   */
-  protected $pagerManager;
-
-  /**
    * Constructs an OverviewTerms object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -89,10 +81,8 @@ class OverviewTerms extends FormBase {
    *   The renderer service.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
-   * @param \Drupal\Core\Pager\PagerManagerInterface|null $pager_manager
-   *   The pager manager.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer = NULL, EntityRepositoryInterface $entity_repository = NULL, PagerManagerInterface $pager_manager = NULL) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer = NULL, EntityRepositoryInterface $entity_repository = NULL) {
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;
     $this->storageController = $entity_type_manager->getStorage('taxonomy_term');
@@ -103,11 +93,6 @@ class OverviewTerms extends FormBase {
       $entity_repository = \Drupal::service('entity.repository');
     }
     $this->entityRepository = $entity_repository;
-    if (!$pager_manager) {
-      @trigger_error('Calling OverviewTerms::__construct() without the $pager_manager argument is deprecated in drupal:8.8.0 and the $pager_manager argument will be required in drupal:9.0.0. See https://www.drupal.org/node/2779457', E_USER_DEPRECATED);
-      $pager_manager = \Drupal::service('pager.manager');
-    }
-    $this->pagerManager = $pager_manager;
   }
 
   /**
@@ -118,8 +103,7 @@ class OverviewTerms extends FormBase {
       $container->get('module_handler'),
       $container->get('entity_type.manager'),
       $container->get('renderer'),
-      $container->get('entity.repository'),
-      $container->get('pager.manager')
+      $container->get('entity.repository')
     );
   }
 
@@ -147,6 +131,10 @@ class OverviewTerms extends FormBase {
    *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state, VocabularyInterface $taxonomy_vocabulary = NULL) {
+    // @todo Remove global variables when https://www.drupal.org/node/2044435 is
+    //   in.
+    global $pager_page_array, $pager_total, $pager_total_items;
+
     $form_state->set(['taxonomy', 'vocabulary'], $taxonomy_vocabulary);
     $vocabulary_hierarchy = $this->storageController->getVocabularyHierarchyType($taxonomy_vocabulary->id());
     $parent_fields = FALSE;
@@ -239,7 +227,9 @@ class OverviewTerms extends FormBase {
 
     // Because we didn't use a pager query, set the necessary pager variables.
     $total_entries = $before_entries + $page_entries + $after_entries;
-    $this->pagerManager->createPager($total_entries, $page_increment);
+    $pager_total_items[0] = $total_entries;
+    $pager_page_array[0] = $page;
+    $pager_total[0] = ceil($total_entries / $page_increment);
 
     // If this form was already submitted once, it's probably hit a validation
     // error. Ensure the form is rebuilt in the same order as the user

@@ -86,10 +86,9 @@ class FieldImportDeleteUninstallUiTest extends FieldTestBase {
     unset($core_extension['module']['telephone']);
     $sync->write('core.extension', $core_extension);
 
-    // Stage the field deletion including its dependencies.
+    // Stage the field deletion
     $sync->delete('field.storage.entity_test.field_tel');
     $sync->delete('field.field.entity_test.entity_test.field_tel');
-    $sync->delete('core.entity_form_display.entity_test.entity_test.default');
     $this->drupalGet('admin/config/development/configuration');
     // Test that the message for one field being purged during a configuration
     // synchronization is correct.

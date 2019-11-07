@@ -40,6 +40,7 @@ use Drupal\user\EntityOwnerTrait;
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *       "delete-multiple-confirm" = "Drupal\Core\Entity\Form\DeleteMultipleForm",
  *     },
+ *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "views_data" = "Drupal\media\MediaViewsData",
  *     "route_provider" = {
  *       "html" = "Drupal\media\Routing\MediaRouteProvider",

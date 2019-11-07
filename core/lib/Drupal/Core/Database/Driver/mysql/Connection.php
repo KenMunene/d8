@@ -7,6 +7,7 @@ use Drupal\Core\Database\DatabaseExceptionWrapper;
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\DatabaseNotFoundException;
+use Drupal\Core\Database\TransactionCommitFailedException;
 use Drupal\Core\Database\DatabaseException;
 use Drupal\Core\Database\Connection as DatabaseConnection;
 use Drupal\Component\Utility\Unicode;
@@ -408,9 +409,12 @@ class Connection extends DatabaseConnection {
       \PDO::MYSQL_ATTR_FOUND_ROWS => TRUE,
       // Because MySQL's prepared statements skip the query cache, because it's dumb.
       \PDO::ATTR_EMULATE_PREPARES => TRUE,
-      // Limit SQL to a single statement like mysqli.
-      \PDO::MYSQL_ATTR_MULTI_STATEMENTS => FALSE,
     ];
+    if (defined('\PDO::MYSQL_ATTR_MULTI_STATEMENTS')) {
+      // An added connection option in PHP 5.5.21 to optionally limit SQL to a
+      // single statement like mysqli.
+      $connection_options['pdo'] += [\PDO::MYSQL_ATTR_MULTI_STATEMENTS => FALSE];
+    }
 
     try {
       $pdo = new \PDO($dsn, $connection_options['username'], $connection_options['password'], $connection_options['pdo']);
@@ -633,7 +637,9 @@ class Connection extends DatabaseConnection {
       // If there are no more layers left then we should commit.
       unset($this->transactionLayers[$name]);
       if (empty($this->transactionLayers)) {
-        $this->doCommit();
+        if (!$this->connection->commit()) {
+          throw new TransactionCommitFailedException();
+        }
       }
       else {
         // Attempt to release this savepoint in the standard way.
@@ -654,7 +660,7 @@ class Connection extends DatabaseConnection {
             $this->transactionLayers = [];
             // We also have to explain to PDO that the transaction stack has
             // been cleaned-up.
-            $this->doCommit();
+            $this->connection->commit();
           }
           else {
             throw $e;

@@ -22,8 +22,6 @@
     multiple: []
   };
 
-  messageObjects.default.zone.clear();
-
   testMessages.selectors.filter(Boolean).forEach(function (selector) {
     messageObjects[selector] = {
       zone: new Drupal.Message(document.querySelector(selector)),

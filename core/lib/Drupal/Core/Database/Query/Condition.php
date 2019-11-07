@@ -61,8 +61,6 @@ class Condition implements ConditionInterface, \Countable {
 
   /**
    * The identifier of the query placeholder this condition has been compiled against.
-   *
-   * @var string
    */
   protected $queryPlaceholderIdentifier;
 

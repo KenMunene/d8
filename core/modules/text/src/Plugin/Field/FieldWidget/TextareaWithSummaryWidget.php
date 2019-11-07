@@ -27,7 +27,6 @@ class TextareaWithSummaryWidget extends TextareaWidget {
       'rows' => '9',
       'summary_rows' => '3',
       'placeholder' => '',
-      'show_summary' => FALSE,
     ] + parent::defaultSettings();
   }
 
@@ -44,11 +43,6 @@ class TextareaWithSummaryWidget extends TextareaWidget {
       '#required' => TRUE,
       '#min' => 1,
     ];
-    $element['show_summary'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Always show the summary field'),
-      '#default_value' => $this->getSetting('show_summary'),
-    ];
     return $element;
   }
 
@@ -59,9 +53,6 @@ class TextareaWithSummaryWidget extends TextareaWidget {
     $summary = parent::settingsSummary();
 
     $summary[] = t('Number of summary rows: @rows', ['@rows' => $this->getSetting('summary_rows')]);
-    if ($this->getSetting('show_summary')) {
-      $summary[] = t('Summary field will always be visible');
-    }
 
     return $summary;
   }
@@ -73,24 +64,20 @@ class TextareaWithSummaryWidget extends TextareaWidget {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
 
     $display_summary = $items[$delta]->summary || $this->getFieldSetting('display_summary');
-    $required = empty($form['#type']) && $this->getFieldSetting('required_summary');
-
     $element['summary'] = [
       '#type' => $display_summary ? 'textarea' : 'value',
       '#default_value' => $items[$delta]->summary,
       '#title' => t('Summary'),
       '#rows' => $this->getSetting('summary_rows'),
-      '#description' => !$required ? $this->t('Leave blank to use trimmed value of full text as the summary.') : '',
+      '#description' => t('Leave blank to use trimmed value of full text as the summary.'),
+      '#attached' => [
+        'library' => ['text/drupal.text'],
+      ],
       '#attributes' => ['class' => ['js-text-summary', 'text-summary']],
       '#prefix' => '<div class="js-text-summary-wrapper text-summary-wrapper">',
       '#suffix' => '</div>',
       '#weight' => -10,
-      '#required' => $required,
     ];
-
-    if (!$this->getSetting('show_summary') && !$required) {
-      $element['summary']['#attached']['library'][] = 'text/drupal.text';
-    }
 
     return $element;
   }

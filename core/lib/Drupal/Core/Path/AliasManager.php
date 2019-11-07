@@ -4,7 +4,6 @@ namespace Drupal\Core\Path;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\CacheDecorator\CacheDecoratorInterface;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 
@@ -13,19 +12,12 @@ use Drupal\Core\Language\LanguageManagerInterface;
  */
 class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
 
-  use DeprecatedServicePropertyTrait;
-
   /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['storage' => 'path.alias_storage'];
-
-  /**
-   * The path alias repository.
+   * The alias storage service.
    *
-   * @var \Drupal\Core\Path\AliasRepositoryInterface
+   * @var \Drupal\Core\Path\AliasStorageInterface
    */
-  protected $pathAliasRepository;
+  protected $storage;
 
   /**
    * Cache backend service.
@@ -103,8 +95,8 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
   /**
    * Constructs an AliasManager.
    *
-   * @param \Drupal\Core\Path\AliasRepositoryInterface $alias_repository
-   *   The path alias repository.
+   * @param \Drupal\Core\Path\AliasStorageInterface $storage
+   *   The alias storage service.
    * @param \Drupal\Core\Path\AliasWhitelistInterface $whitelist
    *   The whitelist implementation to use.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
@@ -112,12 +104,8 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   Cache backend.
    */
-  public function __construct($alias_repository, AliasWhitelistInterface $whitelist, LanguageManagerInterface $language_manager, CacheBackendInterface $cache) {
-    if (!$alias_repository instanceof AliasRepositoryInterface) {
-      @trigger_error('Passing the path.alias_storage service to AliasManager::__construct() is deprecated in drupal:8.8.0 and will be removed before drupal:9.0.0. Pass the new dependencies instead. See https://www.drupal.org/node/3013865.', E_USER_DEPRECATED);
-      $alias_repository = \Drupal::service('path.alias_repository');
-    }
-    $this->pathAliasRepository = $alias_repository;
+  public function __construct(AliasStorageInterface $storage, AliasWhitelistInterface $whitelist, LanguageManagerInterface $language_manager, CacheBackendInterface $cache) {
+    $this->storage = $storage;
     $this->languageManager = $language_manager;
     $this->whitelist = $whitelist;
     $this->cache = $cache;
@@ -178,9 +166,9 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
     }
 
     // Look for path in storage.
-    if ($path_alias = $this->pathAliasRepository->lookupByAlias($alias, $langcode)) {
-      $this->lookupMap[$langcode][$path_alias['path']] = $alias;
-      return $path_alias['path'];
+    if ($path = $this->storage->lookupPathSource($alias, $langcode)) {
+      $this->lookupMap[$langcode][$path] = $alias;
+      return $path;
     }
 
     // We can't record anything into $this->lookupMap because we didn't find any
@@ -232,7 +220,7 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
 
       // Load paths from cache.
       if (!empty($this->preloadedPathLookups[$langcode])) {
-        $this->lookupMap[$langcode] = $this->pathAliasRepository->preloadPathAlias($this->preloadedPathLookups[$langcode], $langcode);
+        $this->lookupMap[$langcode] = $this->storage->preloadPathAlias($this->preloadedPathLookups[$langcode], $langcode);
         // Keep a record of paths with no alias to avoid querying twice.
         $this->noAlias[$langcode] = array_flip(array_diff_key($this->preloadedPathLookups[$langcode], array_keys($this->lookupMap[$langcode])));
       }
@@ -249,9 +237,9 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
     }
 
     // Try to load alias from storage.
-    if ($path_alias = $this->pathAliasRepository->lookupBySystemPath($path, $langcode)) {
-      $this->lookupMap[$langcode][$path] = $path_alias['alias'];
-      return $path_alias['alias'];
+    if ($alias = $this->storage->lookupPathAlias($path, $langcode)) {
+      $this->lookupMap[$langcode][$path] = $alias;
+      return $alias;
     }
 
     // We can't record anything into $this->lookupMap because we didn't find any

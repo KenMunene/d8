@@ -31,6 +31,8 @@ interface CommentManagerInterface {
    *   - type: The field type.
    *   - bundles: The bundles in which the field appears, as an array with entity
    *     types as keys and the array of bundle names as values.
+   *
+   * @see \Drupal\Core\Entity\EntityManagerInterface::getFieldMap()
    */
   public function getFields($entity_type_id);
 

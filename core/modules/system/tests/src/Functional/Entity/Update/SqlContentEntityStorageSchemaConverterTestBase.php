@@ -15,6 +15,13 @@ abstract class SqlContentEntityStorageSchemaConverterTestBase extends UpdatePath
   use ExpectDeprecationTrait;
 
   /**
+   * The entity manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * The entity definition update manager.
    *
    * @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface
@@ -48,6 +55,7 @@ abstract class SqlContentEntityStorageSchemaConverterTestBase extends UpdatePath
   protected function setUp() {
     parent::setUp();
 
+    $this->entityManager = \Drupal::entityManager();
     $this->entityDefinitionUpdateManager = \Drupal::entityDefinitionUpdateManager();
     $this->lastInstalledSchemaRepository = \Drupal::service('entity.last_installed_schema.repository');
     $this->installedStorageSchema = \Drupal::keyValue('entity.storage_schema.sql');

@@ -94,8 +94,7 @@ class EditorLoadingTest extends BrowserTestBase {
       'bundle' => 'page',
     ])->save();
 
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('node', 'page')
+    entity_get_form_display('node', 'page', 'default')
       ->setComponent('field_text')
       ->save();
 
@@ -115,7 +114,7 @@ class EditorLoadingTest extends BrowserTestBase {
       'editor' => 'unicorn',
       'image_upload' => [
         'status' => FALSE,
-        'scheme' => 'public',
+        'scheme' => file_default_scheme(),
         'directory' => 'inline-images',
         'max_size' => '',
         'max_dimensions' => ['width' => '', 'height' => ''],
@@ -208,7 +207,7 @@ class EditorLoadingTest extends BrowserTestBase {
     ]);
 
     // The untrusted user tries to edit content that is written in a text format
-    // that they are not allowed to use. The editor is still loaded. CKEditor,
+    // that (s)he is not allowed to use. The editor is still loaded. CKEditor,
     // for example, supports being loaded in a disabled state.
     $this->drupalGet('node/1/edit');
     list(, $editor_settings_present, $editor_js_present, $body, $format_selector) = $this->getThingsToCheck('body');
@@ -231,7 +230,7 @@ class EditorLoadingTest extends BrowserTestBase {
       'editor' => 'unicorn',
       'image_upload' => [
         'status' => FALSE,
-        'scheme' => 'public',
+        'scheme' => file_default_scheme(),
         'directory' => 'inline-images',
         'max_size' => '',
         'max_dimensions' => ['width' => '', 'height' => ''],

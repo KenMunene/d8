@@ -51,7 +51,7 @@ class DefaultSelection extends SelectionPluginBase implements ContainerFactoryPl
   /**
    * The entity type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityTypeManager;
 

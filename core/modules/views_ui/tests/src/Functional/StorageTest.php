@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\views_ui\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\views\Views;
 
@@ -50,7 +49,7 @@ class StorageTest extends UITestBase {
     $view = Views::getView($view_name);
 
     foreach (['label', 'tag', 'description', 'langcode'] as $property) {
-      $this->assertEqual($view->storage->get($property), $edit[$property], new FormattableMarkup('Make sure the property @property got probably saved.', ['@property' => $property]));
+      $this->assertEqual($view->storage->get($property), $edit[$property], format_string('Make sure the property @property got probably saved.', ['@property' => $property]));
     }
   }
 

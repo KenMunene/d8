@@ -7,6 +7,7 @@ use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\views\Tests\ViewResultAssertionTrait;
 use Drupal\views\Tests\ViewTestData;
+use Drupal\views\ViewsData;
 
 /**
  * Defines a base class for Views kernel testing.

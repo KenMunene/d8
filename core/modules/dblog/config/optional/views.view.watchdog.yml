@@ -11,6 +11,7 @@ description: 'Recent log messages'
 tag: ''
 base_table: watchdog
 base_field: wid
+core: 8.x
 display:
   default:
     display_plugin: default
@@ -581,8 +582,6 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -622,8 +621,6 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -683,7 +680,7 @@ display:
           1: AND
       css_class: admin-dblog
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -700,7 +697,7 @@ display:
       display_extenders: {  }
       path: admin/reports/dblog
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

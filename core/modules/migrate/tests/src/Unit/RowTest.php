@@ -115,7 +115,7 @@ class RowTest extends UnitTestCase {
     $invalid_values = [
       'title' => 'node X',
     ];
-    $this->expectException(\Exception::class);
+    $this->setExpectedException(\Exception::class);
     $row = new Row($invalid_values, $this->testSourceIds);
   }
 
@@ -130,7 +130,7 @@ class RowTest extends UnitTestCase {
     $row->rehash();
     $this->assertSame($this->testHashMod, $row->getHash(), 'Hash changed correctly.');
     $row->freezeSource();
-    $this->expectException(\Exception::class);
+    $this->setExpectedException(\Exception::class);
     $row->setSourceProperty('title', 'new title');
   }
 
@@ -140,8 +140,7 @@ class RowTest extends UnitTestCase {
   public function testSetFrozenRow() {
     $row = new Row($this->testValues, $this->testSourceIds);
     $row->freezeSource();
-    $this->expectException(\Exception::class);
-    $this->expectExceptionMessage("The source is frozen and can't be changed any more");
+    $this->setExpectedException(\Exception::class, "The source is frozen and can't be changed any more");
     $row->setSourceProperty('title', 'new title');
   }
 

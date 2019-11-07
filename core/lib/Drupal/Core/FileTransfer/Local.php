@@ -2,34 +2,10 @@
 
 namespace Drupal\Core\FileTransfer;
 
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\Core\File\FileSystemInterface;
-
 /**
  * Defines the local connection class for copying files as the httpd user.
  */
 class Local extends FileTransfer implements ChmodInterface {
-
-  use DependencySerializationTrait;
-
-  /**
-   * The file system service.
-   *
-   * @var \Drupal\Core\File\FileSystemInterface
-   */
-  protected $fileSystem;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct($jail, FileSystemInterface $file_system = NULL) {
-    parent::__construct($jail);
-    if (!isset($file_system)) {
-      @trigger_error('The $file_system parameter was added in Drupal 8.8.0 and will be required in 9.0.0. See https://www.drupal.org/node/3021434.', E_USER_DEPRECATED);
-      $file_system = \Drupal::service('file_system');
-    }
-    $this->fileSystem = $file_system;
-  }
 
   /**
    * {@inheritdoc}
@@ -42,7 +18,7 @@ class Local extends FileTransfer implements ChmodInterface {
    * {@inheritdoc}
    */
   public static function factory($jail, $settings) {
-    return new Local($jail, \Drupal::service('file_system'));
+    return new Local($jail);
   }
 
   /**
@@ -80,7 +56,7 @@ class Local extends FileTransfer implements ChmodInterface {
         }
       }
       elseif ($file->isFile()) {
-        if (@!$this->fileSystem->unlink($filename)) {
+        if (@!drupal_unlink($filename)) {
           throw new FileTransferException('Cannot remove file %file.', NULL, ['%file' => $filename]);
         }
       }
@@ -94,7 +70,7 @@ class Local extends FileTransfer implements ChmodInterface {
    * {@inheritdoc}
    */
   protected function removeFileJailed($file) {
-    if (@!$this->fileSystem->unlink($file)) {
+    if (@!drupal_unlink($file)) {
       throw new FileTransferException('Cannot remove file %file.', NULL, ['%file' => $file]);
     }
   }

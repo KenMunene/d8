@@ -10,10 +10,11 @@
     },
     "require": {
         "composer/installers": "^1.0.24",
-        "drupal/core": "self.version",
+        "drupal/core": "8.7.9",
         "drupal/core-project-message": "self.version",
         "drupal/core-vendor-hardening": "self.version",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "drupal/backup_migrate": "^4.0"
     },
     "require-dev": {
         "behat/mink": "1.7.x-dev",

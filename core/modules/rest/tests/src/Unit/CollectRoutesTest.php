@@ -39,15 +39,12 @@ class CollectRoutesTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->view = $this->getMockBuilder('\Drupal\views\Entity\View')
-      ->setMethods(['initHandlers'])
-      ->setConstructorArgs([['id' => 'test_view'], 'view'])
-      ->getMock();
+    $this->view = $this->getMock('\Drupal\views\Entity\View', ['initHandlers'], [
+      ['id' => 'test_view'],
+      'view',
+    ]);
 
-    $view_executable = $this->getMockBuilder('\Drupal\views\ViewExecutable')
-      ->setMethods(['initHandlers', 'getTitle'])
-      ->disableOriginalConstructor()
-      ->getMock();
+    $view_executable = $this->getMock('\Drupal\views\ViewExecutable', ['initHandlers', 'getTitle'], [], '', FALSE);
     $view_executable->expects($this->any())
       ->method('getTitle')
       ->willReturn('View title');
@@ -72,16 +69,16 @@ class CollectRoutesTest extends UnitTestCase {
 
     $container->setParameter('authentication_providers', ['basic_auth' => 'basic_auth']);
 
-    $state = $this->createMock('\Drupal\Core\State\StateInterface');
+    $state = $this->getMock('\Drupal\Core\State\StateInterface');
     $container->set('state', $state);
 
     $style_manager = $this->getMockBuilder('\Drupal\views\Plugin\ViewsPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
     $container->set('plugin.manager.views.style', $style_manager);
-    $container->set('renderer', $this->createMock('Drupal\Core\Render\RendererInterface'));
+    $container->set('renderer', $this->getMock('Drupal\Core\Render\RendererInterface'));
 
-    $authentication_collector = $this->createMock('\Drupal\Core\Authentication\AuthenticationCollectorInterface');
+    $authentication_collector = $this->getMock('\Drupal\Core\Authentication\AuthenticationCollectorInterface');
     $container->set('authentication_collector', $authentication_collector);
     $authentication_collector->expects($this->any())
       ->method('getSortedProviders')
@@ -115,10 +112,7 @@ class CollectRoutesTest extends UnitTestCase {
       ->method('createInstance')
       ->will($this->returnValue($none));
 
-    $style_plugin = $this->getMockBuilder('\Drupal\rest\Plugin\views\style\Serializer')
-      ->setMethods(['getFormats', 'init'])
-      ->disableOriginalConstructor()
-      ->getMock();
+    $style_plugin = $this->getMock('\Drupal\rest\Plugin\views\style\Serializer', ['getFormats', 'init'], [], '', FALSE);
 
     $style_plugin->expects($this->once())
       ->method('getFormats')

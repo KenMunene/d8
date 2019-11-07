@@ -1,4 +1,4 @@
-entity.path_alias.collection:
+path.admin_overview:
   title: List
-  route_name: entity.path_alias.collection
-  base_route: entity.path_alias.collection
+  route_name: path.admin_overview
+  base_route: path.admin_overview

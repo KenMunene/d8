@@ -69,10 +69,11 @@ class ConfigInstallProfileUnmetDependenciesTest extends InstallerTestBase {
       }
     }
 
-    // Add a dependency that can not be met.
+    // Add a dependency that can not be met because User is installed before
+    // Action.
     $config_file = $dest . DIRECTORY_SEPARATOR . InstallStorage::CONFIG_INSTALL_DIRECTORY . DIRECTORY_SEPARATOR . 'system.action.user_block_user_action.yml';
     $action = Yaml::decode(file_get_contents($config_file));
-    $action['dependencies']['module'][] = 'does_not_exist';
+    $action['dependencies']['module'][] = 'action';
     file_put_contents($config_file, Yaml::encode($action));
   }
 
@@ -81,7 +82,7 @@ class ConfigInstallProfileUnmetDependenciesTest extends InstallerTestBase {
    */
   public function testInstalled() {
     if ($this->expectedException) {
-      $this->assertContains('Configuration objects provided by <em class="placeholder">testing_config_overrides</em> have unmet dependencies: <em class="placeholder">system.action.user_block_user_action (does_not_exist)</em>', $this->expectedException->getMessage());
+      $this->assertContains('Configuration objects provided by <em class="placeholder">user</em> have unmet dependencies: <em class="placeholder">system.action.user_block_user_action (action)</em>', $this->expectedException->getMessage());
       $this->assertContains('Drupal\Core\Config\UnmetDependenciesException', $this->expectedException->getMessage());
     }
     else {

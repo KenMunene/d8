@@ -14,7 +14,6 @@ use Zend\Stdlib\ArrayUtils;
 class ContentPreviewToggleTest extends WebDriverTestBase {
 
   use ContextualLinkClickTrait;
-  use LayoutBuilderSortTrait;
 
   /**
    * {@inheritdoc}
@@ -92,14 +91,9 @@ class ContentPreviewToggleTest extends WebDriverTestBase {
     // Confirm repositioning blocks works with content preview disabled.
     $this->assertOrderInPage([$links_field_placeholder_label, $body_field_placeholder_label]);
 
-    $region_content = '.layout__region--content';
-    $links_block = "[data-layout-content-preview-placeholder-label='$links_field_placeholder_label']";
-    $body_block = "[data-layout-content-preview-placeholder-label='$body_field_placeholder_label']";
-
-    $assert_session->elementExists('css', $links_block . " div");
-    $assert_session->elementExists('css', $body_block . " div");
-
-    $this->sortableAfter($links_block, $body_block, $region_content);
+    $links_block_placeholder_child = $assert_session->elementExists('css', "[data-layout-content-preview-placeholder-label='$links_field_placeholder_label'] div");
+    $body_block_placeholder_child = $assert_session->elementExists('css', "[data-layout-content-preview-placeholder-label='$body_field_placeholder_label'] div");
+    $body_block_placeholder_child->dragTo($links_block_placeholder_child);
     $assert_session->assertWaitOnAjaxRequest();
 
     // Check that the drag-triggered rebuild did not trigger content preview.

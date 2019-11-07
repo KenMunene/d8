@@ -32,7 +32,6 @@ class TestSiteReleaseLocksCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) {
     TestDatabase::releaseAllTestLocks();
     $output->writeln('<info>Successfully released all the test database locks</info>');
-    return 0;
   }
 
 }

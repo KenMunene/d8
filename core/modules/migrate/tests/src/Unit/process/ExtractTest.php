@@ -32,8 +32,7 @@ class ExtractTest extends MigrateProcessTestCase {
    * Tests invalid input.
    */
   public function testExtractFromString() {
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('Input should be an array.');
+    $this->setExpectedException(MigrateException::class, 'Input should be an array.');
     $this->plugin->transform('bar', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 
@@ -41,8 +40,7 @@ class ExtractTest extends MigrateProcessTestCase {
    * Tests unsuccessful extraction.
    */
   public function testExtractFail() {
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('Array index missing, extraction failed.');
+    $this->setExpectedException(MigrateException::class, 'Array index missing, extraction failed.');
     $this->plugin->transform(['bar' => 'foo'], $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 

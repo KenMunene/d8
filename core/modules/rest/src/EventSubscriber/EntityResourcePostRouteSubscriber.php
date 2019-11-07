@@ -15,7 +15,7 @@ class EntityResourcePostRouteSubscriber implements EventSubscriberInterface {
   /**
    * The REST resource config storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $resourceConfigStorage;
 

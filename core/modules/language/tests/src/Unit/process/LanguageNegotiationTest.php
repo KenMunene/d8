@@ -79,8 +79,7 @@ class LanguageNegotiationTest extends MigrateProcessTestCase {
    */
   public function testStringInput() {
     $this->plugin = new LanguageNegotiation([], 'map', []);
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('The input should be an array');
+    $this->setExpectedException(MigrateException::class, 'The input should be an array');
     $this->plugin->transform('foo', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 

@@ -43,7 +43,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
   public function testDependencyManagement() {
     /** @var \Drupal\Core\Config\ConfigManagerInterface $config_manager */
     $config_manager = \Drupal::service('config.manager');
-    $storage = $this->container->get('entity_type.manager')->getStorage('config_test');
+    $storage = $this->container->get('entity.manager')->getStorage('config_test');
     // Test dependencies between modules.
     $entity1 = $storage->create(
       [
@@ -126,7 +126,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
 
     // Create a configuration entity of a different type with the same ID as one
     // of the entities already created.
-    $alt_storage = $this->container->get('entity_type.manager')->getStorage('config_query_test');
+    $alt_storage = $this->container->get('entity.manager')->getStorage('config_query_test');
     $alt_storage->create(['id' => 'entity1', 'dependencies' => ['enforced' => ['config' => [$entity1->getConfigDependencyName()]]]])->save();
     $alt_storage->create(['id' => 'entity2', 'dependencies' => ['enforced' => ['module' => ['views']]]])->save();
 
@@ -192,7 +192,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     /** @var \Drupal\Core\Config\ConfigManagerInterface $config_manager */
     $config_manager = \Drupal::service('config.manager');
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorage $storage */
-    $storage = $this->container->get('entity_type.manager')
+    $storage = $this->container->get('entity.manager')
       ->getStorage('config_test');
     // Test dependencies between modules.
     $entity1 = $storage->create(
@@ -217,6 +217,10 @@ class ConfigDependencyTest extends EntityKernelTestBase {
       ]
     );
     $entity2->save();
+    // Perform a module rebuild so we can know where the node module is located
+    // and uninstall it.
+    // @todo Remove as part of https://www.drupal.org/node/2186491
+    system_rebuild_module_data();
     // Test that doing a config uninstall of the node module deletes entity2
     // since it is dependent on entity1 which is dependent on the node module.
     $config_manager->uninstall('module', 'node');
@@ -252,7 +256,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     /** @var \Drupal\Core\Config\ConfigManagerInterface $config_manager */
     $config_manager = \Drupal::service('config.manager');
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorage $storage */
-    $storage = $this->container->get('entity_type.manager')
+    $storage = $this->container->get('entity.manager')
       ->getStorage('config_test');
     // Entity 1 will be deleted because it depends on node.
     $entity_1 = $storage->create(
@@ -355,6 +359,10 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     $this->assertEqual($entity_4->uuid(), $config_entities['delete'][0]->uuid(), 'Entity 4 will be deleted.');
     $this->assertEqual($entity_5->uuid(), $config_entities['update'][1]->uuid(), 'Entity 5 is updated.');
 
+    // Perform a module rebuild so we can know where the node module is located
+    // and uninstall it.
+    // @todo Remove as part of https://www.drupal.org/node/2186491
+    system_rebuild_module_data();
     // Perform the uninstall.
     $config_manager->uninstall('module', 'node');
 
@@ -468,6 +476,10 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     $this->assertSame(['config' => [], 'content' => [], 'module' => ['node'], 'theme' => []], $called[$entity_2->id()]);
     $this->assertSame(['config' => [], 'content' => [], 'module' => ['node'], 'theme' => []], $called[$entity_4->id()]);
 
+    // Perform a module rebuild so we can know where the node module is located
+    // and uninstall it.
+    // @todo Remove as part of https://www.drupal.org/node/2186491
+    system_rebuild_module_data();
     // Perform the uninstall.
     $config_manager->uninstall('module', 'node');
 
@@ -492,7 +504,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     /** @var \Drupal\Core\Config\ConfigManagerInterface $config_manager */
     $config_manager = \Drupal::service('config.manager');
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorage $storage */
-    $storage = $this->container->get('entity_type.manager')->getStorage('config_test');
+    $storage = $this->container->get('entity.manager')->getStorage('config_test');
     // Test dependencies between configuration entities.
     $entity1 = $storage->create(
       [
@@ -603,7 +615,7 @@ class ConfigDependencyTest extends EntityKernelTestBase {
     $content_entity = EntityTest::create();
     $content_entity->save();
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorage $storage */
-    $storage = $this->container->get('entity_type.manager')->getStorage('config_test');
+    $storage = $this->container->get('entity.manager')->getStorage('config_test');
     $entity1 = $storage->create(
       [
         'id' => 'entity1',

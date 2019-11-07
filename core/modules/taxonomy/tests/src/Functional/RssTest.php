@@ -49,15 +49,12 @@ class RssTest extends TaxonomyTestBase {
     ];
     $this->createEntityReferenceField('node', 'article', $this->fieldName, NULL, 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $display_repository->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($this->fieldName, [
         'type' => 'options_select',
       ])
       ->save();
-    $display_repository->getViewDisplay('node', 'article')
+    entity_get_display('node', 'article', 'default')
       ->setComponent($this->fieldName, [
         'type' => 'entity_reference_label',
       ])

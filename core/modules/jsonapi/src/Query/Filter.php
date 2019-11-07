@@ -157,7 +157,7 @@ class Filter {
     foreach ($expanded as &$filter_item) {
       if (isset($filter_item[static::CONDITION_KEY][EntityCondition::PATH_KEY])) {
         $unresolved = $filter_item[static::CONDITION_KEY][EntityCondition::PATH_KEY];
-        $filter_item[static::CONDITION_KEY][EntityCondition::PATH_KEY] = $field_resolver->resolveInternalEntityQueryPath($resource_type, $unresolved);
+        $filter_item[static::CONDITION_KEY][EntityCondition::PATH_KEY] = $field_resolver->resolveInternalEntityQueryPath($resource_type->getEntityTypeId(), $resource_type->getBundle(), $unresolved);
       }
     }
     return new static(static::buildEntityConditionGroup($expanded));

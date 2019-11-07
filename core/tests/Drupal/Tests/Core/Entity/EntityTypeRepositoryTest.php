@@ -53,7 +53,7 @@ class EntityTypeRepositoryTest extends UnitTestCase {
     $class = $this->getMockClass(EntityInterface::class);
     foreach ($definitions as $key => $entity_type) {
       // \Drupal\Core\Entity\EntityTypeInterface::getLinkTemplates() is called
-      // by \Drupal\Core\Entity\EntityTypeManager::processDefinition() so it must
+      // by \Drupal\Core\Entity\EntityManager::processDefinition() so it must
       // always be mocked.
       $entity_type->getLinkTemplates()->willReturn([]);
 
@@ -147,8 +147,7 @@ class EntityTypeRepositoryTest extends UnitTestCase {
     $apple->getOriginalClass()->willReturn('\Drupal\apple\Entity\Apple');
     $banana->getOriginalClass()->willReturn('\Drupal\banana\Entity\Banana');
 
-    $this->expectException(NoCorrespondingEntityClassException::class);
-    $this->expectExceptionMessage('The \Drupal\pear\Entity\Pear class does not correspond to an entity type.');
+    $this->setExpectedException(NoCorrespondingEntityClassException::class, 'The \Drupal\pear\Entity\Pear class does not correspond to an entity type.');
     $this->entityTypeRepository->getEntityTypeFromClass('\Drupal\pear\Entity\Pear');
   }
 
@@ -169,8 +168,7 @@ class EntityTypeRepositoryTest extends UnitTestCase {
       'gala' => $gala,
     ]);
 
-    $this->expectException(AmbiguousEntityClassException::class);
-    $this->expectExceptionMessage('Multiple entity types found for \Drupal\apple\Entity\Apple.');
+    $this->setExpectedException(AmbiguousEntityClassException::class, 'Multiple entity types found for \Drupal\apple\Entity\Apple.');
     $this->entityTypeRepository->getEntityTypeFromClass('\Drupal\apple\Entity\Apple');
   }
 

@@ -10,7 +10,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\ImageToolkit\ImageToolkitBase;
 use Drupal\Core\ImageToolkit\ImageToolkitOperationManagerInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -131,7 +130,7 @@ class GDToolkit extends ImageToolkitBase {
    * @param resource $resource
    *   The GD image resource.
    *
-   * @return $this
+   * @return \Drupal\system\Plugin\ImageToolkit\GDToolkit
    *   An instance of the current toolkit object.
    */
   public function setResource($resource) {
@@ -231,9 +230,9 @@ class GDToolkit extends ImageToolkitBase {
    * {@inheritdoc}
    */
   public function save($destination) {
-    $scheme = StreamWrapperManager::getScheme($destination);
+    $scheme = file_uri_scheme($destination);
     // Work around lack of stream wrapper support in imagejpeg() and imagepng().
-    if ($scheme && $this->streamWrapperManager->isValidScheme($scheme)) {
+    if ($scheme && file_stream_wrapper_valid_scheme($scheme)) {
       // If destination is not local, save image to temporary local file.
       $local_wrappers = $this->streamWrapperManager->getWrappers(StreamWrapperInterface::LOCAL);
       if (!isset($local_wrappers[$scheme])) {

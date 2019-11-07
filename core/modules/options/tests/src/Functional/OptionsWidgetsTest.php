@@ -113,8 +113,7 @@ class OptionsWidgetsTest extends FieldTestBase {
       'bundle' => 'entity_test',
     ]);
     $field->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card1->getName(), [
         'type' => 'options_buttons',
       ])
@@ -171,8 +170,7 @@ class OptionsWidgetsTest extends FieldTestBase {
       'bundle' => 'entity_test',
     ]);
     $field->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card2->getName(), [
         'type' => 'options_buttons',
       ])
@@ -262,8 +260,7 @@ class OptionsWidgetsTest extends FieldTestBase {
       'required' => TRUE,
     ]);
     $field->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card1->getName(), [
         'type' => 'options_select',
       ])
@@ -362,8 +359,7 @@ class OptionsWidgetsTest extends FieldTestBase {
       'bundle' => 'entity_test',
     ]);
     $field->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card2->getName(), [
         'type' => 'options_select',
       ])
@@ -532,11 +528,8 @@ class OptionsWidgetsTest extends FieldTestBase {
     ]);
     $field->save();
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
     // Change it to the check boxes/radio buttons widget.
-    $display_repository->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card1->getName(), [
         'type' => 'options_buttons',
       ])
@@ -555,7 +548,7 @@ class OptionsWidgetsTest extends FieldTestBase {
     $this->assertTrue($this->xpath('//div[@id=:id]//label[@for=:for and text()=:label]', [':id' => 'edit-card-1', ':for' => 'edit-card-1-none', ':label' => 'N/A']), 'A test radio button has a "N/A" choice.');
 
     // Change it to the select widget.
-    $display_repository->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($this->card1->getName(), [
         'type' => 'options_select',
       ])

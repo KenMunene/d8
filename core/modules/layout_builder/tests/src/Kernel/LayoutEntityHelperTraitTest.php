@@ -64,7 +64,7 @@ class LayoutEntityHelperTraitTest extends KernelTestBase {
           ],
         ],
       ],
-      ['display', 'view_mode'],
+      ['display'],
     ];
     $data['fieldable entity'] = [
       'entity_test',

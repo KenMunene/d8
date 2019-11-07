@@ -7,7 +7,6 @@ use Drupal\views\Entity\View;
 use Drupal\views\Plugin\views\field\Counter;
 use Drupal\views\ResultRow;
 use Drupal\views\Tests\ViewTestData;
-use Drupal\views\ViewExecutable;
 
 /**
  * @coversDefaultClass \Drupal\views\Plugin\views\field\Counter
@@ -66,12 +65,12 @@ class CounterTest extends UnitTestCase {
     ];
 
     $storage = new View($config, 'view');
-    $user = $this->createMock('Drupal\Core\Session\AccountInterface');
+    $user = $this->getMock('Drupal\Core\Session\AccountInterface');
     $views_data = $this->getMockBuilder('Drupal\views\ViewsData')
       ->disableOriginalConstructor()
       ->getMock();
-    $route_provider = $this->createMock('Drupal\Core\Routing\RouteProviderInterface');
-    $this->view = new ViewExecutable($storage, $user, $views_data, $route_provider);
+    $route_provider = $this->getMock('Drupal\Core\Routing\RouteProviderInterface');
+    $this->view = $this->getMock('Drupal\views\ViewExecutable', NULL, [$storage, $user, $views_data, $route_provider]);
 
     $this->display = $this->getMockBuilder('Drupal\views\Plugin\views\display\DisplayPluginBase')
       ->disableOriginalConstructor()

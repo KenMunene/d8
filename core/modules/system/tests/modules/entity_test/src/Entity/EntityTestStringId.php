@@ -16,6 +16,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "form" = {
  *       "default" = "Drupal\entity_test\EntityTestForm"
  *     },
+ *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },

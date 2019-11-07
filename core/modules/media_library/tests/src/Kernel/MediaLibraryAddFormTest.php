@@ -120,8 +120,7 @@ class MediaLibraryAddFormTest extends KernelTestBase {
    */
   public function testFormStateValidation() {
     $form_state = new FormState();
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The media library state is not present in the form state.');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The media library state is not present in the form state.');
     \Drupal::formBuilder()->buildForm(FileUploadForm::class, $form_state);
   }
 
@@ -132,8 +131,7 @@ class MediaLibraryAddFormTest extends KernelTestBase {
     $state = MediaLibraryState::create('test', ['image', 'remote_video', 'header_image'], 'header_image', -1);
     $form_state = new FormState();
     $form_state->set('media_library_state', $state);
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage("The 'header_image' media type does not exist.");
+    $this->setExpectedException(\InvalidArgumentException::class, "The 'header_image' media type does not exist.");
     \Drupal::formBuilder()->buildForm(FileUploadForm::class, $form_state);
   }
 

@@ -202,9 +202,7 @@ class MailManager extends DefaultPluginManager implements MailManagerInterface {
    * @param string $langcode
    *   Language code to use to compose the email.
    * @param array $params
-   *   (optional) Parameters to build the email. Use the key '_error_message'
-   *   to provide translatable markup to display as a message if an error
-   *   occurs, or set this to false to disable error display.
+   *   (optional) Parameters to build the email.
    * @param string|null $reply
    *   Optional email address to be used to answer.
    * @param bool $send
@@ -313,10 +311,7 @@ class MailManager extends DefaultPluginManager implements MailManagerInterface {
             '%to' => $message['to'],
             '%reply' => $message['reply-to'] ? $message['reply-to'] : $this->t('not set'),
           ]);
-          $error_message = $params['_error_message'] ?? $this->t('Unable to send email. Contact the site administrator if the problem persists.');
-          if ($error_message) {
-            $this->messenger()->addError($error_message);
-          }
+          $this->messenger()->addError($this->t('Unable to send email. Contact the site administrator if the problem persists.'));
         }
       }
     }

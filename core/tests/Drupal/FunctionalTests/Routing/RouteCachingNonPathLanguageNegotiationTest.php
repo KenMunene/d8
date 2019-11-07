@@ -5,7 +5,6 @@ namespace Drupal\FunctionalTests\Routing;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\Traits\Core\PathAliasTestTrait;
 
 /**
  * Tests the route cache when the language is not in the path.
@@ -13,8 +12,6 @@ use Drupal\Tests\Traits\Core\PathAliasTestTrait;
  * @group language
  */
 class RouteCachingNonPathLanguageNegotiationTest extends BrowserTestBase {
-
-  use PathAliasTestTrait;
 
   /**
    * Modules to enable.
@@ -74,7 +71,7 @@ class RouteCachingNonPathLanguageNegotiationTest extends BrowserTestBase {
     // on the french page exist in english, no matter which language is
     // checked first. Create the alias after visiting frontpage to make sure
     // there is no existing cache entry for this that affects the tests.
-    $this->createPathAlias('/user/' . $this->adminUser->id(), '/user-page', 'en');
+    \Drupal::service('path.alias_storage')->save('/user/' . $this->adminUser->id(), '/user-page', 'en');
 
     $this->clickLink('French');
     $this->drupalGet('user-page');

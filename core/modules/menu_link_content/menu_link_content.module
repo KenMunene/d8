@@ -7,7 +7,6 @@
 
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Path\PathAliasInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\system\MenuInterface;
 
@@ -45,16 +44,16 @@ function menu_link_content_entity_type_alter(array &$entity_types) {
  * Implements hook_menu_delete().
  */
 function menu_link_content_menu_delete(MenuInterface $menu) {
-  $storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+  $storage = \Drupal::entityManager()->getStorage('menu_link_content');
   $menu_links = $storage->loadByProperties(['menu_name' => $menu->id()]);
   $storage->delete($menu_links);
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert() for 'path_alias'.
+ * Implements hook_path_insert().
  */
-function menu_link_content_path_alias_insert(PathAliasInterface $path_alias) {
-  _menu_link_content_update_path_alias($path_alias->getAlias());
+function menu_link_content_path_insert($path) {
+  _menu_link_content_update_path_alias($path['alias']);
 }
 
 /**
@@ -67,7 +66,7 @@ function _menu_link_content_update_path_alias($path) {
   /** @var \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager */
   $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
   /** @var \Drupal\menu_link_content\MenuLinkContentInterface[] $entities */
-  $entities = \Drupal::entityTypeManager()
+  $entities = \Drupal::entityManager()
     ->getStorage('menu_link_content')
     ->loadByProperties(['link.uri' => 'internal:' . $path]);
   foreach ($entities as $menu_link) {
@@ -76,23 +75,23 @@ function _menu_link_content_update_path_alias($path) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_update() for 'path_alias'.
+ * Implements hook_path_update().
  */
-function menu_link_content_path_alias_update(PathAliasInterface $path_alias) {
-  if ($path_alias->getAlias() != $path_alias->original->getAlias()) {
-    _menu_link_content_update_path_alias($path_alias->getAlias());
-    _menu_link_content_update_path_alias($path_alias->original->getAlias());
+function menu_link_content_path_update($path) {
+  if ($path['alias'] != $path['original']['alias']) {
+    _menu_link_content_update_path_alias($path['alias']);
+    _menu_link_content_update_path_alias($path['original']['alias']);
   }
-  elseif ($path_alias->getPath() != $path_alias->original->getPath()) {
-    _menu_link_content_update_path_alias($path_alias->getAlias());
+  elseif ($path['source'] != $path['original']['source']) {
+    _menu_link_content_update_path_alias($path['alias']);
   }
 }
 
 /**
- * Implements hook_ENTITY_TYPE_delete() for 'path_alias'.
+ * Implements hook_path_delete().
  */
-function menu_link_content_path_alias_delete(PathAliasInterface $path_alias) {
-  _menu_link_content_update_path_alias($path_alias->getAlias());
+function menu_link_content_path_delete($path) {
+  _menu_link_content_update_path_alias($path['alias']);
 }
 
 /**

@@ -97,20 +97,20 @@ class QuickEditAutocompleteTermTest extends WebDriverTestBase {
     ];
     $this->createEntityReferenceField('node', 'article', $this->fieldName, 'Tags', 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    \Drupal::service('entity_display.repository')->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($this->fieldName, [
         'type' => 'entity_reference_autocomplete_tags',
         'weight' => -4,
       ])
       ->save();
 
-    \Drupal::service('entity_display.repository')->getViewDisplay('node', 'article')
+    entity_get_display('node', 'article', 'default')
       ->setComponent($this->fieldName, [
         'type' => 'entity_reference_label',
         'weight' => 10,
       ])
       ->save();
-    \Drupal::service('entity_display.repository')->getViewDisplay('node', 'article', 'teaser')
+    entity_get_display('node', 'article', 'teaser')
       ->setComponent($this->fieldName, [
         'type' => 'entity_reference_label',
         'weight' => 10,

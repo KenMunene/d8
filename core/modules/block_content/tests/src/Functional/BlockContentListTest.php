@@ -72,7 +72,7 @@ class BlockContentListTest extends BlockContentTestBase {
 
     // Edit the entity using the operations link.
     $blocks = $this->container
-      ->get('entity_type.manager')
+      ->get('entity.manager')
       ->getStorage('block_content')
       ->loadByProperties(['info' => $label]);
     $block = reset($blocks);

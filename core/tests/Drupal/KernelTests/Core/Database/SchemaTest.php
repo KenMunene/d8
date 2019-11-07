@@ -2,7 +2,6 @@
 
 namespace Drupal\KernelTests\Core\Database;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\SchemaException;
 use Drupal\Core\Database\SchemaObjectDoesNotExistException;
@@ -555,8 +554,8 @@ class SchemaTest extends KernelTestBase {
 
     // Finally, check each column and try to insert invalid values into them.
     foreach ($table_spec['fields'] as $column_name => $column_spec) {
-      $this->assertTrue($this->schema->fieldExists($table_name, $column_name), new FormattableMarkup('Unsigned @type column was created.', ['@type' => $column_spec['type']]));
-      $this->assertFalse($this->tryUnsignedInsert($table_name, $column_name), new FormattableMarkup('Unsigned @type column rejected a negative value.', ['@type' => $column_spec['type']]));
+      $this->assertTrue($this->schema->fieldExists($table_name, $column_name), format_string('Unsigned @type column was created.', ['@type' => $column_spec['type']]));
+      $this->assertFalse($this->tryUnsignedInsert($table_name, $column_name), format_string('Unsigned @type column rejected a negative value.', ['@type' => $column_spec['type']]));
     }
   }
 
@@ -687,7 +686,7 @@ class SchemaTest extends KernelTestBase {
       'primary key' => ['serial_column'],
     ];
     $this->schema->createTable($table_name, $table_spec);
-    $this->pass(new FormattableMarkup('Table %table created.', ['%table' => $table_name]));
+    $this->pass(format_string('Table %table created.', ['%table' => $table_name]));
 
     // Check the characteristics of the field.
     $this->assertFieldCharacteristics($table_name, 'test_field', $field_spec);
@@ -705,7 +704,7 @@ class SchemaTest extends KernelTestBase {
       'primary key' => ['serial_column'],
     ];
     $this->schema->createTable($table_name, $table_spec);
-    $this->pass(new FormattableMarkup('Table %table created.', ['%table' => $table_name]));
+    $this->pass(format_string('Table %table created.', ['%table' => $table_name]));
 
     // Insert some rows to the table to test the handling of initial values.
     for ($i = 0; $i < 3; $i++) {
@@ -723,7 +722,7 @@ class SchemaTest extends KernelTestBase {
       ->execute();
 
     $this->schema->addField($table_name, 'test_field', $field_spec);
-    $this->pass(new FormattableMarkup('Column %column created.', ['%column' => 'test_field']));
+    $this->pass(format_string('Column %column created.', ['%column' => 'test_field']));
 
     // Check the characteristics of the field.
     $this->assertFieldCharacteristics($table_name, 'test_field', $field_spec);
@@ -918,8 +917,7 @@ class SchemaTest extends KernelTestBase {
       ],
       'primary key' => ['test_field'],
     ];
-    $this->expectException(SchemaException::class);
-    $this->expectExceptionMessage("The 'test_field' field specification does not define 'not null' as TRUE.");
+    $this->setExpectedException(SchemaException::class, "The 'test_field' field specification does not define 'not null' as TRUE.");
     $this->schema->createTable($table_name, $table_spec);
   }
 
@@ -937,8 +935,7 @@ class SchemaTest extends KernelTestBase {
     ];
     $this->schema->createTable($table_name, $table_spec);
 
-    $this->expectException(SchemaException::class);
-    $this->expectExceptionMessage("The 'new_test_field' field specification does not define 'not null' as TRUE.");
+    $this->setExpectedException(SchemaException::class, "The 'new_test_field' field specification does not define 'not null' as TRUE.");
     $this->schema->addField($table_name, 'new_test_field', ['type' => 'int'], ['primary key' => ['test_field', 'new_test_field']]);
   }
 
@@ -956,8 +953,7 @@ class SchemaTest extends KernelTestBase {
     ];
     $this->schema->createTable($table_name, $table_spec);
 
-    $this->expectException(SchemaException::class);
-    $this->expectExceptionMessage("The 'changed_test_field' field specification does not define 'not null' as TRUE.");
+    $this->setExpectedException(SchemaException::class, "The 'changed_test_field' field specification does not define 'not null' as TRUE.");
     $this->schema->dropPrimaryKey($table_name);
     $this->schema->changeField($table_name, 'test_field', 'changed_test_field', ['type' => 'int'], ['primary key' => ['changed_test_field']]);
   }
@@ -1025,7 +1021,7 @@ class SchemaTest extends KernelTestBase {
       'primary key' => ['serial_column'],
     ];
     $this->schema->createTable($table_name, $table_spec);
-    $this->pass(new FormattableMarkup('Table %table created.', ['%table' => $table_name]));
+    $this->pass(format_string('Table %table created.', ['%table' => $table_name]));
 
     // Check the characteristics of the field.
     $this->assertFieldCharacteristics($table_name, 'test_field', $old_spec);

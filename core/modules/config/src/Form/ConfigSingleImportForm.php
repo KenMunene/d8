@@ -13,7 +13,6 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
@@ -106,13 +105,6 @@ class ConfigSingleImportForm extends ConfirmFormBase {
   protected $themeHandler;
 
   /**
-   * The module extension list.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $moduleExtensionList;
-
-  /**
    * The module installer.
    *
    * @var \Drupal\Core\Extension\ModuleInstallerInterface
@@ -156,10 +148,8 @@ class ConfigSingleImportForm extends ConfirmFormBase {
    *   The module installer.
    * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
    *   The theme handler.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
-   *   The module extension list.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, StorageInterface $config_storage, RendererInterface $renderer, EventDispatcherInterface $event_dispatcher, ConfigManagerInterface $config_manager, LockBackendInterface $lock, TypedConfigManagerInterface $typed_config, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, ThemeHandlerInterface $theme_handler, ModuleExtensionList $extension_list_module) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, StorageInterface $config_storage, RendererInterface $renderer, EventDispatcherInterface $event_dispatcher, ConfigManagerInterface $config_manager, LockBackendInterface $lock, TypedConfigManagerInterface $typed_config, ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, ThemeHandlerInterface $theme_handler) {
     $this->entityTypeManager = $entity_type_manager;
     $this->configStorage = $config_storage;
     $this->renderer = $renderer;
@@ -172,7 +162,6 @@ class ConfigSingleImportForm extends ConfirmFormBase {
     $this->moduleHandler = $module_handler;
     $this->moduleInstaller = $module_installer;
     $this->themeHandler = $theme_handler;
-    $this->moduleExtensionList = $extension_list_module;
   }
 
   /**
@@ -189,8 +178,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
       $container->get('config.typed'),
       $container->get('module_handler'),
       $container->get('module_installer'),
-      $container->get('theme_handler'),
-      $container->get('extension.list.module')
+      $container->get('theme_handler')
     );
   }
 
@@ -219,7 +207,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
     else {
       $definition = $this->entityTypeManager->getDefinition($this->data['config_type']);
       $name = $this->data['import'][$definition->getKey('id')];
-      $type = $definition->getSingularLabel();
+      $type = $definition->getLowercaseLabel();
     }
 
     $args = [
@@ -376,8 +364,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
           $this->moduleHandler,
           $this->moduleInstaller,
           $this->themeHandler,
-          $this->getStringTranslation(),
-          $this->moduleExtensionList
+          $this->getStringTranslation()
         );
 
         try {

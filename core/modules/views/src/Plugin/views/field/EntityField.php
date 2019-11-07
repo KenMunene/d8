@@ -92,6 +92,13 @@ class EntityField extends FieldPluginBase implements CacheableDependencyInterfac
   protected $entityTypeManager;
 
   /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
    * The entity repository service.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface

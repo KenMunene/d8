@@ -29,6 +29,11 @@ class ManageDisplayTest extends WebDriverTestBase {
   protected $type;
 
   /**
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entity_manager;
+
+  /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entity_type_manager;
@@ -55,6 +60,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     $this->type = $type->id();
 
     $this->entity_type_manager = $this->container->get('entity_type.manager');
+    $this->entity_manager = $this->container->get('entity.manager');
   }
 
   /**
@@ -161,7 +167,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     $button_save->click();
 
     // Assert the third party settings.
-    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->entity_manager->clearCachedFieldDefinitions();
     $this->drupalGet($manage_display);
 
     $id = 'node.' . $this->type . '.default';
@@ -310,7 +316,7 @@ class ManageDisplayTest extends WebDriverTestBase {
     $this->drupalGet($manage_display);
 
     // Assert the third party settings.
-    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->entity_manager->clearCachedFieldDefinitions();
 
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = $form_storage->loadUnchanged('node.' . $this->type . '.default');

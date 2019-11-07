@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\system\Functional\Menu;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Url;
 use Drupal\Tests\BrowserTestBase;
@@ -57,7 +56,7 @@ class LocalTasksTest extends BrowserTestBase {
       list($route_name, $route_parameters) = $route_info;
       $expected = Url::fromRoute($route_name, $route_parameters)->toString();
       $method = ($elements[$index]->getAttribute('href') == $expected ? 'pass' : 'fail');
-      $this->{$method}(new FormattableMarkup('Task @number href @value equals @expected.', [
+      $this->{$method}(format_string('Task @number href @value equals @expected.', [
         '@number' => $index + 1,
         '@value' => $elements[$index]->getAttribute('href'),
         '@expected' => $expected,
@@ -177,7 +176,7 @@ class LocalTasksTest extends BrowserTestBase {
 
     // Test that we we correctly apply the active class to tabs where one of the
     // request attributes is upcast to an entity object.
-    $entity = \Drupal::entityTypeManager()->getStorage('entity_test')->create(['bundle' => 'test']);
+    $entity = \Drupal::entityManager()->getStorage('entity_test')->create(['bundle' => 'test']);
     $entity->save();
 
     $this->drupalGet(Url::fromRoute('menu_test.local_task_test_upcasting_sub1', ['entity_test' => '1']));

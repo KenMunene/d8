@@ -80,9 +80,10 @@ class ForumUninstallTest extends BrowserTestBase {
 
     // Delete any forum terms.
     $vid = $this->config('forum.settings')->get('vocabulary');
-    $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-    $terms = $storage->loadByProperties(['vid' => $vid]);
-    $storage->delete($terms);
+    $terms = entity_load_multiple_by_properties('taxonomy_term', ['vid' => $vid]);
+    foreach ($terms as $term) {
+      $term->delete();
+    }
 
     // Ensure that the forum node type can not be deleted.
     $this->drupalGet('admin/structure/types/manage/forum');
@@ -136,7 +137,7 @@ class ForumUninstallTest extends BrowserTestBase {
 
     // Delete all terms in the Forums vocabulary. Uninstalling the forum module
     // will fail unless this is done.
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['vid' => 'forums']);
+    $terms = entity_load_multiple_by_properties('taxonomy_term', ['vid' => 'forums']);
     foreach ($terms as $term) {
       $term->delete();
     }

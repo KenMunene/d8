@@ -15,7 +15,7 @@ class BubbleableMetadata extends CacheableMetadata implements AttachmentsInterfa
   use AttachmentsTrait;
 
   /**
-   * Creates a new bubbleable metadata object by merging this one with another.
+   * Merges the values of another bubbleable metadata object with this one.
    *
    * @param \Drupal\Core\Cache\CacheableMetadata $other
    *   The other bubbleable metadata object.

@@ -374,7 +374,7 @@ abstract class LocalStream implements StreamWrapperInterface {
    */
   public function unlink($uri) {
     $this->uri = $uri;
-    return $this->getFileSystem()->unlink($this->getLocalPath());
+    return drupal_unlink($this->getLocalPath());
   }
 
   /**
@@ -570,16 +570,6 @@ abstract class LocalStream implements StreamWrapperInterface {
     // We do not really have a way to signal a failure as closedir() does not
     // have a return value.
     return TRUE;
-  }
-
-  /**
-   * Returns file system service.
-   *
-   * @return \Drupal\Core\File\FileSystemInterface
-   *   The file system service.
-   */
-  private function getFileSystem() {
-    return \Drupal::service('file_system');
   }
 
 }

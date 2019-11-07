@@ -13,6 +13,7 @@ description: 'All content, by letter.'
 tag: default
 base_table: node_field_data
 base_field: nid
+core: '8'
 display:
   default:
     id: default
@@ -332,8 +333,6 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -358,7 +357,7 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      max-age: -1
+      max-age: 0
       tags: {  }
   attachment_1:
     id: attachment_1
@@ -426,7 +425,7 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      max-age: -1
+      max-age: 0
       tags: {  }
   page_1:
     id: page_1
@@ -453,5 +452,5 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      max-age: -1
+      max-age: 0
       tags: {  }

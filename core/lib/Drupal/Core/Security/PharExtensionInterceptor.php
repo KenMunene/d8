@@ -28,10 +28,10 @@ class PharExtensionInterceptor implements Assertable {
    * @return bool
    *   TRUE if the phar file is allowed to execute.
    *
-   * @throws \TYPO3\PharStreamWrapper\Exception
+   * @throws Exception
    *   Thrown when the file is not allowed to execute.
    */
-  public function assert(string $path, string $command): bool {
+  public function assert($path, $command) {
     if ($this->baseFileContainsPharExtension($path)) {
       return TRUE;
     }

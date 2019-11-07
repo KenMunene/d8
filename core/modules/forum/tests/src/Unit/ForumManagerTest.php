@@ -23,7 +23,7 @@ class ForumManagerTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $config_factory = $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface');
+    $config_factory = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
 
     $config = $this->getMockBuilder('\Drupal\Core\Config\Config')
       ->disableOriginalConstructor()
@@ -60,17 +60,14 @@ class ForumManagerTest extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $manager = $this->getMockBuilder('\Drupal\forum\ForumManager')
-      ->setMethods(['getChildren'])
-      ->setConstructorArgs([
-        $config_factory,
-        $entity_type_manager,
-        $connection,
-        $translation_manager,
-        $comment_manager,
-        $entity_field_manager,
-      ])
-      ->getMock();
+    $manager = $this->getMock('\Drupal\forum\ForumManager', ['getChildren'], [
+      $config_factory,
+      $entity_type_manager,
+      $connection,
+      $translation_manager,
+      $comment_manager,
+      $entity_field_manager,
+    ]);
 
     $manager->expects($this->once())
       ->method('getChildren')

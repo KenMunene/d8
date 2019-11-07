@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\field\Functional\String;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -63,11 +62,7 @@ class StringFieldTest extends BrowserTestBase {
       'bundle' => 'entity_test',
       'label' => $this->randomMachineName() . '_label',
     ])->save();
-
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $display_repository->getFormDisplay('entity_test', 'entity_test')
+    entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($field_name, [
         'type' => $widget_type,
         'settings' => [
@@ -75,7 +70,7 @@ class StringFieldTest extends BrowserTestBase {
         ],
       ])
       ->save();
-    $display_repository->getViewDisplay('entity_test', 'entity_test', 'full')
+    entity_get_display('entity_test', 'entity_test', 'full')
       ->setComponent($field_name)
       ->save();
 
@@ -83,7 +78,7 @@ class StringFieldTest extends BrowserTestBase {
     $this->drupalGet('entity_test/add');
     $this->assertFieldByName("{$field_name}[0][value]", '', 'Widget is displayed');
     $this->assertNoFieldByName("{$field_name}[0][format]", '1', 'Format selector is not displayed');
-    $this->assertRaw(new FormattableMarkup('placeholder="A placeholder on @widget_type"', ['@widget_type' => $widget_type]));
+    $this->assertRaw(format_string('placeholder="A placeholder on @widget_type"', ['@widget_type' => $widget_type]));
 
     // Submit with some value.
     $value = $this->randomMachineName();
@@ -97,7 +92,7 @@ class StringFieldTest extends BrowserTestBase {
 
     // Display the entity.
     $entity = EntityTest::load($id);
-    $display = $display_repository->getViewDisplay($entity->getEntityTypeId(), $entity->bundle(), 'full');
+    $display = entity_get_display($entity->getEntityTypeId(), $entity->bundle(), 'full');
     $content = $display->build($entity);
     $rendered_entity = \Drupal::service('renderer')->renderRoot($content);
     $this->assertContains($value, (string) $rendered_entity);

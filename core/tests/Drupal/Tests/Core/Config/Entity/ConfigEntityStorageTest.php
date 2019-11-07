@@ -410,8 +410,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
       ->shouldNotBeCalled();
 
     $entity = $this->getMockEntity();
-    $this->expectException(EntityMalformedException::class);
-    $this->expectExceptionMessage('The entity does not have an ID.');
+    $this->setExpectedException(EntityMalformedException::class, 'The entity does not have an ID.');
     $this->entityStorage->save($entity);
   }
 
@@ -432,7 +431,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
     $entity = $this->getMockEntity(['id' => 'foo']);
     $entity->enforceIsNew();
 
-    $this->expectException(EntityStorageException::class);
+    $this->setExpectedException(EntityStorageException::class);
     $this->entityStorage->save($entity);
   }
 
@@ -454,8 +453,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
     $this->entityQuery->execute()->willReturn(['baz']);
 
     $entity = $this->getMockEntity(['id' => 'foo']);
-    $this->expectException(ConfigDuplicateUUIDException::class);
-    $this->expectExceptionMessage('when this UUID is already used for');
+    $this->setExpectedException(ConfigDuplicateUUIDException::class, 'when this UUID is already used for');
     $this->entityStorage->save($entity);
   }
 
@@ -533,8 +531,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
     $entity = $this->getMockEntity(['id' => 'foo']);
 
     $entity->set('uuid', 'baz');
-    $this->expectException(ConfigDuplicateUUIDException::class);
-    $this->expectExceptionMessage('when this entity already exists with UUID');
+    $this->setExpectedException(ConfigDuplicateUUIDException::class, 'when this entity already exists with UUID');
     $this->entityStorage->save($entity);
   }
 
@@ -563,8 +560,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
     $this->assertInstanceOf(EntityInterface::class, $entity);
     $this->assertSame('foo', $entity->id());
 
-    $this->expectException(\AssertionError::class);
-    $this->expectExceptionMessage('Cannot load a NULL ID.');
+    $this->setExpectedException(\AssertionError::class, 'Cannot load a NULL ID.');
     $this->entityStorage->load(NULL);
   }
 
@@ -720,7 +716,7 @@ class ConfigEntityStorageTest extends UnitTestCase {
    * @param array $methods
    *   (optional) The methods to mock.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @return \Drupal\Core\Entity\EntityInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   public function getMockEntity(array $values = [], $methods = []) {
     return $this->getMockForAbstractClass(ConfigEntityBase::class, [$values, 'test_entity_type'], '', TRUE, TRUE, TRUE, $methods);

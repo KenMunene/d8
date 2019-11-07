@@ -11,20 +11,8 @@ if (window.jQuery) {
 
 document.documentElement.className += ' js';
 
-(function (Drupal, drupalSettings) {
-  var domReady = function domReady(callback) {
-    if (document.readyState !== 'loading') {
-      callback();
-    } else {
-      var listener = function listener() {
-        callback();
-        document.removeEventListener('DOMContentLoaded', listener);
-      };
-      document.addEventListener('DOMContentLoaded', listener);
-    }
-  };
-
-  domReady(function () {
+(function (domready, Drupal, drupalSettings) {
+  domready(function () {
     Drupal.attachBehaviors(document, drupalSettings);
   });
-})(Drupal, window.drupalSettings);
+})(domready, Drupal, window.drupalSettings);

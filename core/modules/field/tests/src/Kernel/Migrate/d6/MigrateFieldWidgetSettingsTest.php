@@ -102,25 +102,22 @@ class MigrateFieldWidgetSettingsTest extends MigrateDrupal6TestBase {
     $expected['weight'] = 12;
     $this->assertIdentical($expected, $component);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $component = $display_repository->getFormDisplay('node', 'employee', 'default')
+    $component = entity_get_form_display('node', 'employee', 'default')
       ->getComponent('field_company');
     $this->assertInternalType('array', $component);
     $this->assertSame('options_select', $component['type']);
 
-    $component = $display_repository->getFormDisplay('node', 'employee', 'default')
+    $component = entity_get_form_display('node', 'employee', 'default')
       ->getComponent('field_company_2');
     $this->assertInternalType('array', $component);
     $this->assertSame('options_buttons', $component['type']);
 
-    $component = $display_repository->getFormDisplay('node', 'employee', 'default')
+    $component = entity_get_form_display('node', 'employee', 'default')
       ->getComponent('field_company_3');
     $this->assertInternalType('array', $component);
     $this->assertSame('entity_reference_autocomplete_tags', $component['type']);
 
-    $component = $display_repository->getFormDisplay('node', 'employee', 'default')
+    $component = entity_get_form_display('node', 'employee', 'default')
       ->getComponent('field_commander');
     $this->assertInternalType('array', $component);
     $this->assertSame('options_select', $component['type']);

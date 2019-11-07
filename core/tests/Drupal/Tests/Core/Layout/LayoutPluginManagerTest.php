@@ -70,7 +70,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
     $this->moduleHandler->moduleExists('core')->willReturn(FALSE);
     $this->moduleHandler->moduleExists('invalid_provider')->willReturn(FALSE);
 
-    $module_a = new Extension('vfs://root', 'module', 'modules/module_a/module_a.layouts.yml');
+    $module_a = new Extension('/', 'module', vfsStream::url('root/modules/module_a/module_a.layouts.yml'));
     $this->moduleHandler->getModule('module_a')->willReturn($module_a);
     $this->moduleHandler->getModuleDirectories()->willReturn(['module_a' => vfsStream::url('root/modules/module_a')]);
     $this->moduleHandler->alter('layout', Argument::type('array'))->shouldBeCalled();
@@ -81,7 +81,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
     $this->themeHandler->themeExists('core')->willReturn(FALSE);
     $this->themeHandler->themeExists('invalid_provider')->willReturn(FALSE);
 
-    $theme_a = new Extension('vfs://root', 'theme', 'themes/theme_a/theme_a.layouts.yml');
+    $theme_a = new Extension('/', 'theme', vfsStream::url('root/themes/theme_a/theme_a.layouts.yml'));
     $this->themeHandler->getTheme('theme_a')->willReturn($theme_a);
     $this->themeHandler->getThemeDirectories()->willReturn(['theme_a' => vfsStream::url('root/themes/theme_a')]);
 
@@ -112,6 +112,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
    * @covers ::processDefinition
    */
   public function testGetDefinition() {
+    $theme_a_path = vfsStream::url('root/themes/theme_a');
     $layout_definition = $this->layoutPluginManager->getDefinition('theme_a_provided_layout');
     $this->assertSame('theme_a_provided_layout', $layout_definition->id());
     $this->assertSame('2 column layout', (string) $layout_definition->getLabel());
@@ -121,10 +122,10 @@ class LayoutPluginManagerTest extends UnitTestCase {
     $this->assertTrue($layout_definition->getCategory() instanceof TranslatableMarkup);
     $this->assertTrue($layout_definition->getDescription() instanceof TranslatableMarkup);
     $this->assertSame('twocol', $layout_definition->getTemplate());
-    $this->assertSame('themes/theme_a/templates', $layout_definition->getPath());
+    $this->assertSame("$theme_a_path/templates", $layout_definition->getPath());
     $this->assertSame('theme_a/twocol', $layout_definition->getLibrary());
     $this->assertSame('twocol', $layout_definition->getThemeHook());
-    $this->assertSame('themes/theme_a/templates', $layout_definition->getTemplatePath());
+    $this->assertSame("$theme_a_path/templates", $layout_definition->getTemplatePath());
     $this->assertSame('theme_a', $layout_definition->getProvider());
     $this->assertSame('right', $layout_definition->getDefaultRegion());
     $this->assertSame(LayoutDefault::class, $layout_definition->getClass());
@@ -141,6 +142,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
     $this->assertTrue($regions['left']['label'] instanceof TranslatableMarkup);
     $this->assertTrue($regions['right']['label'] instanceof TranslatableMarkup);
 
+    $module_a_path = vfsStream::url('root/modules/module_a');
     $layout_definition = $this->layoutPluginManager->getDefinition('module_a_provided_layout');
     $this->assertSame('module_a_provided_layout', $layout_definition->id());
     $this->assertSame('1 column layout', (string) $layout_definition->getLabel());
@@ -150,7 +152,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
     $this->assertTrue($layout_definition->getCategory() instanceof TranslatableMarkup);
     $this->assertTrue($layout_definition->getDescription() instanceof TranslatableMarkup);
     $this->assertSame(NULL, $layout_definition->getTemplate());
-    $this->assertSame('modules/module_a/layouts', $layout_definition->getPath());
+    $this->assertSame("$module_a_path/layouts", $layout_definition->getPath());
     $this->assertSame('module_a/onecol', $layout_definition->getLibrary());
     $this->assertSame('onecol', $layout_definition->getThemeHook());
     $this->assertSame(NULL, $layout_definition->getTemplatePath());
@@ -202,8 +204,7 @@ class LayoutPluginManagerTest extends UnitTestCase {
    */
   public function testProcessDefinition() {
     $this->moduleHandler->alter('layout', Argument::type('array'))->shouldNotBeCalled();
-    $this->expectException(InvalidPluginDefinitionException::class);
-    $this->expectExceptionMessage('The "module_a_derived_layout:array_based" layout definition must extend ' . LayoutDefinition::class);
+    $this->setExpectedException(InvalidPluginDefinitionException::class, 'The "module_a_derived_layout:array_based" layout definition must extend ' . LayoutDefinition::class);
     $module_a_provided_layout = <<<'EOS'
 module_a_derived_layout:
   deriver: \Drupal\Tests\Core\Layout\LayoutDeriver
@@ -224,6 +225,7 @@ EOS;
    */
   public function testGetThemeImplementations() {
     $core_path = '/core/lib/Drupal/Core';
+    $theme_a_path = vfsStream::url('root/themes/theme_a');
     $expected = [
       'layout' => [
         'render element' => 'content',
@@ -232,7 +234,7 @@ EOS;
         'render element' => 'content',
         'base hook' => 'layout',
         'template' => 'twocol',
-        'path' => 'themes/theme_a/templates',
+        'path' => "$theme_a_path/templates",
       ],
       'plugin_provided_layout' => [
         'render element' => 'content',

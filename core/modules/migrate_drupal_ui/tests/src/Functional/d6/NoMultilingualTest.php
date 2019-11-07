@@ -128,6 +128,7 @@ class NoMultilingualTest extends MigrateUpgradeExecuteTestBase {
       'forum',
       'imagecache',
       'imagefield',
+      'language',
       'link',
       'locale',
       'menu',
@@ -145,7 +146,8 @@ class NoMultilingualTest extends MigrateUpgradeExecuteTestBase {
       'user',
       'userreference',
       // Include modules that do not have an upgrade path and are enabled in the
-      // source database.
+      // source database, defined in the $noUpgradePath property
+      // in MigrateUpgradeForm.
       'date_api',
       'date_timezone',
       'event',

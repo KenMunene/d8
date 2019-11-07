@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Query\EntityCondition
  * @group jsonapi
+ * @group legacy
  *
  * @internal
  */
@@ -75,8 +76,7 @@ class EntityConditionTest extends UnitTestCase {
    */
   public function testValidation($input, $exception) {
     if ($exception) {
-      $this->expectException(get_class($exception));
-      $this->expectExceptionMessage($exception->getMessage());
+      $this->setExpectedException(get_class($exception), $exception->getMessage());
     }
     EntityCondition::createFromQueryParameter($input);
     $this->assertTrue(is_null($exception), 'No exception was expected.');

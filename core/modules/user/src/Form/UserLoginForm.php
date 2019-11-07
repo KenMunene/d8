@@ -6,7 +6,6 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Url;
 use Drupal\user\UserAuthInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
@@ -72,7 +71,7 @@ class UserLoginForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('flood'),
-      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity.manager')->getStorage('user'),
       $container->get('user.auth'),
       $container->get('renderer')
     );
@@ -222,11 +221,11 @@ class UserLoginForm extends FormBase {
 
       if ($flood_control_triggered = $form_state->get('flood_control_triggered')) {
         if ($flood_control_triggered == 'user') {
-          $form_state->setErrorByName('name', $this->formatPlural($flood_config->get('user_limit'), 'There has been more than one failed login attempt for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', 'There have been more than @count failed login attempts for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', [':url' => Url::fromRoute('user.pass')->toString()]));
+          $form_state->setErrorByName('name', $this->formatPlural($flood_config->get('user_limit'), 'There has been more than one failed login attempt for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', 'There have been more than @count failed login attempts for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', [':url' => $this->url('user.pass')]));
         }
         else {
           // We did not find a uid, so the limit is IP-based.
-          $form_state->setErrorByName('name', $this->t('Too many failed login attempts from your IP address. This IP address is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', [':url' => Url::fromRoute('user.pass')->toString()]));
+          $form_state->setErrorByName('name', $this->t('Too many failed login attempts from your IP address. This IP address is temporarily blocked. Try again later or <a href=":url">request a new password</a>.', [':url' => $this->url('user.pass')]));
         }
       }
       else {
@@ -236,7 +235,7 @@ class UserLoginForm extends FormBase {
         // handlers that ran earlier than this one.
         $user_input = $form_state->getUserInput();
         $query = isset($user_input['name']) ? ['name' => $user_input['name']] : [];
-        $form_state->setErrorByName('name', $this->t('Unrecognized username or password. <a href=":password">Forgot your password?</a>', [':password' => Url::fromRoute('user.pass', [], ['query' => $query])->toString()]));
+        $form_state->setErrorByName('name', $this->t('Unrecognized username or password. <a href=":password">Forgot your password?</a>', [':password' => $this->url('user.pass', [], ['query' => $query])]));
         $accounts = $this->userStorage->loadByProperties(['name' => $form_state->getValue('name')]);
         if (!empty($accounts)) {
           $this->logger('user')->notice('Login attempt failed for %user.', ['%user' => $form_state->getValue('name')]);

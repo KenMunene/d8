@@ -69,7 +69,7 @@ function user_schema() {
  * Implements hook_install().
  */
 function user_install() {
-  $storage = \Drupal::entityTypeManager()->getStorage('user');
+  $storage = \Drupal::entityManager()->getStorage('user');
   // Insert a row for the anonymous user.
   $storage
     ->create([

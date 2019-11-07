@@ -32,7 +32,7 @@ class PageTest extends UnitTestCase {
    * @covers ::buildBasicRenderable
    */
   public function testBuildBasicRenderableWithMissingRoute() {
-    $this->expectException(\BadFunctionCallException::class);
+    $this->setExpectedException(\BadFunctionCallException::class);
     Page::buildBasicRenderable('test_view', 'page_1', []);
   }
 

@@ -42,7 +42,7 @@ class DateTimePlainFormatter extends DateTimeFormatterBase {
    */
   protected function formatDate($date) {
     $format = $this->getFieldSetting('datetime_type') == DateTimeItem::DATETIME_TYPE_DATE ? DateTimeItemInterface::DATE_STORAGE_FORMAT : DateTimeItemInterface::DATETIME_STORAGE_FORMAT;
-    $timezone = $this->getSetting('timezone_override') ?: $date->getTimezone()->getName();
+    $timezone = $this->getSetting('timezone_override');
     return $this->dateFormatter->format($date->getTimestamp(), 'custom', $format, $timezone != '' ? $timezone : NULL);
   }
 

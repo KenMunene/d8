@@ -32,8 +32,8 @@ class AutoIncrementingTestItem extends IntegerItem {
    *   The incremented field value.
    */
   private static function getIncrementedFieldValue() {
-    static $cache = 0;
-    return ++$cache;
+    $current_value = &drupal_static(__METHOD__, 0);
+    return ++$current_value;
   }
 
 }

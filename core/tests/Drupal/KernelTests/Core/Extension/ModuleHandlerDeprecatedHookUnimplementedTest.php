@@ -17,7 +17,6 @@ class ModuleHandlerDeprecatedHookUnimplementedTest extends KernelTestBase {
    * @covers ::alterDeprecated
    * @covers ::invokeAllDeprecated
    * @covers ::invokeDeprecated
-   * @doesNotPerformAssertions
    */
   public function testUnimplementedHooks() {
     $unimplemented_hook_name = 'unimplemented_hook_name';

@@ -18,9 +18,7 @@ abstract class NormalizerDenormalizeExceptionsUnitTestBase extends UnitTestCase 
    * @return array Test data.
    */
   public function providerNormalizerDenormalizeExceptions() {
-    $mock = $this->getMockBuilder('\Drupal\Core\Field\Plugin\DataType\FieldItem')
-      ->setMethods(['getParent'])
-      ->getMock();
+    $mock = $this->getMock('\Drupal\Core\Field\Plugin\DataType\FieldItem', ['getParent']);
     $mock->expects($this->any())
       ->method('getParent')
       ->will($this->returnValue(NULL));

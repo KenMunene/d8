@@ -60,7 +60,7 @@ class GarbageCollectionTest extends KernelTestBase {
     system_cron();
 
     // Query the database and confirm that the stale records were deleted.
-    $result = $connection->query(
+    $result = db_query(
       'SELECT name, value FROM {key_value_expire} WHERE collection = :collection',
       [
         ':collection' => $collection,

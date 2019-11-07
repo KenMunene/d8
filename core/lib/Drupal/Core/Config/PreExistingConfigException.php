@@ -53,7 +53,7 @@ class PreExistingConfigException extends ConfigException {
    *   A list of configuration objects that already exist in active
    *   configuration, keyed by config collection.
    *
-   * @return $this
+   * @return \Drupal\Core\Config\PreExistingConfigException
    */
   public static function create($extension, array $config_objects) {
     $message = new FormattableMarkup('Configuration objects (@config_names) provided by @extension already exist in active configuration',

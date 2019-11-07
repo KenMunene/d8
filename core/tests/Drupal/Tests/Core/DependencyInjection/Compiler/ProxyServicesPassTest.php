@@ -70,7 +70,7 @@ class ProxyServicesPassTest extends UnitTestCase {
     $container->register('alias_whitelist', 'Drupal\Core\Path\AliasWhitelist')
       ->setLazy(TRUE);
 
-    $this->expectException(InvalidArgumentException::class);
+    $this->setExpectedException(InvalidArgumentException::class);
     $this->proxyServicesPass->process($container);
   }
 

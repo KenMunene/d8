@@ -81,7 +81,7 @@ abstract class ViewsBlockBase extends BlockBase implements ContainerFactoryPlugi
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('views.executable'),
-      $container->get('entity_type.manager')->getStorage('view'),
+      $container->get('entity.manager')->getStorage('view'),
       $container->get('current_user')
     );
   }
@@ -110,12 +110,7 @@ abstract class ViewsBlockBase extends BlockBase implements ContainerFactoryPlugi
    * {@inheritdoc}
    */
   public function getPreviewFallbackString() {
-    if (!empty($this->pluginDefinition["admin_label"])) {
-      return $this->t('"@view" views block', ['@view' => $this->pluginDefinition["admin_label"]]);
-    }
-    else {
-      return $this->t('"@view" views block', ['@view' => $this->view->storage->label() . '::' . $this->displayID]);
-    }
+    return $this->t('"@view" views block', ['@view' => $this->view->storage->label()]);
   }
 
   /**

@@ -19,6 +19,13 @@ class EntityUpdateAddRevisionDefaultTest extends UpdatePathTestBase {
   use DbUpdatesTrait;
 
   /**
+   * The entity manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * The state service.
    *
    * @var \Drupal\Core\State\StateInterface
@@ -32,6 +39,7 @@ class EntityUpdateAddRevisionDefaultTest extends UpdatePathTestBase {
     parent::setUp();
 
     // Do not use this property after calling ::runUpdates().
+    $this->entityManager = \Drupal::entityManager();
     $this->state = \Drupal::state();
   }
 

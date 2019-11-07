@@ -14,27 +14,6 @@ use Drupal\migrate\Plugin\RequirementsInterface;
 trait MigrationConfigurationTrait {
 
   /**
-   * The config factory service.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * The migration plugin manager service.
-   *
-   * @var \Drupal\migrate\Plugin\MigrationPluginManagerInterface
-   */
-  protected $migrationPluginManager;
-
-  /**
-   * The state service.
-   *
-   * @var \Drupal\Core\State\StateInterface
-   */
-  protected $state;
-
-  /**
    * The follow-up migration tags.
    *
    * @var string[]
@@ -103,9 +82,8 @@ trait MigrationConfigurationTrait {
     $database_state['key'] = 'upgrade';
     $database_state['database'] = $database;
     $database_state_key = 'migrate_drupal_' . $drupal_version;
-    $state = $this->getState();
-    $state->set($database_state_key, $database_state);
-    $state->set('migrate.fallback_state_key', $database_state_key);
+    \Drupal::state()->set($database_state_key, $database_state);
+    \Drupal::state()->set('migrate.fallback_state_key', $database_state_key);
   }
 
   /**
@@ -121,8 +99,9 @@ trait MigrationConfigurationTrait {
    */
   protected function getMigrations($database_state_key, $drupal_version) {
     $version_tag = 'Drupal ' . $drupal_version;
+    $plugin_manager = \Drupal::service('plugin.manager.migration');
     /** @var \Drupal\migrate\Plugin\Migration[] $all_migrations */
-    $all_migrations = $this->getMigrationPluginManager()->createInstancesByTag($version_tag);
+    $all_migrations = $plugin_manager->createInstancesByTag($version_tag);
     $migrations = [];
     foreach ($all_migrations as $migration) {
       // Skip migrations tagged with any of the follow-up migration tags. They
@@ -168,7 +147,7 @@ trait MigrationConfigurationTrait {
    */
   protected function getFollowUpMigrationTags() {
     if ($this->followUpMigrationTags === NULL) {
-      $this->followUpMigrationTags = $this->getConfigFactory()
+      $this->followUpMigrationTags = \Drupal::configFactory()
         ->get('migrate_drupal.settings')
         ->get('follow_up_migration_tags') ?: [];
     }
@@ -229,48 +208,6 @@ trait MigrationConfigurationTrait {
     }
 
     return $version_string ? substr($version_string, 0, 1) : FALSE;
-  }
-
-  /**
-   * Gets the config factory service.
-   *
-   * @return \Drupal\Core\Config\ConfigFactoryInterface
-   *   The config factory service.
-   */
-  protected function getConfigFactory() {
-    if (!$this->configFactory) {
-      $this->configFactory = \Drupal::service('config.factory');
-    }
-
-    return $this->configFactory;
-  }
-
-  /**
-   * Gets the migration plugin manager service.
-   *
-   * @return \Drupal\migrate\Plugin\MigrationPluginManagerInterface
-   *   The migration plugin manager service.
-   */
-  protected function getMigrationPluginManager() {
-    if (!$this->migrationPluginManager) {
-      $this->migrationPluginManager = \Drupal::service('plugin.manager.migration');
-    }
-
-    return $this->migrationPluginManager;
-  }
-
-  /**
-   * Gets the state service.
-   *
-   * @return \Drupal\Core\State\StateInterface
-   *   The state service.
-   */
-  protected function getState() {
-    if (!$this->state) {
-      $this->state = \Drupal::service('state');
-    }
-
-    return $this->state;
   }
 
 }

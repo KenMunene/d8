@@ -2,12 +2,10 @@
 
 namespace Drupal\migrate_drupal_ui\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
-use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,6 +14,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @internal
  */
 class IncrementalForm extends MigrateUpgradeFormBase {
+
+  /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
 
   /**
    * The date formatter service.
@@ -32,14 +37,11 @@ class IncrementalForm extends MigrateUpgradeFormBase {
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempstore_private
-   *   The private tempstore factory service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
-   * @param \Drupal\migrate\Plugin\MigrationPluginManagerInterface $migration_plugin_manager
-   *   The migration plugin manager service.
+   *   The private temp store factory.
    */
-  public function __construct(StateInterface $state, DateFormatterInterface $date_formatter, PrivateTempStoreFactory $tempstore_private, ConfigFactoryInterface $config_factory, MigrationPluginManagerInterface $migration_plugin_manager) {
-    parent::__construct($config_factory, $migration_plugin_manager, $state, $tempstore_private);
+  public function __construct(StateInterface $state, DateFormatterInterface $date_formatter, PrivateTempStoreFactory $tempstore_private) {
+    parent::__construct($tempstore_private);
+    $this->state = $state;
     $this->dateFormatter = $date_formatter;
   }
 
@@ -50,9 +52,7 @@ class IncrementalForm extends MigrateUpgradeFormBase {
     return new static(
       $container->get('state'),
       $container->get('date.formatter'),
-      $container->get('tempstore.private'),
-      $container->get('config.factory'),
-      $container->get('plugin.manager.migration')
+      $container->get('tempstore.private')
     );
   }
 

@@ -13,8 +13,6 @@ use Drupal\simpletest\WebTestBase;
  * properly are skipped.
  *
  * @group WebTestBase
- * @group legacy
- *
  * @see \Drupal\simpletest\WebTestBase
  */
 class BrokenSetUpTest extends WebTestBase {

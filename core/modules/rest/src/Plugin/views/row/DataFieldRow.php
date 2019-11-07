@@ -141,13 +141,9 @@ class DataFieldRow extends RowPluginBase {
       if (!empty($this->rawOutputOptions[$id])) {
         $value = $field->getValue($row);
       }
-      // Otherwise, get rendered field.
+      // Otherwise, pass this through the field advancedRender() method.
       else {
-        // Advanced render for token replacement.
-        $markup = $field->advancedRender($row);
-        // Post render to support uncacheable fields.
-        $field->postRender($row, $markup);
-        $value = $field->last_render;
+        $value = $field->advancedRender($row);
       }
 
       // Omit excluded fields from the rendered output.

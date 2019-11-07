@@ -3,7 +3,7 @@
 namespace Drupal\views\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityMalformedException;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ResultRow;
@@ -26,11 +26,11 @@ class EntityLabel extends FieldPluginBase {
   protected $loadedReferencers = [];
 
   /**
-   * EntityTypeManager class.
+   * EntityManager class.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
    * Constructs a EntityLabel object.
@@ -41,13 +41,13 @@ class EntityLabel extends FieldPluginBase {
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $manager
+   *   EntityManager that is stored internally and used to load nodes.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entity_type_manager;
+    $this->entityManager = $manager;
   }
 
   /**
@@ -58,7 +58,7 @@ class EntityLabel extends FieldPluginBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager')
+      $container->get('entity.manager')
     );
   }
 
@@ -136,7 +136,7 @@ class EntityLabel extends FieldPluginBase {
     }
 
     foreach ($entity_ids_per_type as $type => $ids) {
-      $this->loadedReferencers[$type] = $this->entityTypeManager->getStorage($type)->loadMultiple($ids);
+      $this->loadedReferencers[$type] = $this->entityManager->getStorage($type)->loadMultiple($ids);
     }
   }
 

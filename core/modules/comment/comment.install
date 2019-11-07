@@ -43,9 +43,10 @@ function comment_requirements($phase) {
  */
 function comment_uninstall() {
   // Remove the comment fields.
-  $storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
-  $fields = $storage->loadByProperties(['type' => 'comment']);
-  $storage->delete($fields);
+  $fields = entity_load_multiple_by_properties('field_storage_config', ['type' => 'comment']);
+  foreach ($fields as $field) {
+    $field->delete();
+  }
 
   // Remove state setting.
   \Drupal::state()->delete('comment.node_comment_statistics_scale');

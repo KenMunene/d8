@@ -57,8 +57,7 @@ class QueryBatchTest extends KernelTestBase {
    * Tests a negative batch size throws an exception.
    */
   public function testBatchSizeNegative() {
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('batch_size must be greater than or equal to zero');
+    $this->setExpectedException(MigrateException::class, 'batch_size must be greater than or equal to zero');
     $plugin = $this->getPlugin(['batch_size' => -1]);
     $plugin->next();
   }
@@ -67,8 +66,7 @@ class QueryBatchTest extends KernelTestBase {
    * Tests a non integer batch size throws an exception.
    */
   public function testBatchSizeNonInteger() {
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('batch_size must be greater than or equal to zero');
+    $this->setExpectedException(MigrateException::class, 'batch_size must be greater than or equal to zero');
     $plugin = $this->getPlugin(['batch_size' => '1']);
     $plugin->next();
   }

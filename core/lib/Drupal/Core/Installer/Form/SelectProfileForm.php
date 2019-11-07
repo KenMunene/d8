@@ -5,7 +5,6 @@ namespace Drupal\Core\Installer\Form;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Site\Settings;
 
 /**
  * Provides the profile selection form.
@@ -32,6 +31,7 @@ class SelectProfileForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $install_state = NULL) {
+    global $config_directories;
     $form['#title'] = $this->t('Select an installation profile');
 
     $profiles = [];
@@ -88,9 +88,8 @@ class SelectProfileForm extends FormBase {
       }
     }
 
-    $config_sync_directory = Settings::get('config_sync_directory');
-    if (!empty($config_sync_directory)) {
-      $sync = new FileStorage($config_sync_directory);
+    if (!empty($config_directories[CONFIG_SYNC_DIRECTORY])) {
+      $sync = new FileStorage($config_directories[CONFIG_SYNC_DIRECTORY]);
       $extensions = $sync->read('core.extension');
       $site = $sync->read('system.site');
       if (isset($site['name']) && isset($extensions['profile']) && in_array($extensions['profile'], array_keys($names), TRUE)) {
@@ -107,7 +106,7 @@ class SelectProfileForm extends FormBase {
             ],
             'info' => [
               '#type' => 'item',
-              '#markup' => $this->t('The configuration from the directory %sync_directory will be used.', ['%sync_directory' => $config_sync_directory]),
+              '#markup' => $this->t('The configuration from the directory %sync_directory will be used.', ['%sync_directory' => $config_directories[CONFIG_SYNC_DIRECTORY]]),
               '#wrapper_attributes' => [
                 'class' => ['messages', 'messages--status'],
               ],
@@ -135,10 +134,10 @@ class SelectProfileForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    global $install_state;
+    global $install_state, $config_directories;
     $profile = $form_state->getValue('profile');
     if ($profile === static::CONFIG_INSTALL_PROFILE_KEY) {
-      $sync = new FileStorage(Settings::get('config_sync_directory'));
+      $sync = new FileStorage($config_directories[CONFIG_SYNC_DIRECTORY]);
       $profile = $sync->read('core.extension')['profile'];
       $install_state['parameters']['existing_config'] = TRUE;
     }

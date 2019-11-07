@@ -72,11 +72,9 @@ function hook_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_
  * @see \Drupal\help\Annotation\HelpSection
  * @see \Drupal\help\HelpSectionManager
  */
-function hook_help_section_info_alter(array &$info) {
+function hook_help_section_info_alter(&$info) {
   // Alter the header for the module overviews section.
-  $info['hook_help']['title'] = t('Overviews of modules');
-  // Move the module overviews section to the end.
-  $info['hook_help']['weight'] = 500;
+  $info['hook_help']['header'] = t('Overviews of modules');
 }
 
 /**

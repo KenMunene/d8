@@ -57,7 +57,7 @@ class ImageTest extends UnitTestCase {
    * @param array $stubs
    *   (optional) Array containing methods to be replaced with stubs.
    *
-   * @return \PHPUnit\Framework\MockObject\MockObject
+   * @return \PHPUnit_Framework_MockObject_MockObject
    */
   protected function getToolkitMock(array $stubs = []) {
     $mock_builder = $this->getMockBuilder('Drupal\system\Plugin\ImageToolkit\GDToolkit');
@@ -76,11 +76,11 @@ class ImageTest extends UnitTestCase {
    * @param \Drupal\Core\Image\ImageToolkitInterface $toolkit
    *   The image toolkit object.
    *
-   * @return \PHPUnit\Framework\MockObject\MockObject
+   * @return \PHPUnit_Framework_MockObject_MockObject
    */
   protected function getToolkitOperationMock($class_name, ImageToolkitInterface $toolkit) {
     $mock_builder = $this->getMockBuilder('Drupal\system\Plugin\ImageToolkit\Operation\gd\\' . $class_name);
-    $logger = $this->createMock('Psr\Log\LoggerInterface');
+    $logger = $this->getMock('Psr\Log\LoggerInterface');
     return $mock_builder
       ->setMethods(['execute'])
       ->setConstructorArgs([[], '', [], $toolkit, $logger])
@@ -210,10 +210,7 @@ class ImageTest extends UnitTestCase {
       ->method('save')
       ->will($this->returnValue(TRUE));
 
-    $image = $this->getMockBuilder('Drupal\Core\Image\Image')
-      ->setMethods(['chmod'])
-      ->setConstructorArgs([$toolkit, $this->image->getSource()])
-      ->getMock();
+    $image = $this->getMock('Drupal\Core\Image\Image', ['chmod'], [$toolkit, $this->image->getSource()]);
 
     $file_system = $this->prophesize(FileSystemInterface::class);
     $file_system->chmod($this->image->getSource())
@@ -255,10 +252,7 @@ class ImageTest extends UnitTestCase {
       ->method('save')
       ->will($this->returnValue(TRUE));
 
-    $image = $this->getMockBuilder('Drupal\Core\Image\Image')
-      ->setMethods(['chmod'])
-      ->setConstructorArgs([$toolkit, $this->image->getSource()])
-      ->getMock();
+    $image = $this->getMock('Drupal\Core\Image\Image', ['chmod'], [$toolkit, $this->image->getSource()]);
 
     $file_system = $this->prophesize(FileSystemInterface::class);
     $file_system->chmod($this->image->getSource())

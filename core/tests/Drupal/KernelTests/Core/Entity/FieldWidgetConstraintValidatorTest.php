@@ -38,14 +38,13 @@ class FieldWidgetConstraintValidatorTest extends KernelTestBase {
     $entity = $this->container->get('entity_type.manager')
       ->getStorage($entity_type)
       ->create(['id' => 1, 'revision_id' => 1]);
-    $display = \Drupal::service('entity_display.repository')
-      ->getFormDisplay($entity_type, $entity_type);
+    $display = entity_get_form_display($entity_type, $entity_type, 'default');
     $form = [];
     $form_state = new FormState();
     $display->buildForm($entity, $form, $form_state);
 
     // Pretend the form has been built.
-    $form_state->setFormObject(\Drupal::entityTypeManager()->getFormObject($entity_type, 'default'));
+    $form_state->setFormObject(\Drupal::entityManager()->getFormObject($entity_type, 'default'));
     \Drupal::formBuilder()->prepareForm('field_test_entity_form', $form, $form_state);
     \Drupal::formBuilder()->processForm('field_test_entity_form', $form, $form_state);
 
@@ -72,8 +71,7 @@ class FieldWidgetConstraintValidatorTest extends KernelTestBase {
    */
   protected function getErrorsForEntity(EntityInterface $entity, $hidden_fields = []) {
     $entity_type_id = 'entity_test_composite_constraint';
-    $display = \Drupal::service('entity_display.repository')
-      ->getFormDisplay($entity_type_id, $entity_type_id);
+    $display = entity_get_form_display($entity_type_id, $entity_type_id, 'default');
 
     foreach ($hidden_fields as $hidden_field) {
       $display->removeComponent($hidden_field);
@@ -83,7 +81,7 @@ class FieldWidgetConstraintValidatorTest extends KernelTestBase {
     $form_state = new FormState();
     $display->buildForm($entity, $form, $form_state);
 
-    $form_state->setFormObject(\Drupal::entityTypeManager()->getFormObject($entity_type_id, 'default'));
+    $form_state->setFormObject(\Drupal::entityManager()->getFormObject($entity_type_id, 'default'));
     \Drupal::formBuilder()->prepareForm('field_test_entity_form', $form, $form_state);
     \Drupal::formBuilder()->processForm('field_test_entity_form', $form, $form_state);
 

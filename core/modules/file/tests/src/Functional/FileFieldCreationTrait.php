@@ -68,14 +68,14 @@ trait FileFieldCreationTrait {
     ];
     FieldConfig::create($field)->save();
 
-    \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle)
+    entity_get_form_display($entity_type, $bundle, 'default')
       ->setComponent($name, [
         'type' => 'file_generic',
         'settings' => $widget_settings,
       ])
       ->save();
     // Assign display settings.
-    \Drupal::service('entity_display.repository')->getViewDisplay($entity_type, $bundle)
+    entity_get_display($entity_type, $bundle, 'default')
       ->setComponent($name, [
         'label' => 'hidden',
         'type' => 'file_default',

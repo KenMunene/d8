@@ -6,7 +6,6 @@ use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorableConfigBase;
-use Drupal\Core\Installer\InstallerKernel;
 use Drupal\language\Config\LanguageConfigOverrideCrudEvent;
 use Drupal\language\Config\LanguageConfigOverrideEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -79,7 +78,7 @@ class LocaleConfigSubscriber implements EventSubscriberInterface {
   public function onConfigSave(ConfigCrudEvent $event) {
     // Only attempt to feed back configuration translation changes to locale if
     // the update itself was not initiated by locale data changes.
-    if (!InstallerKernel::installationAttempted() && !$this->localeConfigManager->isUpdatingTranslationsFromLocale()) {
+    if (!drupal_installation_attempted() && !$this->localeConfigManager->isUpdatingTranslationsFromLocale()) {
       $config = $event->getConfig();
       $langcode = $config->get('langcode') ?: 'en';
       $this->updateLocaleStorage($config, $langcode);
@@ -95,7 +94,7 @@ class LocaleConfigSubscriber implements EventSubscriberInterface {
   public function onOverrideChange(LanguageConfigOverrideCrudEvent $event) {
     // Only attempt to feed back configuration override changes to locale if
     // the update itself was not initiated by locale data changes.
-    if (!InstallerKernel::installationAttempted() && !$this->localeConfigManager->isUpdatingTranslationsFromLocale()) {
+    if (!drupal_installation_attempted() && !$this->localeConfigManager->isUpdatingTranslationsFromLocale()) {
       $translation_config = $event->getLanguageConfigOverride();
       $langcode = $translation_config->getLangcode();
       $reference_config = $this->configFactory->getEditable($translation_config->getName())->get();

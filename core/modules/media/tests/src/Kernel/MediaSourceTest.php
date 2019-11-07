@@ -530,12 +530,12 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->createMediaTypeViaForm($id, $field_name);
 
     // Source field not in displays.
-    $display = \Drupal::service('entity_display.repository')->getViewDisplay('media', $id);
+    $display = entity_get_display('media', $id, 'default');
     $components = $display->getComponents();
     $this->assertArrayHasKey($field_name, $components);
     $this->assertSame('entity_reference_entity_id', $components[$field_name]['type']);
 
-    $display = \Drupal::service('entity_display.repository')->getFormDisplay('media', $id);
+    $display = entity_get_form_display('media', $id, 'default');
     $components = $display->getComponents();
     $this->assertArrayHasKey($field_name, $components);
     $this->assertSame('entity_reference_autocomplete_tags', $components[$field_name]['type']);
@@ -551,10 +551,10 @@ class MediaSourceTest extends MediaKernelTestBase {
     $this->createMediaTypeViaForm($id, $field_name);
 
     // Source field not in displays.
-    $display = \Drupal::service('entity_display.repository')->getViewDisplay('media', $id);
+    $display = entity_get_display('media', $id, 'default');
     $this->assertArrayNotHasKey($field_name, $display->getComponents());
 
-    $display = \Drupal::service('entity_display.repository')->getFormDisplay('media', $id);
+    $display = entity_get_form_display('media', $id, 'default');
     $this->assertArrayNotHasKey($field_name, $display->getComponents());
   }
 

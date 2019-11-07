@@ -18,7 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Creates a form to create media entities from oEmbed URLs.
  *
  * @internal
- *   Form classes are internal.
+ *   Media Library is an experimental module and its internal code may be
+ *   subject to change in minor releases. External code should not instantiate
+ *   or extend this class.
  */
 class OEmbedForm extends AddFormBase {
 
@@ -72,13 +74,6 @@ class OEmbedForm extends AddFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
-    return $this->getBaseFormId() . '_oembed';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getMediaType(FormStateInterface $form_state) {
     if ($this->mediaType) {
       return $this->mediaType;
@@ -95,12 +90,17 @@ class OEmbedForm extends AddFormBase {
    * {@inheritdoc}
    */
   protected function buildInputElement(array $form, FormStateInterface $form_state) {
+    $form['#attributes']['class'][] = 'media-library-add-form--oembed';
+
     $media_type = $this->getMediaType($form_state);
     $providers = $media_type->getSource()->getProviders();
 
     // Add a container to group the input elements for styling purposes.
     $form['container'] = [
       '#type' => 'container',
+      '#attributes' => [
+        'class' => ['media-library-add-form__input-wrapper'],
+      ],
     ];
 
     $form['container']['url'] = [
@@ -114,6 +114,7 @@ class OEmbedForm extends AddFormBase {
       '#required' => TRUE,
       '#attributes' => [
         'placeholder' => 'https://',
+        'class' => ['media-library-add-form-oembed-url'],
       ],
     ];
 
@@ -137,6 +138,9 @@ class OEmbedForm extends AddFormBase {
             FormBuilderInterface::AJAX_FORM_REQUEST => TRUE,
           ],
         ],
+      ],
+      '#attributes' => [
+        'class' => ['media-library-add-form-oembed-submit'],
       ],
     ];
     return $form;

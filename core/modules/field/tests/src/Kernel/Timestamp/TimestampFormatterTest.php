@@ -70,8 +70,7 @@ class TimestampFormatterTest extends KernelTestBase {
     ]);
     $instance->save();
 
-    $this->display = \Drupal::service('entity_display.repository')
-      ->getViewDisplay($this->entityType, $this->bundle)
+    $this->display = entity_get_display($this->entityType, $this->bundle, 'default')
       ->setComponent($this->fieldName, [
         'type' => 'boolean',
         'settings' => [],
@@ -103,7 +102,7 @@ class TimestampFormatterTest extends KernelTestBase {
     $data = [];
 
     // Test standard formats.
-    $date_formats = array_keys(\Drupal::entityTypeManager()->getStorage('date_format')->loadMultiple());
+    $date_formats = array_keys(\Drupal::entityManager()->getStorage('date_format')->loadMultiple());
 
     foreach ($date_formats as $date_format) {
       $data[] = ['date_format' => $date_format, 'custom_date_format' => '', 'timezone' => ''];

@@ -33,7 +33,7 @@ class DefaultHtmlRouteProvider implements EntityRouteProviderInterface, EntityHa
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityTypeManager;
 

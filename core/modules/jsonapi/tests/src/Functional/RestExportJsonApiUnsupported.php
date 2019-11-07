@@ -9,6 +9,7 @@ use Drupal\views\Tests\ViewTestData;
  * Ensures that the 'api_json' format is not supported by the REST module.
  *
  * @group jsonapi
+ * @group legacy
  *
  * @internal
  */

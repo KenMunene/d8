@@ -27,8 +27,6 @@ class StateValuesCleanAdvancedTest extends BrowserTestBase {
 
   /**
    * An image file path for uploading.
-   *
-   * @var string|bool
    */
   protected $image;
 

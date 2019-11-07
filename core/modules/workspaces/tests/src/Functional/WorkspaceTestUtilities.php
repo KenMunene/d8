@@ -49,17 +49,14 @@ trait WorkspaceTestUtilities {
    *   The label of the workspace to create.
    * @param string $id
    *   The ID of the workspace to create.
-   * @param string $parent
-   *   (optional) The ID of the parent workspace. Defaults to '_none'.
    *
    * @return \Drupal\workspaces\WorkspaceInterface
    *   The workspace that was just created.
    */
-  protected function createWorkspaceThroughUi($label, $id, $parent = '_none') {
+  protected function createWorkspaceThroughUi($label, $id) {
     $this->drupalPostForm('/admin/config/workflow/workspaces/add', [
       'id' => $id,
       'label' => $label,
-      'parent' => $parent,
     ], 'Save');
 
     $this->getSession()->getPage()->hasContent("$label ($id)");
@@ -102,19 +99,6 @@ trait WorkspaceTestUtilities {
     $session->buttonExists('Activate');
     $this->drupalPostForm(NULL, ['workspace_id' => $workspace->id()], 'Activate');
     $session->pageTextContains($workspace->label() . ' is now the active workspace.');
-  }
-
-  /**
-   * Switches to the live version of the site for subsequent requests.
-   *
-   * This assumes that the switcher block has already been setup by calling
-   * setupWorkspaceSwitcherBlock().
-   */
-  protected function switchToLive() {
-    /** @var \Drupal\Tests\WebAssert $session */
-    $session = $this->assertSession();
-    $this->drupalPostForm(NULL, [], 'Switch to Live');
-    $session->pageTextContains('You are now viewing the live version of the site.');
   }
 
   /**

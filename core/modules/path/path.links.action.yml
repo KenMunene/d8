@@ -1,5 +1,5 @@
-entity.path_alias.add_form:
-  route_name: entity.path_alias.add_form
+path.admin_add:
+  route_name: path.admin_add
   title: 'Add alias'
   appears_on:
-    - entity.path_alias.collection
+    - path.admin_overview

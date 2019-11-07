@@ -2,12 +2,12 @@
 
 namespace Drupal\system\Form;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\PreExistingConfigException;
 use Drupal\Core\Config\UnmetDependenciesException;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\InfoParserException;
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\FormBase;
@@ -67,13 +67,6 @@ class ModulesListForm extends FormBase {
   protected $permissionHandler;
 
   /**
-   * The module extension list.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $moduleExtensionList;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
@@ -83,8 +76,7 @@ class ModulesListForm extends FormBase {
       $container->get('keyvalue.expirable')->get('module_list'),
       $container->get('access_manager'),
       $container->get('current_user'),
-      $container->get('user.permissions'),
-      $container->get('extension.list.module')
+      $container->get('user.permissions')
     );
   }
 
@@ -103,11 +95,8 @@ class ModulesListForm extends FormBase {
    *   The current user.
    * @param \Drupal\user\PermissionHandlerInterface $permission_handler
    *   The permission handler.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
-   *   The module extension list.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, KeyValueStoreExpirableInterface $key_value_expirable, AccessManagerInterface $access_manager, AccountInterface $current_user, PermissionHandlerInterface $permission_handler, ModuleExtensionList $extension_list_module) {
-    $this->moduleExtensionList = $extension_list_module;
+  public function __construct(ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, KeyValueStoreExpirableInterface $key_value_expirable, AccessManagerInterface $access_manager, AccountInterface $current_user, PermissionHandlerInterface $permission_handler) {
     $this->moduleHandler = $module_handler;
     $this->moduleInstaller = $module_installer;
     $this->keyValueExpirable = $key_value_expirable;
@@ -156,9 +145,7 @@ class ModulesListForm extends FormBase {
 
     // Sort all modules by their names.
     try {
-      // The module list needs to be reset so that it can re-scan and include
-      // any new modules that may have been added directly into the filesystem.
-      $modules = $this->moduleExtensionList->reset()->getList();
+      $modules = system_rebuild_module_data();
       uasort($modules, 'system_sort_modules_by_info_name');
     }
     catch (InfoParserException $e) {
@@ -327,7 +314,7 @@ class ModulesListForm extends FormBase {
     /** @var \Drupal\Core\Extension\Dependency $dependency_object */
     foreach ($module->requires as $dependency => $dependency_object) {
       if (!isset($modules[$dependency])) {
-        $row['#requires'][$dependency] = $this->t('@module (<span class="admin-missing">missing</span>)', ['@module' => $dependency]);
+        $row['#requires'][$dependency] = $this->t('@module (<span class="admin-missing">missing</span>)', ['@module' => Unicode::ucfirst($dependency)]);
         $row['enable']['#disabled'] = TRUE;
       }
       // Only display visible modules.
@@ -394,7 +381,7 @@ class ModulesListForm extends FormBase {
       'experimental' => [],
     ];
 
-    $data = $this->moduleExtensionList->getList();
+    $data = system_rebuild_module_data();
     foreach ($data as $name => $module) {
       // If the module is installed there is nothing to do.
       if ($this->moduleHandler->moduleExists($name)) {

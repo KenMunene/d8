@@ -37,8 +37,7 @@ class ArbitraryRebuildTest extends BrowserTestBase {
       'bundle' => 'user',
       'label' => 'Test a multiple valued field',
     ])->save();
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay('user', 'user', 'register')
+    entity_get_form_display('user', 'user', 'register')
       ->setComponent('test_multiple', [
         'type' => 'text_textfield',
         'weight' => 0,

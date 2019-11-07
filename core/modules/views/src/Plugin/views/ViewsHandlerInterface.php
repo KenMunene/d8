@@ -129,7 +129,7 @@ interface ViewsHandlerInterface extends ViewsPluginInterface {
    * @param bool $force_int
    *   Enforce a numeric check.
    *
-   * @return object
+   * @return \stdClass
    *   A stdClass object containing value and operator properties.
    */
   public static function breakString($str, $force_int = FALSE);

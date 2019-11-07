@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\search\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\Traits\Core\CronRunTrait;
@@ -110,7 +109,7 @@ class SearchNumbersTest extends BrowserTestBase {
       $this->drupalPostForm('search/node',
         ['keys' => $number],
         t('Search'));
-      $this->assertText($node->label(), new FormattableMarkup('%type: node title shown (search found the node) in search for number %number.', ['%type' => $type, '%number' => $number]));
+      $this->assertText($node->label(), format_string('%type: node title shown (search found the node) in search for number %number.', ['%type' => $type, '%number' => $number]));
     }
   }
 

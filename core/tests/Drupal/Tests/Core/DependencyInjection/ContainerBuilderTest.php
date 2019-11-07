@@ -40,8 +40,7 @@ class ContainerBuilderTest extends UnitTestCase {
   public function testSetException() {
     $container = new ContainerBuilder();
     $class = new BarClass();
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Service ID names must be lowercase: Bar');
+    $this->setExpectedException(\InvalidArgumentException::class, 'Service ID names must be lowercase: Bar');
     $container->set('Bar', $class);
   }
 
@@ -50,8 +49,7 @@ class ContainerBuilderTest extends UnitTestCase {
    */
   public function testSetParameterException() {
     $container = new ContainerBuilder();
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Parameter names must be lowercase: Buzz');
+    $this->setExpectedException(\InvalidArgumentException::class, 'Parameter names must be lowercase: Buzz');
     $container->setParameter('Buzz', 'buzz');
   }
 
@@ -60,8 +58,7 @@ class ContainerBuilderTest extends UnitTestCase {
    */
   public function testRegisterException() {
     $container = new ContainerBuilder();
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('Service ID names must be lowercase: Bar');
+    $this->setExpectedException(\InvalidArgumentException::class, 'Service ID names must be lowercase: Bar');
     $container->register('Bar');
   }
 
@@ -117,7 +114,7 @@ class ContainerBuilderTest extends UnitTestCase {
    */
   public function testSerialize() {
     $container = new ContainerBuilder();
-    $this->expectException(\AssertionError::class);
+    $this->setExpectedException(\AssertionError::class);
     serialize($container);
   }
 

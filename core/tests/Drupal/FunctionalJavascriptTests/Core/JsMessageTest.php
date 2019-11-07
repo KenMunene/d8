@@ -3,10 +3,10 @@
 namespace Drupal\FunctionalJavascriptTests\Core;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
-use Drupal\js_message_test\Controller\JSMessageTestController;
+use Drupal\system\Tests\JsMessageTestCases;
 
 /**
- * Tests core/drupal.message library.
+ * Tests core/drupal.messages library.
  *
  * @group Javascript
  */
@@ -38,9 +38,9 @@ class JsMessageTest extends WebDriverTestBase {
     $this->drupalGet('js_message_test_link');
 
     $current_messages = [];
-    foreach (JSMessageTestController::getMessagesSelectors() as $messagesSelector) {
+    foreach (JsMessageTestCases::getMessagesSelectors() as $messagesSelector) {
       $web_assert->elementExists('css', $messagesSelector);
-      foreach (JSMessageTestController::getTypes() as $type) {
+      foreach (JsMessageTestCases::getTypes() as $type) {
         $this->click('[id="add-' . $messagesSelector . '-' . $type . '"]');
         $selector = "$messagesSelector .messages.messages--$type";
         $msg_element = $web_assert->waitForElementVisible('css', $selector);
@@ -50,7 +50,7 @@ class JsMessageTest extends WebDriverTestBase {
         $this->assertCurrentMessages($current_messages, $messagesSelector);
       }
       // Remove messages 1 by 1 and confirm the messages are expected.
-      foreach (JSMessageTestController::getTypes() as $type) {
+      foreach (JsMessageTestCases::getTypes() as $type) {
         $this->click('[id="remove-' . $messagesSelector . '-' . $type . '"]');
         $selector = "$messagesSelector .messages.messages--$type";
         // The message for this selector should not be on the page.
@@ -59,9 +59,9 @@ class JsMessageTest extends WebDriverTestBase {
       }
     }
 
-    $messagesSelector = JSMessageTestController::getMessagesSelectors()[0];
+    $messagesSelector = JsMessageTestCases::getMessagesSelectors()[0];
     $current_messages = [];
-    $types = JSMessageTestController::getTypes();
+    $types = JsMessageTestCases::getTypes();
     $nb_messages = count($types) * 2;
     for ($i = 0; $i < $nb_messages; $i++) {
       $current_messages[] = "This is message number $i of the type, {$types[$i % count($types)]}. You be the the judge of its importance.";

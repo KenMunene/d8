@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\views\Kernel\Handler;
 
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 use Drupal\views\Views;
@@ -62,7 +61,7 @@ class FieldUrlTest extends ViewsKernelTestBase {
 
     $this->executeView($view);
 
-    $this->assertEqual(Link::fromTextAndUrl('John', Url::fromUri('base:John'))->toString(), $view->field['name']->advancedRender($view->result[0]));
+    $this->assertEqual(\Drupal::l('John', Url::fromUri('base:John'))->getGeneratedLink(), $view->field['name']->advancedRender($view->result[0]));
   }
 
 }

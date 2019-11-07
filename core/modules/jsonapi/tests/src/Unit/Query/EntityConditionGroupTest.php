@@ -8,6 +8,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Query\EntityConditionGroup
  * @group jsonapi
+ * @group legacy
  *
  * @internal
  */
@@ -32,7 +33,7 @@ class EntityConditionGroupTest extends UnitTestCase {
    * @covers ::__construct
    */
   public function testConstructException() {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->setExpectedException(\InvalidArgumentException::class);
     new EntityConditionGroup('NOT_ALLOWED', []);
   }
 

@@ -75,8 +75,7 @@ class ImageFormatterTest extends FieldKernelTestBase {
       ],
     ])->save();
 
-    $this->display = \Drupal::service('entity_display.repository')
-      ->getViewDisplay($this->entityType, $this->bundle)
+    $this->display = entity_get_display($this->entityType, $this->bundle, 'default')
       ->setComponent($this->fieldName, [
         'type' => 'image',
         'label' => 'hidden',

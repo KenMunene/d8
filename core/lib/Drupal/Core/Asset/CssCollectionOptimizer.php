@@ -196,9 +196,7 @@ class CssCollectionOptimizer implements AssetCollectionOptimizerInterface {
         $this->fileSystem->delete($uri);
       }
     };
-    if (is_dir('public://css')) {
-      $this->fileSystem->scanDirectory('public://css', '/.*/', ['callback' => $delete_stale]);
-    }
+    file_scan_directory('public://css', '/.*/', ['callback' => $delete_stale]);
   }
 
 }

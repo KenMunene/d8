@@ -123,10 +123,9 @@ class FinalExceptionSubscriber implements EventSubscriberInterface {
       }
     }
 
-    $content_type = $event->getRequest()->getRequestFormat() == 'html' ? 'text/html' : 'text/plain';
     $content = $this->t('The website encountered an unexpected error. Please try again later.');
     $content .= $message ? '</br></br>' . $message : '';
-    $response = new Response($content, 500, ['Content-Type' => $content_type]);
+    $response = new Response($content, 500, ['Content-Type' => 'text/plain']);
 
     if ($exception instanceof HttpExceptionInterface) {
       $response->setStatusCode($exception->getStatusCode());

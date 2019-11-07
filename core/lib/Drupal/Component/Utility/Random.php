@@ -164,7 +164,7 @@ class Random {
    * @param int $size
    *   The number of random keys to add to the object.
    *
-   * @return object
+   * @return \stdClass
    *   The generated object, with the specified number of random keys. Each key
    *   has a random string value.
    */

@@ -4,7 +4,7 @@
  *   configuration.
  */
 
-(function(Drupal, Backbone, $, Sortable) {
+(function(Drupal, Backbone, $) {
   Drupal.ckeditor.VisualView = Backbone.View.extend(
     /** @lends Drupal.ckeditor.VisualView# */ {
       events: {
@@ -150,23 +150,37 @@
       },
 
       /**
-       * Handles Sortable stop sort of a button group.
+       * Handles jQuery Sortable stop sort of a button group.
        *
-       * @param {CustomEvent} event
+       * @param {jQuery.Event} event
        *   The event triggered on the group drag.
+       * @param {object} ui
+       *   A jQuery.ui.sortable argument that contains information about the
+       *   elements involved in the sort action.
        */
-      endGroupDrag(event) {
-        const $item = $(event.item);
-        Drupal.ckeditor.registerGroupMove(this, $item);
+      endGroupDrag(event, ui) {
+        const view = this;
+        Drupal.ckeditor.registerGroupMove(this, ui.item, success => {
+          if (!success) {
+            // Cancel any sorting in the configuration area.
+            view.$el
+              .find('.ckeditor-toolbar-configuration')
+              .find('.ui-sortable')
+              .sortable('cancel');
+          }
+        });
       },
 
       /**
-       * Handles Sortable start sort of a button.
+       * Handles jQuery Sortable start sort of a button.
        *
-       * @param {CustomEvent} event
-       *   The event triggered on the button drag.
+       * @param {jQuery.Event} event
+       *   The event triggered on the group drag.
+       * @param {object} ui
+       *   A jQuery.ui.sortable argument that contains information about the
+       *   elements involved in the sort action.
        */
-      startButtonDrag(event) {
+      startButtonDrag(event, ui) {
         this.$el.find('a:focus').trigger('blur');
 
         // Show the button group names as soon as the user starts dragging.
@@ -174,69 +188,66 @@
       },
 
       /**
-       * Handles Sortable stop sort of a button.
+       * Handles jQuery Sortable stop sort of a button.
        *
-       * @param {CustomEvent} event
+       * @param {jQuery.Event} event
        *   The event triggered on the button drag.
+       * @param {object} ui
+       *   A jQuery.ui.sortable argument that contains information about the
+       *   elements involved in the sort action.
        */
-      endButtonDrag(event) {
-        const $item = $(event.item);
-
-        Drupal.ckeditor.registerButtonMove(this, $item, success => {
-          // Refocus the target button so that the user can continue
-          // from a known place.
-          $item.find('a').trigger('focus');
+      endButtonDrag(event, ui) {
+        const view = this;
+        Drupal.ckeditor.registerButtonMove(this, ui.item, success => {
+          if (!success) {
+            // Cancel any sorting in the configuration area.
+            view.$el.find('.ui-sortable').sortable('cancel');
+          }
+          // Refocus the target button so that the user can continue from a known
+          // place.
+          ui.item.find('a').trigger('focus');
         });
       },
 
       /**
-       * Invokes Sortable() on new buttons and groups in a CKEditor config.
-       * Array.prototype.forEach is used here because of the lack of support for
-       * NodeList.forEach in older browsers.
+       * Invokes jQuery.sortable() on new buttons and groups in a CKEditor config.
        */
       applySorting() {
         // Make the buttons sortable.
-        Array.prototype.forEach.call(
-          this.el.querySelectorAll('.ckeditor-buttons:not(.js-sortable)'),
-          buttons => {
-            buttons.classList.add('js-sortable');
-            Sortable.create(buttons, {
-              ghostClass: 'ckeditor-button-placeholder',
-              group: 'ckeditor-buttons',
-              onStart: this.startButtonDrag.bind(this),
-              onEnd: this.endButtonDrag.bind(this),
-            });
-          },
-        );
+        this.$el
+          .find('.ckeditor-buttons')
+          .not('.ui-sortable')
+          .sortable({
+            // Change this to .ckeditor-toolbar-group-buttons.
+            connectWith: '.ckeditor-buttons',
+            placeholder: 'ckeditor-button-placeholder',
+            forcePlaceholderSize: true,
+            tolerance: 'pointer',
+            cursor: 'move',
+            start: this.startButtonDrag.bind(this),
+            // Sorting within a sortable.
+            stop: this.endButtonDrag.bind(this),
+          })
+          .disableSelection();
 
-        Array.prototype.forEach.call(
-          this.el.querySelectorAll(
-            '.ckeditor-toolbar-groups:not(.js-sortable)',
-          ),
-          buttons => {
-            buttons.classList.add('js-sortable');
-            Sortable.create(buttons, {
-              ghostClass: 'ckeditor-toolbar-group-placeholder',
-              onEnd: this.endGroupDrag.bind(this),
-            });
-          },
-        );
+        // Add the drag and drop functionality to button groups.
+        this.$el
+          .find('.ckeditor-toolbar-groups')
+          .not('.ui-sortable')
+          .sortable({
+            connectWith: '.ckeditor-toolbar-groups',
+            cancel: '.ckeditor-add-new-group',
+            placeholder: 'ckeditor-toolbar-group-placeholder',
+            forcePlaceholderSize: true,
+            cursor: 'move',
+            stop: this.endGroupDrag.bind(this),
+          });
 
-        Array.prototype.forEach.call(
-          this.el.querySelectorAll(
-            '.ckeditor-multiple-buttons:not(.js-sortable)',
-          ),
-          buttons => {
-            buttons.classList.add('js-sortable');
-            Sortable.create(buttons, {
-              group: {
-                name: 'ckeditor-buttons',
-                pull: 'clone',
-              },
-              onEnd: this.endButtonDrag.bind(this),
-            });
-          },
-        );
+        // Add the drag and drop functionality to buttons.
+        this.$el.find('.ckeditor-multiple-buttons li').draggable({
+          connectToSortable: '.ckeditor-toolbar-active .ckeditor-buttons',
+          helper: 'clone',
+        });
       },
 
       /**
@@ -301,4 +312,4 @@
       },
     },
   );
-})(Drupal, Backbone, jQuery, Sortable);
+})(Drupal, Backbone, jQuery);

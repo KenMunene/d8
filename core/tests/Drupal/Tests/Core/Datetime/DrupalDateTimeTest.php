@@ -43,8 +43,7 @@ class DrupalDateTimeTest extends UnitTestCase {
    * @dataProvider providerTestInvalidDateDiff
    */
   public function testInvalidDateDiff($input1, $input2, $absolute) {
-    $this->expectException(\BadMethodCallException::class);
-    $this->expectExceptionMessage('Method Drupal\Component\Datetime\DateTimePlus::diff expects parameter 1 to be a \DateTime or \Drupal\Component\Datetime\DateTimePlus object');
+    $this->setExpectedException(\BadMethodCallException::class, 'Method Drupal\Component\Datetime\DateTimePlus::diff expects parameter 1 to be a \DateTime or \Drupal\Component\Datetime\DateTimePlus object');
     $interval = $input1->diff($input2, $absolute);
   }
 
@@ -207,8 +206,7 @@ class DrupalDateTimeTest extends UnitTestCase {
    * @covers ::__call
    */
   public function testChainableNonCallable() {
-    $this->expectException(\BadMethodCallException::class);
-    $this->expectExceptionMessage('Call to undefined method Drupal\Core\Datetime\DrupalDateTime::nonexistent()');
+    $this->setExpectedException(\BadMethodCallException::class, 'Call to undefined method Drupal\Core\Datetime\DrupalDateTime::nonexistent()');
     $tz = new \DateTimeZone(date_default_timezone_get());
     $date = new DrupalDateTime('now', $tz, ['langcode' => 'en']);
     $date->setTimezone(new \DateTimeZone('America/New_York'))->nonexistent();

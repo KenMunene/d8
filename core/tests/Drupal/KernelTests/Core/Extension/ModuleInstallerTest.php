@@ -17,6 +17,15 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 class ModuleInstallerTest extends KernelTestBase {
 
   /**
+   * Modules to install.
+   *
+   * The System module is required because system_rebuild_module_data() is used.
+   *
+   * @var array
+   */
+  public static $modules = ['system'];
+
+  /**
    * Tests that routes are rebuilt during install and uninstall of modules.
    *
    * @covers ::install
@@ -32,7 +41,7 @@ class ModuleInstallerTest extends KernelTestBase {
     $this->assertEquals('/router_test/test1', $route->getPath());
 
     $this->container->get('module_installer')->uninstall(['router_test']);
-    $this->expectException(RouteNotFoundException::class);
+    $this->setExpectedException(RouteNotFoundException::class);
     $this->container->get('router.route_provider')->getRouteByName('router_test.1');
   }
 
@@ -93,8 +102,7 @@ class ModuleInstallerTest extends KernelTestBase {
    * @covers ::install
    */
   public function testInvalidCoreInstall($module_name, $install_dependencies) {
-    $this->expectException(MissingDependencyException::class);
-    $this->expectExceptionMessage("Unable to install modules: module '$module_name' is incompatible with this version of Drupal core.");
+    $this->setExpectedException(MissingDependencyException::class, "Unable to install modules: module '$module_name' is incompatible with this version of Drupal core.");
     $this->container->get('module_installer')->install([$module_name], $install_dependencies);
   }
 
@@ -128,8 +136,7 @@ class ModuleInstallerTest extends KernelTestBase {
    * @covers ::install
    */
   public function testDependencyInvalidCoreInstall() {
-    $this->expectException(MissingDependencyException::class);
-    $this->expectExceptionMessage("Unable to install modules: module 'system_incompatible_core_version_dependencies_test'. Its dependency module 'system_incompatible_core_version_test' is incompatible with this version of Drupal core.");
+    $this->setExpectedException(MissingDependencyException::class, "Unable to install modules: module 'system_incompatible_core_version_dependencies_test'. Its dependency module 'system_incompatible_core_version_test' is incompatible with this version of Drupal core.");
     $this->container->get('module_installer')->install(['system_incompatible_core_version_dependencies_test']);
   }
 

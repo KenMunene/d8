@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\path\Functional;
 
-use Drupal\Core\Database\Database;
 use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
@@ -47,7 +46,7 @@ class PathTaxonomyTermTest extends PathTestBase {
       'path[0][alias]' => '/' . $this->randomMachineName(),
     ];
     $this->drupalPostForm('admin/structure/taxonomy/manage/' . $vocabulary->id() . '/add', $edit, t('Save'));
-    $tid = Database::getConnection()->query("SELECT tid FROM {taxonomy_term_field_data} WHERE name = :name AND default_langcode = 1", [':name' => $edit['name[0][value]']])->fetchField();
+    $tid = db_query("SELECT tid FROM {taxonomy_term_field_data} WHERE name = :name AND default_langcode = 1", [':name' => $edit['name[0][value]']])->fetchField();
 
     // Confirm that the alias works.
     $this->drupalGet($edit['path[0][alias]']);

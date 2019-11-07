@@ -30,18 +30,12 @@ class BackendChain implements CacheBackendInterface, CacheTagsInvalidatorInterfa
   protected $backends = [];
 
   /**
-   * Constructs a new backend chain service instance.
+   * Constructs a DatabaseBackend object.
    *
-   * @param string|null $bin
-   *   (deprecated) The cache bin for which the object is created. The $bin
-   *   parameter is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0.
-   *
-   * @see https://www.drupal.org/node/3061125
+   * @param string $bin
+   *   The cache bin for which the object is created.
    */
-  public function __construct($bin = NULL) {
-    if ($bin) {
-      @trigger_error('The $bin parameter is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Omit the first parameter. See https://www.drupal.org/node/3061125', E_USER_DEPRECATED);
-    }
+  public function __construct($bin) {
   }
 
   /**
@@ -50,7 +44,7 @@ class BackendChain implements CacheBackendInterface, CacheTagsInvalidatorInterfa
    * @param CacheBackendInterface $backend
    *   The cache backend to be appended to the cache chain.
    *
-   * @return $this
+   * @return \Drupal\Core\Cache\BackendChain
    *   The called object.
    */
   public function appendBackend(CacheBackendInterface $backend) {
@@ -65,7 +59,7 @@ class BackendChain implements CacheBackendInterface, CacheTagsInvalidatorInterfa
    * @param CacheBackendInterface $backend
    *   The backend to be prepended to the cache chain.
    *
-   * @return $this
+   * @return \Drupal\Core\Cache\BackendChain
    *   The called object.
    */
   public function prependBackend(CacheBackendInterface $backend) {

@@ -104,7 +104,7 @@ class OffsetPage {
    * @param mixed $parameter
    *   The `page` query parameter from the Symfony request object.
    *
-   * @return static
+   * @return \Drupal\jsonapi\Query\OffsetPage
    *   An OffsetPage object with defaults.
    */
   public static function createFromQueryParameter($parameter) {

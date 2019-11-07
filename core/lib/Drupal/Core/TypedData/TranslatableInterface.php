@@ -99,11 +99,6 @@ interface TranslatableInterface {
   /**
    * Adds a new translation to the translatable object.
    *
-   * To create a translation of an entity prefilled with the original data:
-   * @code
-   *   $entity->addTranslation($langcode, $entity->toArray())
-   * @endcode
-   *
    * @param string $langcode
    *   The language code identifying the translation.
    * @param array $values

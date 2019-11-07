@@ -51,13 +51,10 @@ class EntityReferenceFieldAttributesTest extends TaxonomyTestBase {
     ];
     $this->createEntityReferenceField('node', 'article', $this->fieldName, 'Tags', 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $display_repository->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($this->fieldName, ['type' => 'options_select'])
       ->save();
-    $display_repository->getViewDisplay('node', 'article', 'full')
+    entity_get_display('node', 'article', 'full')
       ->setComponent($this->fieldName, ['type' => 'entity_reference_label'])
       ->save();
 
@@ -83,8 +80,7 @@ class EntityReferenceFieldAttributesTest extends TaxonomyTestBase {
    */
   public function testNodeTeaser() {
     // Set the teaser display to show this field.
-    \Drupal::service('entity_display.repository')
-      ->getViewDisplay('node', 'article', 'teaser')
+    entity_get_display('node', 'article', 'teaser')
       ->setComponent($this->fieldName, ['type' => 'entity_reference_label'])
       ->save();
 
@@ -102,9 +98,7 @@ class EntityReferenceFieldAttributesTest extends TaxonomyTestBase {
     ]);
 
     // Render the node.
-    $node_render_array = \Drupal::entityTypeManager()
-      ->getViewBuilder('node')
-      ->view($node, 'teaser');
+    $node_render_array = entity_view_multiple([$node], 'teaser');
     $html = \Drupal::service('renderer')->renderRoot($node_render_array);
 
     // Parse the teaser.

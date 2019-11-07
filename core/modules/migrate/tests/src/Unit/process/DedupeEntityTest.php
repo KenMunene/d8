@@ -24,7 +24,7 @@ class DedupeEntityTest extends MigrateProcessTestCase {
   /**
    * The mocked entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $entityTypeManager;
 
@@ -44,9 +44,9 @@ class DedupeEntityTest extends MigrateProcessTestCase {
     $this->entityQuery = $this->getMockBuilder('Drupal\Core\Entity\Query\QueryInterface')
       ->disableOriginalConstructor()
       ->getMock();
-    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);
 
-    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage = $this->getMock(EntityStorageInterface::class);
     $storage->expects($this->any())
       ->method('getQuery')
       ->willReturn($this->entityQuery);
@@ -91,8 +91,7 @@ class DedupeEntityTest extends MigrateProcessTestCase {
       'start' => 'foobar',
     ];
     $plugin = new DedupeEntity($configuration, 'dedupe_entity', [], $this->getMigration(), $this->entityTypeManager);
-    $this->expectException('Drupal\migrate\MigrateException');
-    $this->expectExceptionMessage('The start position configuration key should be an integer. Omit this key to capture from the beginning of the string.');
+    $this->setExpectedException('Drupal\migrate\MigrateException', 'The start position configuration key should be an integer. Omit this key to capture from the beginning of the string.');
     $plugin->transform('test_start', $this->migrateExecutable, $this->row, 'testproperty');
   }
 
@@ -106,8 +105,7 @@ class DedupeEntityTest extends MigrateProcessTestCase {
       'length' => 'foobar',
     ];
     $plugin = new DedupeEntity($configuration, 'dedupe_entity', [], $this->getMigration(), $this->entityTypeManager);
-    $this->expectException('Drupal\migrate\MigrateException');
-    $this->expectExceptionMessage('The character length configuration key should be an integer. Omit this key to capture the entire string.');
+    $this->setExpectedException('Drupal\migrate\MigrateException', 'The character length configuration key should be an integer. Omit this key to capture the entire string.');
     $plugin->transform('test_length', $this->migrateExecutable, $this->row, 'testproperty');
   }
 

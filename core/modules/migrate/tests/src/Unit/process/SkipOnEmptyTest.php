@@ -19,7 +19,7 @@ class SkipOnEmptyTest extends MigrateProcessTestCase {
    */
   public function testProcessSkipsOnEmpty() {
     $configuration['method'] = 'process';
-    $this->expectException(MigrateSkipProcessException::class);
+    $this->setExpectedException(MigrateSkipProcessException::class);
     (new SkipOnEmpty($configuration, 'skip_on_empty', []))
       ->transform('', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
@@ -39,7 +39,7 @@ class SkipOnEmptyTest extends MigrateProcessTestCase {
    */
   public function testRowSkipsOnEmpty() {
     $configuration['method'] = 'row';
-    $this->expectException(MigrateSkipRowException::class);
+    $this->setExpectedException(MigrateSkipRowException::class);
     (new SkipOnEmpty($configuration, 'skip_on_empty', []))
       ->transform('', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
@@ -64,7 +64,7 @@ class SkipOnEmptyTest extends MigrateProcessTestCase {
       'method' => 'row',
     ];
     $process = new SkipOnEmpty($configuration, 'skip_on_empty', []);
-    $this->expectException(MigrateSkipRowException::class);
+    $this->setExpectedException(MigrateSkipRowException::class);
     $process->transform('', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 
@@ -79,8 +79,7 @@ class SkipOnEmptyTest extends MigrateProcessTestCase {
       'message' => 'The value is empty',
     ];
     $process = new SkipOnEmpty($configuration, 'skip_on_empty', []);
-    $this->expectException(MigrateSkipRowException::class);
-    $this->expectExceptionMessage('The value is empty');
+    $this->setExpectedException(MigrateSkipRowException::class, 'The value is empty');
     $process->transform('', $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 

@@ -15,19 +15,13 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 0
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  content_moderation_control:
-    weight: 2
+    weight: 100
     region: content
     settings: {  }
     third_party_settings: {  }
   links:
-    weight: 1
+    weight: 101
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  content_moderation_control: true
   langcode: true

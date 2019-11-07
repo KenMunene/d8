@@ -25,7 +25,8 @@ class CckFileTest extends MigrateDrupalTestBase {
   public function testConfigurableFileMigration() {
     $migration = Migration::create($this->container, [], 'custom_migration', []);
     $cck_file_migration = CckFile::create($this->container, ['migration' => 'custom_file'], 'custom_file', [], $migration);
-    $config = $this->readAttribute($cck_file_migration, 'configuration');
+    $migration_plugin = $this->readAttribute($cck_file_migration, 'migrationPlugin');
+    $config = $this->readAttribute($migration_plugin, 'configuration');
 
     $this->assertEquals($config['migration'], 'custom_file');
   }

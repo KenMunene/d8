@@ -349,8 +349,7 @@ class EntityReferenceFieldItemNormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeWithUuidWithIncorrectType() {
-    $this->expectException(UnexpectedValueException::class);
-    $this->expectExceptionMessage('The field "field_reference" property "target_type" must be set to "test_type" or omitted.');
+    $this->setExpectedException(UnexpectedValueException::class, 'The field "field_reference" property "target_type" must be set to "test_type" or omitted.');
 
     $data = [
       'target_id' => 'test',
@@ -370,8 +369,7 @@ class EntityReferenceFieldItemNormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeWithTypeWithIncorrectUuid() {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage('No "test_type" entity found with UUID "unique-but-none-non-existent" for field "field_reference"');
+    $this->setExpectedException(InvalidArgumentException::class, 'No "test_type" entity found with UUID "unique-but-none-non-existent" for field "field_reference"');
 
     $data = [
       'target_id' => 'test',
@@ -394,8 +392,7 @@ class EntityReferenceFieldItemNormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeWithEmtpyUuid() {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage('If provided "target_uuid" cannot be empty for field "test_type".');
+    $this->setExpectedException(InvalidArgumentException::class, 'If provided "target_uuid" cannot be empty for field "test_type".');
 
     $data = [
       'target_id' => 'test',

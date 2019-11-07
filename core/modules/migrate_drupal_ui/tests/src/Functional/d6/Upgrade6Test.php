@@ -12,8 +12,6 @@ use Drupal\user\Entity\User;
  * The test method is provided by the MigrateUpgradeTestBase class.
  *
  * @group migrate_drupal_ui
- *
- * @group legacy
  */
 class Upgrade6Test extends MigrateUpgradeExecuteTestBase {
 
@@ -75,7 +73,7 @@ class Upgrade6Test extends MigrateUpgradeExecuteTestBase {
       'file' => 7,
       'filter_format' => 7,
       'image_style' => 5,
-      'language_content_settings' => 15,
+      'language_content_settings' => 14,
       'node' => 18,
       // The 'book' module provides the 'book' node type, and the migration
       // creates 12 node types.
@@ -84,9 +82,8 @@ class Upgrade6Test extends MigrateUpgradeExecuteTestBase {
       'search_page' => 2,
       'shortcut' => 2,
       'shortcut_set' => 1,
-      'action' => 25,
+      'action' => 23,
       'menu' => 8,
-      'path_alias' => 8,
       'taxonomy_term' => 15,
       'taxonomy_vocabulary' => 7,
       'tour' => 5,
@@ -133,32 +130,40 @@ class Upgrade6Test extends MigrateUpgradeExecuteTestBase {
       'contact',
       'content',
       'date',
+      'dblog',
       'email',
       'filefield',
       'filter',
       'forum',
+      'i18n',
       'i18nblocks',
-      'i18ncontent',
+      'i18ncck',
       'i18nmenu',
       'i18nprofile',
-      'i18nsync',
+      'i18nstrings',
+      'i18ntaxonomy',
       'imagecache',
       'imagefield',
+      'language',
+      'link',
+      'locale',
       'menu',
+      'node',
       'nodereference',
       'optionwidgets',
       'path',
+      'profile',
       'search',
       'statistics',
       'system',
       'taxonomy',
       'text',
-      'translation',
       'upload',
       'user',
       'userreference',
       // Include modules that do not have an upgrade path and are enabled in the
-      // source database'.
+      // source database, defined in the $noUpgradePath property
+      // in MigrateUpgradeForm.
       'date_api',
       'date_timezone',
       'event',
@@ -175,12 +180,7 @@ class Upgrade6Test extends MigrateUpgradeExecuteTestBase {
    */
   protected function getMissingPaths() {
     return [
-      'i18n',
-      'i18ncck',
-      'i18nstrings',
-      'i18ntaxonomy',
-      'locale',
-      'node',
+      'i18ncontent',
     ];
   }
 

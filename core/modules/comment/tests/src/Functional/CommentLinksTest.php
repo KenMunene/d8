@@ -43,7 +43,7 @@ class CommentLinksTest extends CommentTestBase {
    */
   public function testCommentLinks() {
     // Bartik theme alters comment links, so use a different theme.
-    \Drupal::service('theme_installer')->install(['stark']);
+    \Drupal::service('theme_handler')->install(['stark']);
     $this->config('system.theme')
       ->set('default', 'stark')
       ->save();
@@ -51,7 +51,7 @@ class CommentLinksTest extends CommentTestBase {
     // Remove additional user permissions from $this->webUser added by setUp(),
     // since this test is limited to anonymous and authenticated roles only.
     $roles = $this->webUser->getRoles();
-    \Drupal::entityTypeManager()->getStorage('user_role')->load(reset($roles))->delete();
+    entity_delete_multiple('user_role', [reset($roles)]);
 
     // Create a comment via CRUD API functionality, since
     // $this->postComment() relies on actual user permissions.
@@ -101,10 +101,8 @@ class CommentLinksTest extends CommentTestBase {
       $this->assertLink('Add new comment');
     }
 
-    $display_repository = $this->container->get('entity_display.repository');
-
     // Change weight to make links go before comment body.
-    $display_repository->getViewDisplay('comment', 'comment')
+    entity_get_display('comment', 'comment', 'default')
       ->setComponent('links', ['weight' => -100])
       ->save();
     $this->drupalGet($this->node->toUrl());
@@ -114,7 +112,7 @@ class CommentLinksTest extends CommentTestBase {
     $this->assertIdentical($element->getTagName(), 'div', 'Last element is comment body.');
 
     // Change weight to make links go after comment body.
-    $display_repository->getViewDisplay('comment', 'comment')
+    entity_get_display('comment', 'comment', 'default')
       ->setComponent('links', ['weight' => 100])
       ->save();
     $this->drupalGet($this->node->toUrl());
@@ -124,7 +122,7 @@ class CommentLinksTest extends CommentTestBase {
     $this->assertNotEmpty($element->find('css', 'ul.links'), 'Last element is comment links.');
 
     // Make sure we can hide node links.
-    $display_repository->getViewDisplay('node', $this->node->bundle())
+    entity_get_display('node', $this->node->bundle(), 'default')
       ->removeComponent('links')
       ->save();
     $this->drupalGet($this->node->toUrl());
@@ -137,7 +135,7 @@ class CommentLinksTest extends CommentTestBase {
     $this->assertLink('Reply');
 
     // Make sure we can hide comment links.
-    $display_repository->getViewDisplay('comment', 'comment')
+    entity_get_display('comment', 'comment', 'default')
       ->removeComponent('links')
       ->save();
     $this->drupalGet('node/' . $this->node->id());

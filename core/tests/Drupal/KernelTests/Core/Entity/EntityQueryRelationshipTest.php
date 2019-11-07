@@ -195,7 +195,7 @@ class EntityQueryRelationshipTest extends EntityKernelTestBase {
    * Tests the invalid specifier in the query relationship.
    */
   public function testInvalidSpecifier() {
-    $this->expectException(PluginNotFoundException::class);
+    $this->setExpectedException(PluginNotFoundException::class);
     $this->container
       ->get('entity_type.manager')
       ->getStorage('taxonomy_term')

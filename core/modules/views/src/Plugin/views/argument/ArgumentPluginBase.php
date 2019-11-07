@@ -149,15 +149,6 @@ abstract class ArgumentPluginBase extends HandlerBase implements CacheableDepend
     return $options;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    $callbacks = parent::trustedCallbacks();
-    $callbacks[] = 'preRenderMoveArgumentOptions';
-    return $callbacks;
-  }
-
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 

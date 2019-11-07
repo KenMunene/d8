@@ -3,7 +3,6 @@
 namespace Drupal\Core\Config\Importer;
 
 use Drupal\Core\Config\ConfigImporter;
-use Drupal\Core\Installer\InstallerKernel;
 
 /**
  * Methods for running the ConfigImporter in a batch.
@@ -61,7 +60,7 @@ class ConfigImporterBatch {
         }
         $messenger->addWarning(t('The configuration was imported with errors.'));
       }
-      elseif (!InstallerKernel::installationAttempted()) {
+      elseif (!drupal_installation_attempted()) {
         // Display a success message when not installing Drupal.
         $messenger->addStatus(t('The configuration was imported successfully.'));
       }

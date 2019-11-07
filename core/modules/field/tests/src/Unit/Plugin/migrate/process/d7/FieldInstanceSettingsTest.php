@@ -20,10 +20,10 @@ class FieldInstanceSettingsTest extends MigrateTestCase {
    * @covers ::transform
    */
   public function testTransformImageSettings() {
-    $migration = $this->createMock(MigrationInterface::class);
+    $migration = $this->getMock(MigrationInterface::class);
     $plugin = new FieldInstanceSettings([], 'd7_field_instance_settings', [], $migration);
 
-    $executable = $this->createMock(MigrateExecutableInterface::class);
+    $executable = $this->getMock(MigrateExecutableInterface::class);
     $row = $this->getMockBuilder(Row::class)
       ->disableOriginalConstructor()
       ->getMock();

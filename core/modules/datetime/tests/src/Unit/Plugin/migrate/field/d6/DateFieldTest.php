@@ -35,8 +35,7 @@ class DateFieldTest extends UnitTestCase {
   public function testUnknownDateType($method = 'defineValueProcessPipeline') {
     $plugin = new DateField([], '', []);
 
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage("Field field_date of type 'timestamp' is an unknown date field type.");
+    $this->setExpectedException(MigrateException::class, "Field field_date of type 'timestamp' is an unknown date field type.");
     $plugin->$method($this->migration, 'field_date', ['type' => 'timestamp']);
   }
 

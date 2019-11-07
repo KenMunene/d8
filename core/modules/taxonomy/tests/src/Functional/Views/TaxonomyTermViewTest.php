@@ -59,14 +59,12 @@ class TaxonomyTermViewTest extends TaxonomyTestBase {
     ];
     $this->createEntityReferenceField('node', 'article', $this->fieldName1, NULL, 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-    $display_repository->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($this->fieldName1, [
         'type' => 'options_select',
       ])
       ->save();
-    $display_repository->getViewDisplay('node', 'article')
+    entity_get_display('node', 'article', 'default')
       ->setComponent($this->fieldName1, [
         'type' => 'entity_reference_label',
       ])
@@ -102,6 +100,8 @@ class TaxonomyTermViewTest extends TaxonomyTestBase {
       ->grantPermission('create content translations')
       ->grantPermission('translate any entity')
       ->save();
+    drupal_static_reset();
+    \Drupal::service('router.builder')->rebuild();
 
     $edit['title[0][value]'] = $translated_title = $this->randomMachineName();
 

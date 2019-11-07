@@ -211,15 +211,6 @@ abstract class SortPluginBase extends HandlerBase implements CacheableDependency
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    $callbacks = parent::trustedCallbacks();
-    $callbacks[] = 'preRenderFlattenData';
-    return $callbacks;
-  }
-
-  /**
    * Provide default options for exposed sorts.
    */
   public function defaultExposeOptions() {

@@ -57,13 +57,4 @@ class HelpSection extends Plugin {
    */
   public $permission = '';
 
-  /**
-   * An optional weight for the help section.
-   *
-   * The sections will be ordered by this weight on the help page.
-   *
-   * @var int
-   */
-  public $weight = 0;
-
 }

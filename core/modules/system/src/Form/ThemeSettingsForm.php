@@ -8,7 +8,6 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StreamWrapper\PublicStream;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -296,9 +295,8 @@ class ThemeSettingsForm extends ConfigFormBase {
         // directory; stream wrappers are not end-user friendly.
         $original_path = $element['#default_value'];
         $friendly_path = NULL;
-
-        if (StreamWrapperManager::getScheme($original_path) == 'public') {
-          $friendly_path = StreamWrapperManager::getTarget($original_path);
+        if (file_uri_scheme($original_path) == 'public') {
+          $friendly_path = file_uri_target($original_path);
           $element['#default_value'] = $friendly_path;
         }
 
@@ -315,7 +313,7 @@ class ThemeSettingsForm extends ConfigFormBase {
 
         $element['#description'] = t('Examples: <code>@implicit-public-file</code> (for a file in the public filesystem), <code>@explicit-file</code>, or <code>@local-file</code>.', [
           '@implicit-public-file' => isset($friendly_path) ? $friendly_path : $default,
-          '@explicit-file' => StreamWrapperManager::getScheme($original_path) !== FALSE ? $original_path : 'public://' . $default,
+          '@explicit-file' => file_uri_scheme($original_path) !== FALSE ? $original_path : 'public://' . $default,
           '@local-file' => $local_file,
         ]);
       }
@@ -463,10 +461,9 @@ class ThemeSettingsForm extends ConfigFormBase {
 
     // If the user uploaded a new logo or favicon, save it to a permanent location
     // and use it in place of the default theme-provided file.
-    $default_scheme = $this->config('system.file')->get('default_scheme');
     try {
       if (!empty($values['logo_upload'])) {
-        $filename = $this->fileSystem->copy($values['logo_upload']->getFileUri(), $default_scheme . '://');
+        $filename = $this->fileSystem->copy($values['logo_upload']->getFileUri(), file_default_scheme() . '://');
         $values['default_logo'] = 0;
         $values['logo_path'] = $filename;
       }
@@ -476,7 +473,7 @@ class ThemeSettingsForm extends ConfigFormBase {
     }
     try {
       if (!empty($values['favicon_upload'])) {
-        $filename = $this->fileSystem->copy($values['favicon_upload']->getFileUri(), $default_scheme . '://');
+        $filename = $this->fileSystem->copy($values['favicon_upload']->getFileUri(), file_default_scheme() . '://');
         $values['default_favicon'] = 0;
         $values['favicon_path'] = $filename;
         $values['toggle_favicon'] = 1;
@@ -528,7 +525,7 @@ class ThemeSettingsForm extends ConfigFormBase {
       return $path;
     }
     // Prepend 'public://' for relative file paths within public filesystem.
-    if (StreamWrapperManager::getScheme($path) === FALSE) {
+    if (file_uri_scheme($path) === FALSE) {
       $path = 'public://' . $path;
     }
     if (is_file($path)) {

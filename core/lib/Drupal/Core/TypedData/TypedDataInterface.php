@@ -97,7 +97,7 @@ interface TypedDataInterface {
    *   TRUE. If a property is updated from a parent object, set it to FALSE to
    *   avoid being notified again.
    *
-   * @return $this
+   * @return \Drupal\Core\TypedData\TypedDataInterface
    *   Returns itself to allow for chaining.
    */
   public function applyDefaultValue($notify = TRUE);

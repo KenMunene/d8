@@ -14,7 +14,7 @@ use Drupal\jsonapi\Exception\EntityAccessDeniedHttpException;
  * @see https://www.drupal.org/project/jsonapi/issues/3032787
  * @see jsonapi.api.php
  */
-class ResourceObjectData extends Data implements TopLevelDataInterface {
+class ResourceObjectData extends Data {
 
   /**
    * ResourceObjectData constructor.
@@ -29,13 +29,6 @@ class ResourceObjectData extends Data implements TopLevelDataInterface {
   public function __construct($data, $cardinality = -1) {
     assert(Inspector::assertAllObjects($data, ResourceObject::class, EntityAccessDeniedHttpException::class));
     parent::__construct($data, $cardinality);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getData() {
-    return $this->getAccessible();
   }
 
   /**
@@ -66,20 +59,6 @@ class ResourceObjectData extends Data implements TopLevelDataInterface {
       }
     }
     return new OmittedData($omitted_data);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMergedLinks(LinkCollection $top_level_links) {
-    return $top_level_links;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getMergedMeta(array $top_level_meta) {
-    return $top_level_meta;
   }
 
 }

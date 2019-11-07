@@ -12,6 +12,8 @@
 
       this.listenTo(this.model, 'change', this.render);
 
+      this.$el.attr('role', 'form');
+
       this.render();
     },
     render: function render() {

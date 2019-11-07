@@ -37,7 +37,7 @@ class PathNodeFormTest extends PathTestBase {
     $assert_session->fieldExists('path[0][alias]');
 
     // Disable the 'Path' field for this content type.
-    \Drupal::service('entity_display.repository')->getFormDisplay('node', 'page', 'default')
+    entity_get_form_display('node', 'page', 'default')
       ->removeComponent('path')
       ->save();
 

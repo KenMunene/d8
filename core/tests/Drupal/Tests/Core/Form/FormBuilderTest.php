@@ -57,8 +57,7 @@ class FormBuilderTest extends FormTestBase {
   public function testGetFormIdWithString() {
     $form_arg = 'foo';
     $form_state = new FormState();
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The form argument foo is not a valid form.');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The form argument foo is not a valid form.');
     $this->formBuilder->getFormId($form_arg, $form_state);
   }
 
@@ -79,7 +78,7 @@ class FormBuilderTest extends FormTestBase {
    * Tests the getFormId() method with an injected class name form ID.
    */
   public function testGetFormIdWithInjectedClassName() {
-    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
     \Drupal::setContainer($container);
 
     $form_arg = 'Drupal\Tests\Core\Form\TestFormInjected';
@@ -113,7 +112,7 @@ class FormBuilderTest extends FormTestBase {
     $expected_form_id = 'my_module_form_id';
     $base_form_id = 'my_module';
 
-    $form_arg = $this->createMock('Drupal\Core\Form\BaseFormIdInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\BaseFormIdInterface');
     $form_arg->expects($this->once())
       ->method('getFormId')
       ->will($this->returnValue($expected_form_id));
@@ -216,8 +215,7 @@ class FormBuilderTest extends FormTestBase {
    */
   public function testGetFormWithString() {
     $form_id = 'test_form_id';
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The form argument test_form_id is not a valid form.');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The form argument test_form_id is not a valid form.');
     $this->formBuilder->getForm($form_id);
   }
 
@@ -255,8 +253,7 @@ class FormBuilderTest extends FormTestBase {
    */
   public function testBuildFormWithString() {
     $form_id = 'test_form_id';
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The form argument test_form_id is not a valid form.');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The form argument test_form_id is not a valid form.');
     $this->formBuilder->getForm($form_id);
   }
 
@@ -346,7 +343,7 @@ class FormBuilderTest extends FormTestBase {
     $expected_form = $form_id();
 
     // The form will be built four times.
-    $form_arg = $this->createMock('Drupal\Core\Form\FormInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\FormInterface');
     $form_arg->expects($this->exactly(2))
       ->method('getFormId')
       ->will($this->returnValue($form_id));
@@ -386,7 +383,7 @@ class FormBuilderTest extends FormTestBase {
     $expected_form = $form_id();
 
     // The form will be built four times.
-    $form_arg = $this->createMock('Drupal\Core\Form\FormInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\FormInterface');
     $form_arg->expects($this->exactly(2))
       ->method('getFormId')
       ->will($this->returnValue($form_id));
@@ -426,7 +423,7 @@ class FormBuilderTest extends FormTestBase {
 
     // FormBuilder::buildForm() will be called twice, but the form object will
     // only be called once due to caching.
-    $form_arg = $this->createMock('Drupal\Core\Form\FormInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\FormInterface');
     $form_arg->expects($this->exactly(2))
       ->method('getFormId')
       ->will($this->returnValue($form_id));
@@ -468,7 +465,7 @@ class FormBuilderTest extends FormTestBase {
     $expected_form['test']['#required'] = TRUE;
 
     // Mock a form object that will be built two times.
-    $form_arg = $this->createMock('Drupal\Core\Form\FormInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\FormInterface');
     $form_arg->expects($this->exactly(2))
       ->method('getFormId')
       ->will($this->returnValue($form_id));
@@ -548,7 +545,7 @@ class FormBuilderTest extends FormTestBase {
     $form_arg = $this->getMockForm('test_form_id');
     $form_state = new FormState();
 
-    $this->expectException(BrokenPostRequestException::class);
+    $this->setExpectedException(BrokenPostRequestException::class);
     $this->formBuilder->buildForm($form_arg, $form_state);
   }
 
@@ -839,7 +836,7 @@ class FormBuilderTest extends FormTestBase {
       $form['#token'] = $token;
     }
 
-    $form_arg = $this->createMock('Drupal\Core\Form\FormInterface');
+    $form_arg = $this->getMock('Drupal\Core\Form\FormInterface');
     $form_arg->expects($this->once())
       ->method('getFormId')
       ->will($this->returnValue($form_id));

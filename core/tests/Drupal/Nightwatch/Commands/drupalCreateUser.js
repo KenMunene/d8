@@ -46,7 +46,7 @@ exports.command = function drupalCreateUser(
       })
       .submitForm('#user-register-form')
       .assert.containsText(
-        '[data-drupal-messages]',
+        '.messages',
         'Created a new user account',
         `User "${name}" was created successfully.`,
       );

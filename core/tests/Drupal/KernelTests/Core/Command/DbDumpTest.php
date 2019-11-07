@@ -8,7 +8,6 @@ use Drupal\Core\Config\DatabaseStorage;
 use Drupal\Core\Database\Database;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\Tests\Traits\Core\PathAliasTestTrait;
 use Drupal\user\Entity\User;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Reference;
@@ -19,8 +18,6 @@ use Symfony\Component\DependencyInjection\Reference;
  * @group Update
  */
 class DbDumpTest extends KernelTestBase {
-
-  use PathAliasTestTrait;
 
   /**
    * {@inheritdoc}
@@ -96,7 +93,6 @@ class DbDumpTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
     $this->installEntitySchema('menu_link_content');
-    $this->installEntitySchema('path_alias');
     $this->installSchema('system', 'sequences');
 
     // Place some sample config to test for in the export.
@@ -111,8 +107,8 @@ class DbDumpTest extends KernelTestBase {
     $account = User::create(['mail' => 'q\'uote$dollar@example.com', 'name' => '$dollar']);
     $account->save();
 
-    // Create a path alias.
-    $this->createPathAlias('/user/' . $account->id(), '/user/example');
+    // Create url_alias (this will create 'url_alias').
+    $this->container->get('path.alias_storage')->save('/user/' . $account->id(), '/user/example');
 
     // Create a cache table (this will create 'cache_discovery').
     \Drupal::cache('discovery')->set('test', $this->data);
@@ -138,8 +134,7 @@ class DbDumpTest extends KernelTestBase {
       'menu_link_content_field_revision',
       'sequences',
       'sessions',
-      'path_alias',
-      'path_alias_revision',
+      'url_alias',
       'user__roles',
       'users',
       'users_field_data',
@@ -197,12 +192,10 @@ class DbDumpTest extends KernelTestBase {
     $script = $command_tester->getDisplay();
 
     // Store original schemas and drop tables to avoid errors.
-    $connection = Database::getConnection();
-    $schema = $connection->schema();
     foreach ($this->tables as $table) {
       $this->originalTableSchemas[$table] = $this->getTableSchema($table);
       $this->originalTableIndexes[$table] = $this->getTableIndexes($table);
-      $schema->dropTable($table);
+      Database::getConnection()->schema()->dropTable($table);
     }
 
     // This will load the data.
@@ -212,14 +205,15 @@ class DbDumpTest extends KernelTestBase {
 
     // The tables should now exist and the schemas should match the originals.
     foreach ($this->tables as $table) {
-      $this->assertTrue($schema
+      $this->assertTrue(Database::getConnection()
+        ->schema()
         ->tableExists($table), new FormattableMarkup('Table @table created by the database script.', ['@table' => $table]));
       $this->assertSame($this->originalTableSchemas[$table], $this->getTableSchema($table), new FormattableMarkup('The schema for @table was properly restored.', ['@table' => $table]));
       $this->assertSame($this->originalTableIndexes[$table], $this->getTableIndexes($table), new FormattableMarkup('The indexes for @table were properly restored.', ['@table' => $table]));
     }
 
     // Ensure the test config has been replaced.
-    $config = unserialize($connection->query("SELECT data FROM {config} WHERE name = 'test_config'")->fetchField());
+    $config = unserialize(db_query("SELECT data FROM {config} WHERE name = 'test_config'")->fetchField());
     $this->assertIdentical($config, $this->data, 'Script has properly restored the config table data.');
 
     // Ensure the cache data was not exported.
@@ -238,7 +232,7 @@ class DbDumpTest extends KernelTestBase {
   protected function getTableSchema($table) {
     // Verify the field type on the data column in the cache table.
     // @todo this is MySQL specific.
-    $query = Database::getConnection()->query("SHOW COLUMNS FROM {" . $table . "}");
+    $query = db_query("SHOW COLUMNS FROM {" . $table . "}");
     $definition = [];
     while ($row = $query->fetchAssoc()) {
       $definition[$row['Field']] = $row['Type'];
@@ -257,7 +251,7 @@ class DbDumpTest extends KernelTestBase {
    *   table schema.
    */
   protected function getTableIndexes($table) {
-    $query = Database::getConnection()->query("SHOW INDEX FROM {" . $table . "}");
+    $query = db_query("SHOW INDEX FROM {" . $table . "}");
     $definition = [];
     while ($row = $query->fetchAssoc()) {
       $index_name = $row['Key_name'];

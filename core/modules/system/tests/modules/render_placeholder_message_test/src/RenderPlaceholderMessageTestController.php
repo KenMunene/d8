@@ -2,12 +2,11 @@
 
 namespace Drupal\render_placeholder_message_test;
 
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Render\RenderContext;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class RenderPlaceholderMessageTestController implements ContainerAwareInterface, TrustedCallbackInterface {
+class RenderPlaceholderMessageTestController implements ContainerAwareInterface {
 
   use ContainerAwareTrait;
 
@@ -96,13 +95,6 @@ class RenderPlaceholderMessageTestController implements ContainerAwareInterface,
 
     // Print which message is expected.
     return ['#markup' => '<p class="logged-message">Message: ' . $message . '</p>'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['setAndLogMessage'];
   }
 
 }

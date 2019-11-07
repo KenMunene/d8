@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\TestSuites;
 
-use Drupal\Core\Test\TestDiscovery;
+use Drupal\simpletest\TestDiscovery;
 use PHPUnit\Framework\TestSuite;
 
 /**

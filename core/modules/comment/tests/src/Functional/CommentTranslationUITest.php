@@ -18,8 +18,6 @@ class CommentTranslationUITest extends ContentTranslationUITestBase {
 
   /**
    * The subject of the test comment.
-   *
-   * @var string
    */
   protected $subject;
 
@@ -127,8 +125,8 @@ class CommentTranslationUITest extends ContentTranslationUITestBase {
    * {@inheritdoc}
    */
   protected function doTestPublishedStatus() {
-    $entity_type_manager = \Drupal::entityTypeManager();
-    $storage = $entity_type_manager->getStorage($this->entityTypeId);
+    $entity_manager = \Drupal::entityManager();
+    $storage = $entity_manager->getStorage($this->entityTypeId);
 
     $storage->resetCache();
     $entity = $storage->load($this->entityId);

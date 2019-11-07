@@ -6,8 +6,6 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\action\Form\ActionAddForm;
-use Drupal\action\Form\ActionEditForm;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -44,8 +42,8 @@ function action_help($route_name, RouteMatchInterface $route_match) {
 function action_entity_type_build(array &$entity_types) {
   /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['action']
-    ->setFormClass('add', ActionAddForm::class)
-    ->setFormClass('edit', ActionEditForm::class)
+    ->setFormClass('add', 'Drupal\action\ActionAddForm')
+    ->setFormClass('edit', 'Drupal\action\ActionEditForm')
     ->setFormClass('delete', 'Drupal\action\Form\ActionDeleteForm')
     ->setListBuilderClass('Drupal\action\ActionListBuilder')
     ->setLinkTemplate('delete-form', '/admin/config/system/actions/configure/{action}/delete')

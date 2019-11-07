@@ -49,9 +49,7 @@ class HttpExceptionNormalizer extends NormalizerBase {
    * {@inheritdoc}
    */
   public function normalize($object, $format = NULL, array $context = []) {
-    $cacheability = new CacheableMetadata();
-    $cacheability->addCacheableDependency($object);
-    return new HttpExceptionNormalizerValue($cacheability, static::rasterizeValueRecursive($this->buildErrorObjects($object)));
+    return new HttpExceptionNormalizerValue(new CacheableMetadata(), static::rasterizeValueRecursive($this->buildErrorObjects($object)));
   }
 
   /**
@@ -87,7 +85,7 @@ class HttpExceptionNormalizer extends NormalizerBase {
     // Exceptions thrown without an explicitly defined code get assigned zero by
     // default. Since this is no helpful information, omit it.
     if ($exception->getCode() !== 0) {
-      $error['code'] = (string) $exception->getCode();
+      $error['code'] = $exception->getCode();
     }
     if ($this->currentUser->hasPermission('access site reports')) {
       // The following information may contain sensitive information. Only show

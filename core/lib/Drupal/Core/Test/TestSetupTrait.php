@@ -67,6 +67,13 @@ trait TestSetupTrait {
   protected $privateFilesDirectory;
 
   /**
+   * The original installation profile.
+   *
+   * @var string
+   */
+  protected $originalProfile;
+
+  /**
    * Set to TRUE to strict check all configuration saved.
    *
    * @see \Drupal\Core\Config\Testing\ConfigSchemaChecker

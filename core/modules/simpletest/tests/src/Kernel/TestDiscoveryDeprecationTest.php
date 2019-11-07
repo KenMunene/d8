@@ -3,7 +3,6 @@
 namespace Drupal\Tests\simpletest\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\simpletest\TestDiscovery;
 
 /**
  * @group simpletest
@@ -23,13 +22,11 @@ class TestDiscoveryDeprecationTest extends KernelTestBase {
    * @covers ::getTestClasses
    */
   public function testHookSimpletestAlter() {
-    $test_discovery = $this->container->get('test_discovery');
-
-    $this->assertEquals(TestDiscovery::class, get_class($test_discovery));
-
     // The simpletest_test module implements hook_simpletest_alter(), which
     // should trigger a deprecation error during getTestClasses().
-    $this->assertNotEmpty($test_discovery->getTestClasses());
+    $this->assertNotEmpty(
+      $this->container->get('test_discovery')->getTestClasses()
+    );
   }
 
 }

@@ -73,7 +73,7 @@ class EditorTest extends ResourceTestBase {
     $camelids
       ->setImageUploadSettings([
         'status' => FALSE,
-        'scheme' => 'public',
+        'scheme' => file_default_scheme(),
         'directory' => 'inline-images',
         'max_size' => '',
         'max_dimensions' => [
@@ -223,7 +223,7 @@ class EditorTest extends ResourceTestBase {
 
     $entity->setImageUploadSettings([
       'status' => FALSE,
-      'scheme' => 'public',
+      'scheme' => file_default_scheme(),
       'directory' => 'inline-images',
       'max_size' => '',
       'max_dimensions' => [

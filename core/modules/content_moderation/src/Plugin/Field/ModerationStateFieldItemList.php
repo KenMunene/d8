@@ -157,13 +157,11 @@ class ModerationStateFieldItemList extends FieldItemList {
 
       // This entity is default if it is new, the default revision state, or the
       // default revision is not published.
-      if (!$entity->isSyncing()) {
-        $update_default_revision = $entity->isNew()
-          || $current_state->isDefaultRevisionState()
-          || !$content_moderation_info->isDefaultRevisionPublished($entity);
+      $update_default_revision = $entity->isNew()
+        || $current_state->isDefaultRevisionState()
+        || !$content_moderation_info->isDefaultRevisionPublished($entity);
 
-        $entity->isDefaultRevision($update_default_revision);
-      }
+      $entity->isDefaultRevision($update_default_revision);
 
       // Update publishing status if it can be updated and if it needs updating.
       $published_state = $current_state->isPublishedState();

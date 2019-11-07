@@ -47,9 +47,4 @@ interface WorkspaceNegotiatorInterface {
    */
   public function setActiveWorkspace(WorkspaceInterface $workspace);
 
-  /**
-   * Unsets the negotiated workspace.
-   */
-  public function unsetActiveWorkspace();
-
 }

@@ -131,7 +131,6 @@ class FieldConfigEditForm extends EntityForm {
         '#open' => TRUE,
         '#tree' => TRUE,
         '#description' => $this->t('The default value for this field, used when creating new content.'),
-        '#weight' => 12,
       ]);
 
       $form['default_value'] = $element;

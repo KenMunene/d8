@@ -37,7 +37,7 @@ interface ImageStyleInterface extends ConfigEntityInterface {
    * @param string $name
    *   The name of the image style.
    *
-   * @return $this
+   * @return \Drupal\image\ImageStyleInterface
    *   The class instance this method is called on.
    */
   public function setName($name);

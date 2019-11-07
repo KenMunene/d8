@@ -14,7 +14,7 @@ class RequiredModuleUninstallValidatorTest extends UnitTestCase {
   use AssertHelperTrait;
 
   /**
-   * @var \Drupal\Core\Extension\RequiredModuleUninstallValidator|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Extension\RequiredModuleUninstallValidator|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $uninstallValidator;
 

@@ -35,15 +35,11 @@ class SaveUploadTest extends FileManagedTestBase {
 
   /**
    * A PHP file path for upload security testing.
-   *
-   * @var string
    */
   protected $phpfile;
 
   /**
    * The largest file id when the test starts.
-   *
-   * @var int
    */
   protected $maxFidBefore;
 
@@ -72,7 +68,7 @@ class SaveUploadTest extends FileManagedTestBase {
 
     // Upload with replace to guarantee there's something there.
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
     ];
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
@@ -135,35 +131,6 @@ class SaveUploadTest extends FileManagedTestBase {
   }
 
   /**
-   * Test uploading a duplicate file.
-   */
-  public function testDuplicate() {
-    // It should not be possible to create two managed files with the same URI.
-    $image1 = current($this->drupalGetTestFiles('image'));
-    $edit = ['files[file_test_upload]' => \Drupal::service('file_system')->realpath($image1->uri)];
-    $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
-    $max_fid_after = (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
-    $file1 = File::load($max_fid_after);
-
-    // Simulate a race condition where two files are uploaded at almost the same
-    // time, by removing the first uploaded file from disk (leaving the entry in
-    // the file_managed table) before trying to upload another file with the
-    // same name.
-    unlink(\Drupal::service('file_system')->realpath($file1->getFileUri()));
-
-    $image2 = $image1;
-    $edit = ['files[file_test_upload]' => \Drupal::service('file_system')->realpath($image2->uri)];
-    $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
-    // Received a 200 response for posted test file.
-    $this->assertResponse(200);
-    $message = t('The file %file already exists. Enter a unique file URI.', ['%file' => $file1->getFileUri()]);
-    $this->assertRaw($message);
-    $max_fid_before_duplicate = $max_fid_after;
-    $max_fid_after = (int) \Drupal::entityQueryAggregate('file')->aggregate('fid', 'max')->execute()[0]['fid_max'];
-    $this->assertEqual($max_fid_before_duplicate, $max_fid_after, 'A new managed file was not created.');
-  }
-
-  /**
    * Test extension handling.
    */
   public function testHandleExtension() {
@@ -173,7 +140,7 @@ class SaveUploadTest extends FileManagedTestBase {
     // file_save_upload() to only allow ".foo".
     $extensions = 'foo';
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
       'extensions' => $extensions,
     ];
@@ -193,7 +160,7 @@ class SaveUploadTest extends FileManagedTestBase {
     $extensions = 'foo ' . $this->imageExtension;
     // Now tell file_save_upload() to allow the extension of our test image.
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
       'extensions' => $extensions,
     ];
@@ -211,7 +178,7 @@ class SaveUploadTest extends FileManagedTestBase {
 
     // Now tell file_save_upload() to allow any extension.
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
       'allow_all_extensions' => TRUE,
     ];
@@ -232,7 +199,7 @@ class SaveUploadTest extends FileManagedTestBase {
     // Allow the .php extension and make sure it gets renamed to .txt for
     // safety. Also check to make sure its MIME type was changed.
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->phpfile->uri),
       'is_image_file' => FALSE,
       'extensions' => 'php',
@@ -339,7 +306,7 @@ class SaveUploadTest extends FileManagedTestBase {
    */
   public function testExistingReplace() {
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_REPLACE,
+      'file_test_replace' => FILE_EXISTS_REPLACE,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
     ];
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));
@@ -356,7 +323,7 @@ class SaveUploadTest extends FileManagedTestBase {
    */
   public function testExistingError() {
     $edit = [
-      'file_test_replace' => FileSystemInterface::EXISTS_ERROR,
+      'file_test_replace' => FILE_EXISTS_ERROR,
       'files[file_test_upload]' => \Drupal::service('file_system')->realpath($this->image->getFileUri()),
     ];
     $this->drupalPostForm('file-test/upload', $edit, t('Submit'));

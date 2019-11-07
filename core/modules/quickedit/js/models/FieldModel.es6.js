@@ -316,7 +316,7 @@
         // - Trigger: in-place editor.
         // - Guarantees: see 'candidate' and 'active'.
         // - Expected behavior: remain in 'invalid' state, let the user make more
-        //   changes and then save it again, without validation errors.
+        //   changes so that he can save it again, without validation errors.
         'invalid',
       ],
 

@@ -2,11 +2,10 @@
 
 namespace Drupal\color\Plugin\migrate\source\d7;
 
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Extension\ThemeHandler;
 use Drupal\migrate\Row;
 use Drupal\migrate_drupal\Plugin\migrate\source\VariableMultiRow;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,12 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class Color extends VariableMultiRow {
-  use DeprecatedServicePropertyTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
 
   /**
    * The theme handler.
@@ -37,8 +30,8 @@ class Color extends VariableMultiRow {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, StateInterface $state, EntityTypeManagerInterface $entity_type_manager, ThemeHandler $theme_handler) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration, $state, $entity_type_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, StateInterface $state, EntityManagerInterface $entity_manager, ThemeHandler $theme_handler) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration, $state, $entity_manager);
     $this->themeHandler = $theme_handler;
   }
 
@@ -52,7 +45,7 @@ class Color extends VariableMultiRow {
       $plugin_definition,
       $migration,
       $container->get('state'),
-      $container->get('entity_type.manager'),
+      $container->get('entity.manager'),
       $container->get('theme_handler')
     );
   }

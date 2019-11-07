@@ -83,12 +83,12 @@ class RouteCachingLanguageTest extends BrowserTestBase {
     ]);
     $field->save();
 
-    \Drupal::service('entity_display.repository')->getFormDisplay('node', 'page', 'default')
+    entity_get_form_display('node', 'page', 'default')
       ->setComponent('field_link', [
         'type' => 'link_default',
       ])
       ->save();
-    \Drupal::service('entity_display.repository')->getViewDisplay('node', 'page', 'full')
+    entity_get_display('node', 'page', 'full')
       ->setComponent('field_link', [
         'type' => 'link',
       ])

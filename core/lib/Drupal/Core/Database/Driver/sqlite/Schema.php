@@ -157,7 +157,7 @@ class Schema extends DatabaseSchema {
    * Create an SQL string for a field to be used in table creation or alteration.
    *
    * Before passing a field out of a schema definition into this function it has
-   * to be processed by self::processField().
+   * to be processed by db_processField().
    *
    * @param $name
    *   Name of the field.

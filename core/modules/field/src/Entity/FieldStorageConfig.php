@@ -243,6 +243,8 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    *     a 'field_name' property can be accepted in place of 'id'.
    *   - entity_type: required.
    *   - type: required.
+   *
+   * @see entity_create()
    */
   public function __construct(array $values, $entity_type = 'field_storage_config') {
     // Check required properties.
@@ -308,7 +310,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    *   If the field definition is invalid.
    */
   protected function preSaveNew(EntityStorageInterface $storage) {
-    $entity_field_manager = \Drupal::service('entity_field.manager');
+    $entity_manager = \Drupal::entityManager();
     $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
 
     // Assign the ID.
@@ -322,7 +324,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
     }
 
     // Disallow reserved field names.
-    $disallowed_field_names = array_keys($entity_field_manager->getBaseFieldDefinitions($this->getTargetEntityTypeId()));
+    $disallowed_field_names = array_keys($entity_manager->getBaseFieldDefinitions($this->getTargetEntityTypeId()));
     if (in_array($this->getName(), $disallowed_field_names)) {
       throw new FieldException("Attempt to create field storage {$this->getName()} which is reserved by entity type {$this->getTargetEntityTypeId()}.");
     }
@@ -334,7 +336,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
     }
     $this->module = $field_type['provider'];
 
-    // Notify the field storage definition listener.
+    // Notify the entity manager.
     \Drupal::service('field_storage_definition.listener')->onFieldStorageDefinitionCreate($this);
   }
 
@@ -351,7 +353,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
     $this->addDependencies($definition['class']::calculateStorageDependencies($this));
 
     // Ensure the field is dependent on the provider of the entity type.
-    $entity_type = \Drupal::entityTypeManager()->getDefinition($this->entity_type);
+    $entity_type = \Drupal::entityManager()->getDefinition($this->entity_type);
     $this->addDependency('module', $entity_type->getProvider());
     return $this;
   }
@@ -389,10 +391,10 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     if ($update) {
       // Invalidate the render cache for all affected entities.
-      $entity_type_manager = \Drupal::entityTypeManager();
+      $entity_manager = \Drupal::entityManager();
       $entity_type = $this->getTargetEntityTypeId();
-      if ($entity_type_manager->hasHandler($entity_type, 'view_builder')) {
-        $entity_type_manager->getViewBuilder($entity_type)->resetCache();
+      if ($entity_manager->hasHandler($entity_type, 'view_builder')) {
+        $entity_manager->getViewBuilder($entity_type)->resetCache();
       }
     }
   }
@@ -494,7 +496,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    */
   public function getBundles() {
     if (!$this->isDeleted()) {
-      $map = \Drupal::service('entity_field.manager')->getFieldMap();
+      $map = \Drupal::entityManager()->getFieldMap();
       if (isset($map[$this->getTargetEntityTypeId()][$this->getName()]['bundles'])) {
         return $map[$this->getTargetEntityTypeId()][$this->getName()]['bundles'];
       }
@@ -707,7 +709,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    *   TRUE if the field has data for any entity; FALSE otherwise.
    */
   public function hasData() {
-    return \Drupal::entityTypeManager()->getStorage($this->entity_type)->countFieldData($this, TRUE);
+    return \Drupal::entityManager()->getStorage($this->entity_type)->countFieldData($this, TRUE);
   }
 
   /**
@@ -715,7 +717,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    *
    * Using the Serialize interface and serialize() / unserialize() methods
    * breaks entity forms in PHP 5.4.
-   * @todo Investigate in https://www.drupal.org/node/1977206.
+   * @todo Investigate in https://www.drupal.org/node/2074253.
    */
   public function __sleep() {
     // Only serialize necessary properties, excluding those that can be
@@ -806,7 +808,7 @@ class FieldStorageConfig extends ConfigEntityBase implements FieldStorageConfigI
    *   otherwise NULL.
    */
   public static function loadByName($entity_type_id, $field_name) {
-    return \Drupal::entityTypeManager()->getStorage('field_storage_config')->load($entity_type_id . '.' . $field_name);
+    return \Drupal::entityManager()->getStorage('field_storage_config')->load($entity_type_id . '.' . $field_name);
   }
 
   /**

@@ -5,9 +5,8 @@
  * Allows site administrators to modify configuration.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
@@ -64,8 +63,8 @@ function config_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_file_download().
  */
 function config_file_download($uri) {
-  $scheme = StreamWrapperManager::getScheme($uri);
-  $target = StreamWrapperManager::getTarget($uri);
+  $scheme = file_uri_scheme($uri);
+  $target = file_uri_target($uri);
   if ($scheme == 'temporary' && $target == 'config.tar.gz') {
     if (\Drupal::currentUser()->hasPermission('export configuration')) {
       $request = \Drupal::request();

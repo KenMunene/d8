@@ -51,7 +51,7 @@ interface MediaInterface extends ContentEntityInterface, EntityChangedInterface,
    * @param int $timestamp
    *   The media creation timestamp.
    *
-   * @return $this
+   * @return \Drupal\media\MediaInterface
    *   The called media item.
    */
   public function setCreatedTime($timestamp);

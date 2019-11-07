@@ -13,23 +13,13 @@ class RequiredModuleUninstallValidator implements ModuleUninstallValidatorInterf
   use StringTranslationTrait;
 
   /**
-   * The module extension list.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $moduleExtensionList;
-
-  /**
    * Constructs a new RequiredModuleUninstallValidator.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
-   *   The module extension list.
    */
-  public function __construct(TranslationInterface $string_translation, ModuleExtensionList $extension_list_module) {
+  public function __construct(TranslationInterface $string_translation) {
     $this->stringTranslation = $string_translation;
-    $this->moduleExtensionList = $extension_list_module;
   }
 
   /**
@@ -51,13 +41,11 @@ class RequiredModuleUninstallValidator implements ModuleUninstallValidatorInterf
    *   The name of the module.
    *
    * @return array
-   *   The module info, or empty array if that module does not exist.
+   *   The module info, or NULL if that module does not exist.
    */
   protected function getModuleInfoByModule($module) {
-    if ($this->moduleExtensionList->exists($module)) {
-      return $this->moduleExtensionList->get($module)->info;
-    }
-    return [];
+    $modules = system_rebuild_module_data();
+    return isset($modules[$module]->info) ? $modules[$module]->info : [];
   }
 
 }

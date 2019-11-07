@@ -98,7 +98,7 @@ class Section implements ThirdPartySettingsInterface {
    *   The layout plugin.
    */
   public function getLayout() {
-    return $this->layoutPluginManager()->createInstance($this->getLayoutId(), $this->layoutSettings);
+    return $this->layoutPluginManager()->createInstance($this->getLayoutId(), $this->getLayoutSettings());
   }
 
   /**
@@ -124,7 +124,7 @@ class Section implements ThirdPartySettingsInterface {
    *   This method should only be used by code responsible for storing the data.
    */
   public function getLayoutSettings() {
-    return $this->getLayout()->getConfiguration();
+    return $this->layoutSettings;
   }
 
   /**

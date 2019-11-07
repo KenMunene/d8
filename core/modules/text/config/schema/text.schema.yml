@@ -61,9 +61,6 @@ field.field_settings.text_with_summary:
     display_summary:
       type: boolean
       label: 'Summary input'
-    required_summary:
-      type: boolean
-      label: 'Require summary'
 
 field.value.text_with_summary:
   type: mapping
@@ -123,9 +120,6 @@ field.widget.settings.text_textarea_with_summary:
     placeholder:
       type: label
       label: 'Placeholder'
-    show_summary:
-      type: boolean
-      label: 'Always show summary'
 
 field.widget.settings.text_textfield:
   type: mapping

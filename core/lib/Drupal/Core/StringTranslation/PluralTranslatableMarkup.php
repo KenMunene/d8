@@ -92,7 +92,7 @@ class PluralTranslatableMarkup extends TranslatableMarkup {
    * @param array $options
    *   An associative array of additional options. See t() for allowed keys.
    *
-   * @return static
+   * @return \Drupal\Core\StringTranslation\PluralTranslatableMarkup
    *   A PluralTranslatableMarkup object.
    */
   public static function createFromTranslatedString($count, $translated_string, array $args = [], array $options = []) {

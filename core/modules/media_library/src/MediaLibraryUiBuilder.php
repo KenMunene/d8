@@ -17,8 +17,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * Service which builds the media library.
  *
  * @internal
- *   This service is an internal part of the modal media library dialog and
- *   does not provide any extension points.
+ *   Media Library is an experimental module and its internal code may be
+ *   subject to change in minor releases. External code should not instantiate
+ *   or extend this class.
  */
 class MediaLibraryUiBuilder {
 
@@ -122,9 +123,11 @@ class MediaLibraryUiBuilder {
     }
     else {
       return [
-        '#theme' => 'media_library_wrapper',
+        '#type' => 'html_tag',
+        '#tag' => 'div',
         '#attributes' => [
           'id' => 'media-library-wrapper',
+          'class' => ['media-library-wrapper'],
         ],
         'menu' => $this->buildMediaTypeMenu($state),
         'content' => $this->buildLibraryContent($state),
@@ -154,12 +157,12 @@ class MediaLibraryUiBuilder {
    */
   protected function buildLibraryContent(MediaLibraryState $state) {
     return [
-      '#type' => 'container',
-      '#theme_wrappers' => [
-        'container__media_library_content',
-      ],
+      '#type' => 'html_tag',
+      '#tag' => 'div',
       '#attributes' => [
         'id' => 'media-library-content',
+        'class' => ['media-library-content'],
+        'tabindex' => -1,
       ],
       'form' => $this->buildMediaTypeAddForm($state),
       'view' => $this->buildMediaLibraryView($state),
@@ -232,10 +235,10 @@ class MediaLibraryUiBuilder {
     // @todo: Add a class to the li element.
     //   https://www.drupal.org/project/drupal/issues/3029227
     $menu = [
-      '#theme' => 'links__media_library_menu',
+      '#theme' => 'links',
       '#links' => [],
       '#attributes' => [
-        'class' => ['js-media-library-menu'],
+        'class' => ['media-library-menu', 'js-media-library-menu'],
       ],
     ];
 
@@ -265,6 +268,7 @@ class MediaLibraryUiBuilder {
           'query' => $link_state->all(),
         ]),
         'attributes' => [
+          'class' => ['media-library-menu__link'],
           'role' => 'button',
           'data-title' => $title,
         ],
@@ -327,7 +331,7 @@ class MediaLibraryUiBuilder {
     //   https://www.drupal.org/project/drupal/issues/2971209
     $view = $this->entityTypeManager->getStorage('view')->load('media_library');
     $view_executable = $this->viewsExecutableFactory->get($view);
-    $display_id = $state->get('views_display_id', 'widget');
+    $display_id = 'widget';
 
     // Make sure the state parameters are set in the request so the view can
     // pass the parameters along in the pager, filters etc.

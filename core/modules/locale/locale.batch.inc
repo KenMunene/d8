@@ -5,7 +5,6 @@
  * Batch process to check the availability of remote or local po files.
  */
 
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Url;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
@@ -294,7 +293,7 @@ function locale_translation_http_check($uri) {
  *   File object if download was successful. FALSE on failure.
  */
 function locale_translation_download_source($source_file, $directory = 'temporary://') {
-  if ($uri = system_retrieve_file($source_file->uri, $directory, FALSE, FileSystemInterface::EXISTS_REPLACE)) {
+  if ($uri = system_retrieve_file($source_file->uri, $directory, FALSE, FILE_EXISTS_REPLACE)) {
     $file = clone($source_file);
     $file->type = LOCALE_TRANSLATION_LOCAL;
     $file->uri = $uri;

@@ -71,7 +71,7 @@ class BooleanFormatterSettingsTest extends WebDriverTestBase {
     ]);
     $instance->save();
 
-    $display = \Drupal::service('entity_display.repository')->getViewDisplay('node', $this->bundle)
+    $display = entity_get_display('node', $this->bundle, 'default')
       ->setComponent($this->fieldName, [
         'type' => 'boolean',
         'settings' => [],

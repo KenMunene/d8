@@ -36,6 +36,11 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * with them either.
  *
  * @see \Drupal\media_library\MediaLibraryOpenerInterface
+ *
+ * @internal
+ *   Media Library is an experimental module and its internal code may be
+ *   subject to change in minor releases. External code should not instantiate
+ *   or extend this class.
  */
 class MediaLibraryState extends ParameterBag {
 
@@ -66,7 +71,7 @@ class MediaLibraryState extends ParameterBag {
    * @param array $opener_parameters
    *   (optional) Any additional opener-specific parameter values.
    *
-   * @return static
+   * @return \Drupal\media_library\MediaLibraryState
    *   A state object.
    */
   public static function create($opener_id, array $allowed_media_type_ids, $selected_type_id, $remaining_slots, array $opener_parameters = []) {
@@ -86,7 +91,7 @@ class MediaLibraryState extends ParameterBag {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request.
    *
-   * @return static
+   * @return \Drupal\media_library\MediaLibraryState
    *   A state object.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
@@ -202,7 +207,7 @@ class MediaLibraryState extends ParameterBag {
    *   The hashed parameters.
    */
   public function isValidHash($hash) {
-    return hash_equals($this->getHash(), $hash);
+    return Crypt::hashEquals($this->getHash(), $hash);
   }
 
   /**

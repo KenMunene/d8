@@ -67,15 +67,14 @@ class WorkspaceSwitcherTest extends BrowserTestBase {
   public function testQueryParameterNegotiator() {
     $web_assert = $this->assertSession();
     // Initially the default workspace should be active.
-    $web_assert->elementContains('css', '.block-workspace-switcher', 'None');
+    $web_assert->elementContains('css', '.block-workspace-switcher', 'Live');
 
     // When adding a query parameter the workspace will be switched.
-    $current_user_url = \Drupal::currentUser()->getAccount()->toUrl();
-    $this->drupalGet($current_user_url, ['query' => ['workspace' => 'stage']]);
+    $this->drupalGet('<front>', ['query' => ['workspace' => 'stage']]);
     $web_assert->elementContains('css', '.block-workspace-switcher', 'Stage');
 
     // The workspace switching via query parameter should persist.
-    $this->drupalGet($current_user_url);
+    $this->drupalGet('<front>');
     $web_assert->elementContains('css', '.block-workspace-switcher', 'Stage');
 
     // Check that WorkspaceCacheContext provides the cache context used to

@@ -44,7 +44,7 @@ trait InstallerRedirectTrait {
     }
 
     // Never redirect if we're already in the installer.
-    if (InstallerKernel::installationAttempted()) {
+    if (drupal_installation_attempted()) {
       return FALSE;
     }
 

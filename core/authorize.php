@@ -27,8 +27,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Site\Settings;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-use Symfony\Component\Routing\Route;
 
 // Change the directory to the Drupal root.
 chdir('..');
@@ -67,15 +65,7 @@ function authorize_access_allowed(Request $request) {
 try {
   $request = Request::createFromGlobals();
   $kernel = DrupalKernel::createFromRequest($request, $autoloader, 'prod');
-  $kernel->boot();
-  // A route is required for route matching.
-  $request->attributes->set(RouteObjectInterface::ROUTE_OBJECT, new Route('<none>'));
-  $request->attributes->set(RouteObjectInterface::ROUTE_NAME, '<none>');
-  $kernel->preHandle($request);
-  // Ensure our request includes the session if appropriate.
-  if (PHP_SAPI !== 'cli') {
-    $request->setSession($kernel->getContainer()->get('session'));
-  }
+  $kernel->prepareLegacyRequest($request);
 }
 catch (HttpExceptionInterface $e) {
   $response = new Response('', $e->getStatusCode());

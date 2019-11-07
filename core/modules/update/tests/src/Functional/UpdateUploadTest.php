@@ -49,8 +49,7 @@ class UpdateUploadTest extends UpdateTestBase {
     ];
     // This also checks that the correct archive extensions are allowed.
     $this->drupalPostForm('admin/modules/install', $edit, t('Install'));
-    $extensions = \Drupal::service('plugin.manager.archiver')->getExtensions();
-    $this->assertSession()->pageTextContains(t('Only files with the following extensions are allowed: @archive_extensions.', ['@archive_extensions' => $extensions]));
+    $this->assertText(t('Only files with the following extensions are allowed: @archive_extensions.', ['@archive_extensions' => archiver_get_extensions()]), 'Only valid archives can be uploaded.');
     $this->assertUrl('admin/modules/install');
 
     // Check to ensure an existing module can't be reinstalled. Also checks that

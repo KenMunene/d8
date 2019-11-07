@@ -99,22 +99,20 @@ abstract class TaxonomyTestBase extends ViewTestBase {
     ];
     $this->createEntityReferenceField('node', 'article', $field_name, 'Tags', 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-    $display_repository->getFormDisplay('node', 'article')
+    entity_get_form_display('node', 'article', 'default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_autocomplete_tags',
         'weight' => -4,
       ])
       ->save();
 
-    $display_repository->getViewDisplay('node', 'article')
+    entity_get_display('node', 'article', 'default')
       ->setComponent($field_name, [
         'type' => 'entity_reference_label',
         'weight' => 10,
       ])
       ->save();
-    $display_repository->getViewDisplay('node', 'article', 'teaser')
+    entity_get_display('node', 'article', 'teaser')
       ->setComponent($field_name, [
         'type' => 'entity_reference_label',
         'weight' => 10,

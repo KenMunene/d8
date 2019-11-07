@@ -18,20 +18,20 @@
         const $this = $(event.target);
         const value = $this.val();
         $this
-          .closest('.js-filter-wrapper')
-          .find('[data-drupal-format-id]')
+          .closest('.filter-wrapper')
+          .find('.filter-guidelines-item')
           .hide()
-          .filter(`[data-drupal-format-id="${value}"]`)
+          .filter(`.filter-guidelines-${value}`)
           .show();
       }
 
       $(context)
-        .find('.js-filter-guidelines')
+        .find('.filter-guidelines')
         .once('filter-guidelines')
         .find(':header')
         .hide()
-        .closest('.js-filter-wrapper')
-        .find('select.js-filter-list')
+        .closest('.filter-wrapper')
+        .find('select.filter-list')
         .on('change.filterGuidelines', updateFilterGuidelines)
         // Need to trigger the namespaced event to avoid triggering formUpdated
         // when initializing the select.

@@ -9,7 +9,6 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase as ComponentPluginBase;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\ViewExecutable;
@@ -39,7 +38,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup views_plugins
  */
-abstract class PluginBase extends ComponentPluginBase implements ContainerFactoryPluginInterface, ViewsPluginInterface, DependentPluginInterface, TrustedCallbackInterface {
+abstract class PluginBase extends ComponentPluginBase implements ContainerFactoryPluginInterface, ViewsPluginInterface, DependentPluginInterface {
 
   /**
    * Include negotiated languages when listing languages.
@@ -269,13 +268,6 @@ abstract class PluginBase extends ComponentPluginBase implements ContainerFactor
     // elements can add a #fieldset => 'fieldset_name' property, and they'll
     // be moved to their fieldset during pre_render.
     $form['#pre_render'][] = [get_class($this), 'preRenderAddFieldsetMarkup'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderAddFieldsetMarkup'];
   }
 
   /**

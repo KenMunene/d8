@@ -17,6 +17,7 @@ use Prophecy\Argument;
  * @coversDefaultClass \Drupal\jsonapi\Query\Filter
  * @group jsonapi
  * @group jsonapi_query
+ * @group legacy
  *
  * @internal
  */
@@ -47,13 +48,6 @@ class FilterTest extends JsonapiKernelTestBase {
   protected $nodeStorage;
 
   /**
-   * The JSON:API resource type repository.
-   *
-   * @var \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface
-   */
-  protected $resourceTypeRepository;
-
-  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -75,16 +69,14 @@ class FilterTest extends JsonapiKernelTestBase {
 
     $this->nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
     $this->fieldResolver = $this->container->get('jsonapi.field_resolver');
-    $this->resourceTypeRepository = $this->container->get('jsonapi.resource_type.repository');
   }
 
   /**
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueToMissingPropertyName() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The field `colors`, given in the path `colors` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The field `colors`, given in the path `colors` is incomplete, it must end with one of the following specifiers: `value`, `format`, `processed`.');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['colors' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -92,9 +84,8 @@ class FilterTest extends JsonapiKernelTestBase {
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueToMissingPropertyNameReferenceFieldWithMetaProperties() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The field `photo`, given in the path `photo` is incomplete, it must end with one of the following specifiers: `id`, `meta.alt`, `meta.title`, `meta.width`, `meta.height`.');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The field `photo`, given in the path `photo` is incomplete, it must end with one of the following specifiers: `id`, `meta.alt`, `meta.title`, `meta.width`, `meta.height`.');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['photo' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -102,9 +93,8 @@ class FilterTest extends JsonapiKernelTestBase {
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueMissingMetaPrefixReferenceFieldWithMetaProperties() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The property `alt`, given in the path `photo.alt` belongs to the meta object of a relationship and must be preceded by `meta`.');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The property `alt`, given in the path `photo.alt` belongs to the meta object of a relationship and must be preceded by `meta`.');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['photo.alt' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -112,9 +102,8 @@ class FilterTest extends JsonapiKernelTestBase {
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueToMissingPropertyNameReferenceFieldWithoutMetaProperties() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The field `uid`, given in the path `uid` is incomplete, it must end with one of the following specifiers: `id`.');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The field `uid`, given in the path `uid` is incomplete, it must end with one of the following specifiers: `id`.');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['uid' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -122,9 +111,8 @@ class FilterTest extends JsonapiKernelTestBase {
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueToNonexistentProperty() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The property `foobar`, given in the path `colors.foobar`, does not exist. Must be one of the following property names: `value`, `format`, `processed`.');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The property `foobar`, given in the path `colors.foobar`, does not exist. Must be one of the following property names: `value`, `format`, `processed`.');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['colors.foobar' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -132,9 +120,8 @@ class FilterTest extends JsonapiKernelTestBase {
    * @covers ::queryCondition
    */
   public function testInvalidFilterPathDueToElidedSoleProperty() {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    $this->expectExceptionMessage('Invalid nested filtering. The property `value`, given in the path `promote.value`, does not exist. Filter by `promote`, not `promote.value` (the JSON:API module elides property names from single-property fields).');
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $this->setExpectedException(CacheableBadRequestHttpException::class, 'Invalid nested filtering. The property `value`, given in the path `promote.value`, does not exist. Filter by `promote`, not `promote.value` (the JSON:API module elides property names from single-property fields).');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     Filter::createFromQueryParameter(['promote.value' => ''], $resource_type, $this->fieldResolver);
   }
 
@@ -163,7 +150,7 @@ class FilterTest extends JsonapiKernelTestBase {
       return (string) $p->getValue($entity_query);
     };
 
-    $resource_type = $this->resourceTypeRepository->get('node', 'painting');
+    $resource_type = new ResourceType('node', 'painting', NULL);
     foreach ($data as $case) {
       $parameter = $case[0];
       $expected_query = $case[1];
@@ -413,7 +400,7 @@ class FilterTest extends JsonapiKernelTestBase {
    */
   protected function getFieldResolverMock(ResourceType $resource_type) {
     $field_resolver = $this->prophesize(FieldResolver::class);
-    $field_resolver->resolveInternalEntityQueryPath($resource_type, Argument::any())->willReturnArgument(1);
+    $field_resolver->resolveInternalEntityQueryPath($resource_type->getEntityTypeId(), $resource_type->getBundle(), Argument::any())->willReturnArgument(2);
     return $field_resolver->reveal();
   }
 

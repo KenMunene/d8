@@ -2,8 +2,6 @@
 
 namespace Drupal\filter_test\Plugin\Filter;
 
-use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
 
@@ -17,7 +15,7 @@ use Drupal\filter\Plugin\FilterBase;
  *   type = Drupal\filter\Plugin\FilterInterface::TYPE_TRANSFORM_REVERSIBLE
  * )
  */
-class FilterTestPlaceholders extends FilterBase implements TrustedCallbackInterface {
+class FilterTestPlaceholders extends FilterBase {
 
   /**
    * {@inheritdoc}
@@ -40,15 +38,8 @@ class FilterTestPlaceholders extends FilterBase implements TrustedCallbackInterf
    */
   public static function renderDynamicThing($thing) {
     return [
-      '#markup' => new FormattableMarkup('This is a dynamic @thing.', ['@thing' => $thing]),
+      '#markup' => format_string('This is a dynamic @thing.', ['@thing' => $thing]),
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['renderDynamicThing'];
   }
 
 }

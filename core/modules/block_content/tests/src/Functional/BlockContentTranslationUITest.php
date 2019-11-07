@@ -4,7 +4,6 @@ namespace Drupal\Tests\block_content\Functional;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
-use Drupal\Core\Database\Database;
 use Drupal\Tests\content_translation\Functional\ContentTranslationUITestBase;
 
 /**
@@ -133,7 +132,7 @@ class BlockContentTranslationUITest extends ContentTranslationUITestBase {
     // as in the original language.
     $default_langcode = $this->langcodes[0];
     $values = $this->getNewEntityValues($default_langcode);
-    $storage = \Drupal::entityTypeManager()->getStorage($this->entityTypeId);
+    $storage = \Drupal::entityManager()->getStorage($this->entityTypeId);
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $storage->create(['type' => 'basic'] + $values);
     $entity->save();
@@ -171,7 +170,7 @@ class BlockContentTranslationUITest extends ContentTranslationUITestBase {
     $disabled_block_content = $this->createBlockContent(FALSE, $bundle->id());
 
     // Make sure that only a single row was inserted into the block table.
-    $rows = Database::getConnection()->query('SELECT * FROM {block_content_field_data} WHERE id = :id', [':id' => $enabled_block_content->id()])->fetchAll();
+    $rows = db_query('SELECT * FROM {block_content_field_data} WHERE id = :id', [':id' => $enabled_block_content->id()])->fetchAll();
     $this->assertEqual(1, count($rows));
   }
 

@@ -33,7 +33,6 @@ class AudioFile extends File {
   public function prepareViewDisplay(MediaTypeInterface $type, EntityViewDisplayInterface $display) {
     $display->setComponent($this->getSourceFieldDefinition($type)->getName(), [
       'type' => 'file_audio',
-      'label' => 'visually_hidden',
     ]);
   }
 

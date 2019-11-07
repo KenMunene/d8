@@ -5,7 +5,6 @@ namespace Drupal\Tests\Core\Extension;
 use Drupal\Tests\UnitTestCase;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests Extension serialization.
@@ -14,23 +13,6 @@ use org\bovigo\vfs\vfsStream;
  * @group Extension
  */
 class ExtensionSerializationTest extends UnitTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    vfsStream::setup('dummy_app_root');
-    vfsStream::create([
-      'core' => [
-        'modules' => [
-          'system' => [
-            'system.info.yml' => file_get_contents($this->root . '/core/modules/system/system.info.yml'),
-          ],
-        ],
-      ],
-    ]);
-  }
 
   /**
    * Tests that the Extension class unserialize method uses the preferred root.
@@ -48,12 +30,12 @@ class ExtensionSerializationTest extends UnitTestCase {
     $this->assertFalse(defined('DRUPAL_ROOT'), 'Constant DRUPAL_ROOT is defined.');
     $container = new ContainerBuilder();
     // Set a dummy container app.root to test against.
-    $container->set('app.root', 'vfs://dummy_app_root');
+    $container->set('app.root', '/dummy/app/root');
     \Drupal::setContainer($container);
     // Instantiate an Extension object for testing unserialization.
     $extension = new Extension($container->get('app.root'), 'module', 'core/modules/system/system.info.yml', 'system.module');
     $extension = unserialize(serialize($extension));
-    $this->assertEquals('vfs://dummy_app_root', $this->readAttribute($extension, 'root'));
+    $this->assertEquals('/dummy/app/root', $this->readAttribute($extension, 'root'));
   }
 
   /**
@@ -65,7 +47,7 @@ class ExtensionSerializationTest extends UnitTestCase {
   public function testPublicProperties() {
     $container = new ContainerBuilder();
     // Set a dummy container app.root to test against.
-    $container->set('app.root', 'vfs://dummy_app_root');
+    $container->set('app.root', '/dummy/app/root');
     \Drupal::setContainer($container);
     $extension = new Extension($container->get('app.root'), 'module', 'core/modules/system/system.info.yml', 'system.module');
     // Assign a public property dynamically.

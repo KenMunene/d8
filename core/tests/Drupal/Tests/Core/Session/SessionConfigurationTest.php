@@ -14,13 +14,10 @@ class SessionConfigurationTest extends UnitTestCase {
   /**
    * Constructs a partially mocked SUT.
    *
-   * @returns \Drupal\Core\Session\SessionConfiguration|\PHPUnit\Framework\MockObject\MockObject
+   * @returns \Drupal\Core\Session\SessionConfiguration|\PHPUnit_Framework_MockObject_MockObject
    */
   protected function createSessionConfiguration($options = []) {
-    return $this->getMockBuilder('Drupal\Core\Session\SessionConfiguration')
-      ->setMethods(['drupalValidTestUa'])
-      ->setConstructorArgs([$options])
-      ->getMock();
+    return $this->getMock('Drupal\Core\Session\SessionConfiguration', ['drupalValidTestUa'], [$options]);
   }
 
   /**

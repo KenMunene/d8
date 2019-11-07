@@ -22,7 +22,6 @@ module.exports = {
       .drupalRelativeURL('/test-page')
       .waitForElementVisible('@body', testPage.props.timeout)
       .assert.containsText('@body', testPage.props.text)
-      .assert.noDeprecationErrors()
       .drupalLogAndEnd({ onlyOnError: false });
   },
 };

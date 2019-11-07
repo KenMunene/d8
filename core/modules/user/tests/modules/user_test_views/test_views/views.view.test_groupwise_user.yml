@@ -11,6 +11,7 @@ description: ''
 tag: default
 base_table: users_field_data
 base_field: uid
+core: 8.0-dev
 display:
   default:
     display_options:

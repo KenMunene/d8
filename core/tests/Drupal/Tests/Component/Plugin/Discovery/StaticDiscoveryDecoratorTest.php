@@ -17,7 +17,7 @@ class StaticDiscoveryDecoratorTest extends TestCase {
    * \Callable in the mock object. The return value of this callback is
    * never used.
    *
-   * @return \PHPUnit\Framework\MockObject\MockObject
+   * @return \PHPUnit_Framework_MockObject_MockObject
    *   Mocked object with expectation of registerDefinitionsCallback() being
    *   called once.
    */
@@ -100,7 +100,12 @@ class StaticDiscoveryDecoratorTest extends TestCase {
     $ref_decorated->setValue($mock_decorator, $mock_decorated);
 
     if ($exception_on_invalid) {
-      $this->expectException('Drupal\Component\Plugin\Exception\PluginNotFoundException');
+      if (method_exists($this, 'expectException')) {
+        $this->expectException('Drupal\Component\Plugin\Exception\PluginNotFoundException');
+      }
+      else {
+        $this->setExpectedException('Drupal\Component\Plugin\Exception\PluginNotFoundException');
+      }
     }
 
     // Exercise getDefinition(). It calls parent::getDefinition().

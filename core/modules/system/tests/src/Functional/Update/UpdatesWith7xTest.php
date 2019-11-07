@@ -24,8 +24,6 @@ class UpdatesWith7xTest extends BrowserTestBase {
 
   /**
    * The URL for the update page.
-   *
-   * @var string
    */
   private $updateUrl;
 

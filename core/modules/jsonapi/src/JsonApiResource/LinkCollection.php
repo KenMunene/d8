@@ -28,7 +28,7 @@ final class LinkCollection implements \IteratorAggregate {
    * All links objects exist within a context object. Links form a relationship
    * between a source IRI and target IRI. A context is the link's source.
    *
-   * @var \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\Relationship
+   * @var \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject
    *
    * @see https://tools.ietf.org/html/rfc8288#section-3.2
    */
@@ -39,7 +39,7 @@ final class LinkCollection implements \IteratorAggregate {
    *
    * @param \Drupal\jsonapi\JsonApiResource\Link[] $links
    *   An associated array of key names and JSON:API Link objects.
-   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\Relationship $context
+   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject $context
    *   (internal use only) The context object. Use the self::withContext()
    *   method to establish a context. This should be done automatically when
    *   a LinkCollection is passed into a context object.
@@ -51,7 +51,7 @@ final class LinkCollection implements \IteratorAggregate {
     assert(Inspector::assertAll(function ($link) {
       return $link instanceof Link || is_array($link) && Inspector::assertAllObjects($link, Link::class);
     }, $links));
-    assert(is_null($context) || Inspector::assertAllObjects([$context], JsonApiDocumentTopLevel::class, ResourceObject::class, Relationship::class));
+    assert(is_null($context) || Inspector::assertAllObjects([$context], JsonApiDocumentTopLevel::class, ResourceObject::class));
     ksort($links);
     $this->links = array_map(function ($link) {
       return is_array($link) ? $link : [$link];
@@ -71,9 +71,8 @@ final class LinkCollection implements \IteratorAggregate {
    * Gets a new LinkCollection with the given link inserted.
    *
    * @param string $key
-   *   A key for the link. If the key already exists and the link shares an
-   *   href, link relation type and attributes with an existing link with that
-   *   key, those links will be merged together.
+   *   A key for the link. If the key already exists and the link shares an href
+   *   with an existing link with that key, those links will be merged together.
    * @param \Drupal\jsonapi\JsonApiResource\Link $new_link
    *   The link to insert.
    *
@@ -112,7 +111,7 @@ final class LinkCollection implements \IteratorAggregate {
   /**
    * Establishes a new context for a LinkCollection.
    *
-   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\Relationship $context
+   * @param \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject $context
    *   The new context object.
    *
    * @return static
@@ -125,7 +124,7 @@ final class LinkCollection implements \IteratorAggregate {
   /**
    * Gets the LinkCollection's context object.
    *
-   * @return \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject|\Drupal\jsonapi\JsonApiResource\Relationship
+   * @return \Drupal\jsonapi\JsonApiResource\JsonApiDocumentTopLevel|\Drupal\jsonapi\JsonApiResource\ResourceObject
    *   The LinkCollection's context.
    */
   public function getContext() {

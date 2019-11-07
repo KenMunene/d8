@@ -2,7 +2,6 @@
 
 namespace Drupal\system\Form;
 
-use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Form\FormBase;
@@ -39,21 +38,13 @@ class ModulesUninstallForm extends FormBase {
   protected $keyValueExpirable;
 
   /**
-   * The module extension list.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $moduleExtensionList;
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('module_handler'),
       $container->get('module_installer'),
-      $container->get('keyvalue.expirable')->get('modules_uninstall'),
-      $container->get('extension.list.module')
+      $container->get('keyvalue.expirable')->get('modules_uninstall')
     );
   }
 
@@ -66,11 +57,8 @@ class ModulesUninstallForm extends FormBase {
    *   The module installer.
    * @param \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $key_value_expirable
    *   The key value expirable factory.
-   * @param \Drupal\Core\Extension\ModuleExtensionList $extension_list_module
-   *   The module extension list.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, KeyValueStoreExpirableInterface $key_value_expirable, ModuleExtensionList $extension_list_module) {
-    $this->moduleExtensionList = $extension_list_module;
+  public function __construct(ModuleHandlerInterface $module_handler, ModuleInstallerInterface $module_installer, KeyValueStoreExpirableInterface $key_value_expirable) {
     $this->moduleHandler = $module_handler;
     $this->moduleInstaller = $module_installer;
     $this->keyValueExpirable = $key_value_expirable;
@@ -90,9 +78,10 @@ class ModulesUninstallForm extends FormBase {
     // Make sure the install API is available.
     include_once DRUPAL_ROOT . '/core/includes/install.inc';
 
-    // Get a list of all available modules that can be uninstalled.
-    $uninstallable = array_filter($this->moduleExtensionList->getList(), function ($module) {
-       return empty($module->info['required']) && $module->status;
+    // Get a list of all available modules.
+    $modules = system_rebuild_module_data();
+    $uninstallable = array_filter($modules, function ($module) use ($modules) {
+      return empty($modules[$module->getName()]->info['required']) && $module->status;
     });
 
     // Include system.admin.inc so we can use the sort callbacks.

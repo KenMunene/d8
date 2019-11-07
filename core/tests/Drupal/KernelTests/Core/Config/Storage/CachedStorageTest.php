@@ -44,7 +44,7 @@ class CachedStorageTest extends ConfigStorageTestBase {
    * {@inheritdoc}
    */
   public function testInvalidStorage() {
-    $this->markTestSkipped('No-op as this test does not make sense');
+    // No-op as this test does not make sense.
   }
 
   /**

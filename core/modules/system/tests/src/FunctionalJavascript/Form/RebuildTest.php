@@ -78,7 +78,7 @@ class RebuildTest extends WebDriverTestBase {
       'required' => TRUE,
     ])->save();
 
-    \Drupal::service('entity_display.repository')->getFormDisplay('node', 'page', 'default')
+    entity_get_form_display('node', 'page', 'default')
       ->setComponent($field_name, ['type' => 'text_textfield'])
       ->setComponent($field_file_name, ['type' => 'file_generic'])
       ->save();

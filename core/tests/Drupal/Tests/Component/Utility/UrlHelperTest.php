@@ -582,7 +582,12 @@ class UrlHelperTest extends TestCase {
    * @dataProvider providerTestExternalIsLocalInvalid
    */
   public function testExternalIsLocalInvalid($url, $base_url) {
-    $this->expectException(\InvalidArgumentException::class);
+    if (method_exists($this, 'expectException')) {
+      $this->expectException(\InvalidArgumentException::class);
+    }
+    else {
+      $this->setExpectedException(\InvalidArgumentException::class);
+    }
     UrlHelper::externalIsLocal($url, $base_url);
   }
 

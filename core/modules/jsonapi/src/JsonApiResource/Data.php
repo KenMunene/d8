@@ -148,7 +148,7 @@ abstract class Data implements \IteratorAggregate, \Countable {
    * @param \Drupal\jsonapi\JsonApiResource\Data $b
    *   A Data object to be merged.
    *
-   * @return static
+   * @return \Drupal\jsonapi\JsonApiResource\Data
    *   A new merged Data object.
    */
   public static function merge(Data $a, Data $b) {

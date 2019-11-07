@@ -251,16 +251,12 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
       'entity_type' => $this->testEntityTypeName,
     ])
       ->save();
-
-    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
-    $display_repository = \Drupal::service('entity_display.repository');
-
-    $display_repository->getFormDisplay($this->testEntityTypeName, $this->referrerType->id())
+    entity_get_form_display($this->testEntityTypeName, $this->referrerType->id(), 'default')
       ->setComponent($this->referenceFieldName, [
         'type' => 'entity_reference_autocomplete',
       ])
       ->save();
-    $display_repository->getViewDisplay($this->testEntityTypeName, $this->referrerType->id())
+    entity_get_display($this->testEntityTypeName, $this->referrerType->id(), 'default')
       ->setComponent($this->referenceFieldName, [
         'type' => 'entity_reference_label',
       ])
@@ -286,7 +282,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
    */
   protected function createReferencedEntityWithTranslation() {
     /** @var \Drupal\node\Entity\Node $node */
-    $node = \Drupal::entityTypeManager()->getStorage($this->testEntityTypeName)->create([
+    $node = entity_create($this->testEntityTypeName, [
       'title' => $this->originalLabel,
       'type' => $this->referencedType->id(),
       'description' => [
@@ -309,7 +305,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
    */
   protected function createNotTranslatedReferencedEntity() {
     /** @var \Drupal\node\Entity\Node $node */
-    $node = \Drupal::entityTypeManager()->getStorage($this->testEntityTypeName)->create([
+    $node = entity_create($this->testEntityTypeName, [
       'title' => $this->labelOfNotTranslatedReference,
       'type' => $this->referencedType->id(),
       'description' => [
@@ -328,7 +324,7 @@ class EntityReferenceFieldTranslatedReferenceViewTest extends BrowserTestBase {
    */
   protected function createReferrerEntity($translatable = TRUE) {
     /** @var \Drupal\node\Entity\Node $node */
-    $node = \Drupal::entityTypeManager()->getStorage($this->testEntityTypeName)->create([
+    $node = entity_create($this->testEntityTypeName, [
       'title' => $this->randomMachineName(),
       'type' => $this->referrerType->id(),
       'description' => [

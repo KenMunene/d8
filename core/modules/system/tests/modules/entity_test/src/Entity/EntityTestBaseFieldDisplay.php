@@ -17,6 +17,7 @@ use Drupal\entity_test\FieldStorageDefinition;
  *     "form" = {
  *       "default" = "Drupal\entity_test\EntityTestForm"
  *     },
+ *     "translation" = "Drupal\content_translation\ContentTranslationHandler",
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },

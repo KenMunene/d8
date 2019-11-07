@@ -228,7 +228,19 @@ class ExtensionDiscovery {
    */
   public function setProfileDirectoriesFromSettings() {
     $this->profileDirectories = [];
-    if ($profile = \Drupal::installProfile()) {
+    $profile = drupal_get_profile();
+    // For SimpleTest to be able to test modules packaged together with a
+    // distribution we need to include the profile of the parent site (in
+    // which test runs are triggered).
+    if (drupal_valid_test_ua() && !drupal_installation_attempted()) {
+      $testing_profile = \Drupal::config('simpletest.settings')->get('parent_profile');
+      if ($testing_profile && $testing_profile != $profile) {
+        $this->profileDirectories[] = drupal_get_path('profile', $testing_profile);
+      }
+    }
+    // In case both profile directories contain the same extension, the actual
+    // profile always has precedence.
+    if ($profile) {
       $this->profileDirectories[] = drupal_get_path('profile', $profile);
     }
     return $this;

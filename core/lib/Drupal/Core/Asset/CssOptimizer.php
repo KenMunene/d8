@@ -3,7 +3,6 @@
 namespace Drupal\Core\Asset;
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\StreamWrapper\StreamWrapperManager;
 
 /**
  * Optimizes a CSS asset.
@@ -104,7 +103,7 @@ class CssOptimizer implements AssetOptimizerInterface {
 
     // Stylesheets are relative one to each other. Start by adding a base path
     // prefix provided by the parent stylesheet (if necessary).
-    if ($basepath && !StreamWrapperManager::getScheme($file)) {
+    if ($basepath && !file_uri_scheme($file)) {
       $file = $basepath . '/' . $file;
     }
     // Store the parent base path to restore it later.

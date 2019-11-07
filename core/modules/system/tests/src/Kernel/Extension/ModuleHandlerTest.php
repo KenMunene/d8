@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\system\Kernel\Extension;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Extension\MissingDependencyException;
 use Drupal\Core\Extension\ModuleUninstallValidatorException;
 use Drupal\entity_test\Entity\EntityTest;
@@ -62,7 +61,7 @@ class ModuleHandlerTest extends KernelTestBase {
   protected function assertModuleList(array $expected_values, $condition) {
     $expected_values = array_values(array_unique($expected_values));
     $enabled_modules = array_keys($this->container->get('module_handler')->getModuleList());
-    $this->assertEqual($expected_values, $enabled_modules, new FormattableMarkup('@condition: extension handler returns correct results', ['@condition' => $condition]));
+    $this->assertEqual($expected_values, $enabled_modules, format_string('@condition: extension handler returns correct results', ['@condition' => $condition]));
   }
 
   /**
@@ -90,13 +89,14 @@ class ModuleHandlerTest extends KernelTestBase {
     // Color will depend on Config, which depends on a non-existing module Foo.
     // Nothing should be installed.
     \Drupal::state()->set('module_test.dependency', 'missing dependency');
+    \Drupal::service('extension.list.module')->reset();
 
     try {
       $result = $this->moduleInstaller()->install(['color']);
-      $this->fail('ModuleInstaller::install() throws an exception if dependencies are missing.');
+      $this->fail(t('ModuleInstaller::install() throws an exception if dependencies are missing.'));
     }
     catch (MissingDependencyException $e) {
-      $this->pass('ModuleInstaller::install() throws an exception if dependencies are missing.');
+      $this->pass(t('ModuleInstaller::install() throws an exception if dependencies are missing.'));
     }
 
     $this->assertFalse($this->moduleHandler()->moduleExists('color'), 'ModuleInstaller::install() aborts if dependencies are missing.');
@@ -104,6 +104,7 @@ class ModuleHandlerTest extends KernelTestBase {
     // Fix the missing dependency.
     // Color module depends on Config. Config depends on Help module.
     \Drupal::state()->set('module_test.dependency', 'dependency');
+    \Drupal::service('extension.list.module')->reset();
 
     $result = $this->moduleInstaller()->install(['color']);
     $this->assertTrue($result, 'ModuleInstaller::install() returns the correct value.');
@@ -135,6 +136,7 @@ class ModuleHandlerTest extends KernelTestBase {
     // dependency on a specific version of Help module in its info file. Make
     // sure that Drupal\Core\Extension\ModuleInstaller::install() still works.
     \Drupal::state()->set('module_test.dependency', 'version dependency');
+    \Drupal::service('extension.list.module')->reset();
 
     $result = $this->moduleInstaller()->install(['color']);
     $this->assertTrue($result, 'ModuleInstaller::install() returns the correct value.');
@@ -169,7 +171,7 @@ class ModuleHandlerTest extends KernelTestBase {
     drupal_get_filename('profile', $profile, 'core/profiles/' . $profile . '/' . $profile . '.info.yml');
     $this->enableModules(['module_test', $profile]);
 
-    $data = \Drupal::service('extension.list.module')->getList();
+    $data = \Drupal::service('extension.list.module')->reset()->getList();
     $this->assertFalse(isset($data[$profile]->requires[$dependency]));
     $this->assertContains($dependency, $data[$profile]->info['install']);
 
@@ -223,8 +225,7 @@ class ModuleHandlerTest extends KernelTestBase {
     $this->assertNotContains($profile, $uninstalled_modules, 'The installation profile is not in the list of uninstalled modules.');
 
     // Try uninstalling the required module.
-    $this->expectException(ModuleUninstallValidatorException::class);
-    $this->expectExceptionMessage('The following reasons prevent the modules from being uninstalled: The Testing install profile dependencies module is required');
+    $this->setExpectedException(ModuleUninstallValidatorException::class, 'The following reasons prevent the modules from being uninstalled: The Testing install profile dependencies module is required');
     $this->moduleInstaller()->uninstall([$dependency]);
   }
 
@@ -255,8 +256,7 @@ class ModuleHandlerTest extends KernelTestBase {
     }
 
     // Try uninstalling the dependencies.
-    $this->expectException(ModuleUninstallValidatorException::class);
-    $this->expectExceptionMessage('The following reasons prevent the modules from being uninstalled: The Testing install profile all dependencies module is required');
+    $this->setExpectedException(ModuleUninstallValidatorException::class, 'The following reasons prevent the modules from being uninstalled: The Testing install profile all dependencies module is required');
     $this->moduleInstaller()->uninstall($dependencies);
   }
 
@@ -269,7 +269,7 @@ class ModuleHandlerTest extends KernelTestBase {
     $this->assertTrue($this->moduleHandler()->moduleExists('module_test'), 'Test module is enabled.');
 
     $this->installSchema('user', 'users_data');
-    $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+    $entity_types = \Drupal::entityManager()->getDefinitions();
     foreach ($entity_types as $entity_type) {
       if ('entity_test' == $entity_type->getProvider()) {
         $this->installEntitySchema($entity_type->id());
@@ -280,6 +280,7 @@ class ModuleHandlerTest extends KernelTestBase {
     // entity_test will depend on help. This way help can not be uninstalled
     // when there is test content preventing entity_test from being uninstalled.
     \Drupal::state()->set('module_test.dependency', 'dependency');
+    \Drupal::service('extension.list.module')->reset();
 
     // Create an entity so that the modules can not be disabled.
     $entity = EntityTest::create(['name' => $this->randomString()]);
@@ -318,7 +319,7 @@ class ModuleHandlerTest extends KernelTestBase {
    */
   public function testModuleMetaData() {
     // Generate the list of available modules.
-    $modules = $this->container->get('extension.list.module')->getList();
+    $modules = system_rebuild_module_data();
     // Check that the mtime field exists for the system module.
     $this->assertTrue(!empty($modules['system']->info['mtime']), 'The system.info.yml file modification time field is present.');
     // Use 0 if mtime isn't present, to avoid an array index notice.

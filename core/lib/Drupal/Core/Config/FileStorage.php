@@ -3,7 +3,6 @@
 namespace Drupal\Core\Config;
 
 use Drupal\Component\FileCache\FileCacheFactory;
-use Drupal\Component\FileSecurity\FileSecurity;
 use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
@@ -80,7 +79,7 @@ class FileStorage implements StorageInterface {
     $success = $this->getFileSystem()->prepareDirectory($dir, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     // Only create .htaccess file in root directory.
     if ($dir == $this->directory) {
-      $success = $success && FileSecurity::writeHtaccess($this->directory);
+      $success = $success && file_save_htaccess($this->directory, TRUE, TRUE);
     }
     if (!$success) {
       throw new StorageException('Failed to create config directory ' . $dir);

@@ -95,12 +95,12 @@ class LayoutBuilderQuickEditTest extends QuickEditJavascriptTestBase {
     $assert_session = $this->assertSession();
     $this->loginLayoutAdmin();
     $this->drupalGet('admin/structure/types/manage/article/display/default/layout');
-    $page->clickLink('Add block');
+    $page->clickLink('Add Block');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
     $assert_session->assertWaitOnAjaxRequest();
     $page->clickLink('Body');
     $assert_session->assertWaitOnAjaxRequest();
-    $page->pressButton('Add block');
+    $page->pressButton('Add Block');
     $assert_session->assertWaitOnAjaxRequest();
     $page->pressButton('Save layout');
     $this->assertNotEmpty($assert_session->waitForElement('css', '.messages--status'));

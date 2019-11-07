@@ -231,8 +231,7 @@ class DateTimeIso8601NormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeDateOnlyException() {
-    $this->expectException(UnexpectedValueException::class);
-    $this->expectExceptionMessage('The specified date "2016/11/06" is not in an accepted format: "Y-m-d" (date-only).');
+    $this->setExpectedException(UnexpectedValueException::class, 'The specified date "2016/11/06" is not in an accepted format: "Y-m-d" (date-only).');
 
     $normalized = '2016/11/06';
 
@@ -247,8 +246,7 @@ class DateTimeIso8601NormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeDateAndTimeException() {
-    $this->expectException(UnexpectedValueException::class);
-    $this->expectExceptionMessage('The specified date "on a rainy day" is not in an accepted format: "Y-m-d\TH:i:sP" (RFC 3339), "Y-m-d\TH:i:sO" (ISO 8601), "Y-m-d\TH:i:s" (backward compatibility — deprecated).');
+    $this->setExpectedException(UnexpectedValueException::class, 'The specified date "on a rainy day" is not in an accepted format: "Y-m-d\TH:i:sP" (RFC 3339), "Y-m-d\TH:i:sO" (ISO 8601), "Y-m-d\TH:i:s" (backward compatibility — deprecated).');
 
     $normalized = 'on a rainy day';
 
@@ -263,8 +261,7 @@ class DateTimeIso8601NormalizerTest extends UnitTestCase {
    * @covers ::denormalize
    */
   public function testDenormalizeNoTargetInstanceOrFieldDefinitionException() {
-    $this->expectException(InvalidArgumentException::class);
-    $this->expectExceptionMessage('$context[\'target_instance\'] or $context[\'field_definition\'] must be set to denormalize with the DateTimeIso8601Normalizer');
+    $this->setExpectedException(InvalidArgumentException::class, '$context[\'target_instance\'] or $context[\'field_definition\'] must be set to denormalize with the DateTimeIso8601Normalizer');
     $this->normalizer->denormalize('', DateTimeIso8601::class, NULL, []);
   }
 

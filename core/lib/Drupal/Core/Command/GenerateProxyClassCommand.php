@@ -83,7 +83,6 @@ EOF;
       $output->writeln(sprintf('Proxy of class %s written to %s', $class_name, $proxy_filename));
     }
 
-    return 0;
   }
 
 }

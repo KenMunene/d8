@@ -20,8 +20,6 @@ class FilterDateTimeTest extends DateTimeHandlerTestBase {
 
   /**
    * For offset tests, set a date 1 day in the future.
-   *
-   * @var int
    */
   protected static $date;
 

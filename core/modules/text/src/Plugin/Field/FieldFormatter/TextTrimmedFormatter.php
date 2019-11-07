@@ -5,7 +5,6 @@ namespace Drupal\text\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Plugin implementation of the 'text_trimmed' formatter.
@@ -28,7 +27,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
  *   }
  * )
  */
-class TextTrimmedFormatter extends FormatterBase implements TrustedCallbackInterface {
+class TextTrimmedFormatter extends FormatterBase {
 
   /**
    * {@inheritdoc}
@@ -123,13 +122,6 @@ class TextTrimmedFormatter extends FormatterBase implements TrustedCallbackInter
   public static function preRenderSummary(array $element) {
     $element['#markup'] = text_summary($element['#markup'], $element['#format'], $element['#text_summary_trim_length']);
     return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderSummary'];
   }
 
 }

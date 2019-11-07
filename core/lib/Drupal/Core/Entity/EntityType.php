@@ -96,10 +96,13 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    *
    * @var callable|null
    *
-   * @deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the
-   *   EntityInterface::label() method instead for dynamic labels.
+   * @deprecated in Drupal 8.0.x-dev and will be removed before Drupal 9.0.0.
+   *   Use Drupal\Core\Entity\EntityInterface::label() for complex label
+   *   generation as needed.
    *
    * @see \Drupal\Core\Entity\EntityInterface::label()
+   *
+   * @todo Remove usages of label_callback https://www.drupal.org/node/2450793.
    */
   protected $label_callback = NULL;
 
@@ -229,8 +232,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
 
   /**
    * The machine name of the entity type group.
-   *
-   * @var string
    */
   protected $group;
 
@@ -664,7 +665,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    * {@inheritdoc}
    */
   public function getLabelCallback() {
-    @trigger_error('EntityType::getLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794', E_USER_DEPRECATED);
     return $this->label_callback;
   }
 
@@ -672,7 +672,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    * {@inheritdoc}
    */
   public function setLabelCallback($callback) {
-    @trigger_error('EntityType::setLabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794', E_USER_DEPRECATED);
     $this->label_callback = $callback;
     return $this;
   }
@@ -681,7 +680,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    * {@inheritdoc}
    */
   public function hasLabelCallback() {
-    @trigger_error('EntityType::hasabelCallback() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Override the EntityInterface::label() method instead for dynamic labels. See https://www.drupal.org/node/3050794', E_USER_DEPRECATED);
     return isset($this->label_callback);
   }
 
@@ -775,7 +773,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    * {@inheritdoc}
    */
   public function getLowercaseLabel() {
-    @trigger_error('EntityType::getLowercaseLabel() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Instead, you should call getSingularLabel(). See https://www.drupal.org/node/3075567', E_USER_DEPRECATED);
     return mb_strtolower($this->getLabel());
   }
 
@@ -795,7 +792,7 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    */
   public function getSingularLabel() {
     if (empty($this->label_singular)) {
-      $lowercase_label = mb_strtolower($this->getLabel());
+      $lowercase_label = $this->getLowercaseLabel();
       $this->label_singular = $lowercase_label;
     }
     return $this->label_singular;
@@ -806,7 +803,7 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    */
   public function getPluralLabel() {
     if (empty($this->label_plural)) {
-      $lowercase_label = $this->getSingularLabel();
+      $lowercase_label = $this->getLowercaseLabel();
       $this->label_plural = new TranslatableMarkup('@label entities', ['@label' => $lowercase_label], [], $this->getStringTranslation());
     }
     return $this->label_plural;
@@ -817,7 +814,7 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    */
   public function getCountLabel($count) {
     if (empty($this->label_count)) {
-      return $this->formatPlural($count, '@count @label', '@count @label entities', ['@label' => $this->getSingularLabel()], ['context' => 'Entity type label']);
+      return $this->formatPlural($count, '@count @label', '@count @label entities', ['@label' => $this->getLowercaseLabel()], ['context' => 'Entity type label']);
     }
     $context = isset($this->label_count['context']) ? $this->label_count['context'] : 'Entity type label';
     return $this->formatPlural($count, $this->label_count['singular'], $this->label_count['plural'], ['context' => $context]);
@@ -913,7 +910,7 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
     // If this entity type uses entities to manage its bundles then depend on
     // the bundle entity.
     if ($bundle_entity_type_id = $this->getBundleEntityType()) {
-      if (!$bundle_entity = \Drupal::entityTypeManager()->getStorage($bundle_entity_type_id)->load($bundle)) {
+      if (!$bundle_entity = \Drupal::entityManager()->getStorage($bundle_entity_type_id)->load($bundle)) {
         throw new \LogicException(sprintf('Missing bundle entity, entity type %s, entity id %s.', $bundle_entity_type_id, $bundle));
       }
       $config_dependency = [

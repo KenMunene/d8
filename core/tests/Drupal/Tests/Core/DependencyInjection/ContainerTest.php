@@ -17,7 +17,7 @@ class ContainerTest extends UnitTestCase {
    */
   public function testSerialize() {
     $container = new Container();
-    $this->expectException(\AssertionError::class);
+    $this->setExpectedException(\AssertionError::class);
     serialize($container);
   }
 

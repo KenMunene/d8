@@ -9,7 +9,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,9 +70,8 @@ class ContentTranslationController extends ControllerBase {
    *   The language to be used as target.
    */
   public function prepareTranslation(ContentEntityInterface $entity, LanguageInterface $source, LanguageInterface $target) {
-    $source_langcode = $source->getId();
     /* @var \Drupal\Core\Entity\ContentEntityInterface $source_translation */
-    $source_translation = $entity->getTranslation($source_langcode);
+    $source_translation = $entity->getTranslation($source->getId());
     $target_translation = $entity->addTranslation($target->getId(), $source_translation->toArray());
 
     // Make sure we do not inherit the affected status from the source values.
@@ -89,7 +87,6 @@ class ContentTranslationController extends ControllerBase {
     // creation time.
     $metadata->setAuthor($user);
     $metadata->setCreatedTime(REQUEST_TIME);
-    $metadata->setSource($source_langcode);
   }
 
   /**
@@ -192,7 +189,7 @@ class ContentTranslationController extends ControllerBase {
           $link = isset($links->links[$langcode]['url']) ? $links->links[$langcode] : ['url' => $entity->toUrl()];
           if (!empty($link['url'])) {
             $link['url']->setOption('language', $language);
-            $row_title = Link::fromTextAndUrl($label, $link['url'])->toString();
+            $row_title = $this->l($label, $link['url']);
           }
 
           if (empty($link['url'])) {

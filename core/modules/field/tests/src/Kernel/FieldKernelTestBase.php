@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\field\Kernel;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\field\Entity\FieldConfig;
@@ -53,7 +52,7 @@ abstract class FieldKernelTestBase extends KernelTestBase {
     $this->installConfig(['field', 'system']);
 
     // Create user 1.
-    $storage = \Drupal::entityTypeManager()->getStorage('user');
+    $storage = \Drupal::entityManager()->getStorage('user');
     $storage
       ->create([
         'uid' => 1,
@@ -108,8 +107,7 @@ abstract class FieldKernelTestBase extends KernelTestBase {
     $this->fieldTestData->$field = FieldConfig::create($this->fieldTestData->$field_definition);
     $this->fieldTestData->$field->save();
 
-    \Drupal::service('entity_display.repository')
-      ->getFormDisplay($entity_type, $bundle)
+    entity_get_form_display($entity_type, $bundle, 'default')
       ->setComponent($this->fieldTestData->$field_name, [
         'type' => 'test_field_widget',
         'settings' => [
@@ -130,7 +128,7 @@ abstract class FieldKernelTestBase extends KernelTestBase {
    */
   protected function entitySaveReload(EntityInterface $entity) {
     $entity->save();
-    $controller = $this->container->get('entity_type.manager')->getStorage($entity->getEntityTypeId());
+    $controller = $this->container->get('entity.manager')->getStorage($entity->getEntityTypeId());
     $controller->resetCache();
     return $controller->load($entity->id());
   }
@@ -198,7 +196,7 @@ abstract class FieldKernelTestBase extends KernelTestBase {
     $values = $field->getValue();
     $this->assertEqual(count($values), count($expected_values), 'Expected number of values were saved.');
     foreach ($expected_values as $key => $value) {
-      $this->assertEqual($values[$key][$column], $value, new FormattableMarkup('Value @value was saved correctly.', ['@value' => $value]));
+      $this->assertEqual($values[$key][$column], $value, format_string('Value @value was saved correctly.', ['@value' => $value]));
     }
   }
 

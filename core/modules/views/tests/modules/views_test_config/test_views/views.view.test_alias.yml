@@ -10,6 +10,7 @@ description: ''
 tag: default
 base_table: users_field_data
 base_field: nid
+core: 8.0-dev
 display:
   default:
     display_options:

@@ -2,7 +2,6 @@
 
 namespace Drupal\Core\Cache;
 
-use Drupal\Core\Installer\InstallerKernel;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -61,7 +60,7 @@ class ChainedFastBackendFactory implements CacheFactoryInterface {
     // Do not use the fast chained backend during installation. In those cases,
     // we expect many cache invalidations and writes, the fast chained cache
     // backend performs badly in such a scenario.
-    if (!InstallerKernel::installationAttempted()) {
+    if (!drupal_installation_attempted()) {
       $this->fastServiceName = $fast_service_name;
     }
   }

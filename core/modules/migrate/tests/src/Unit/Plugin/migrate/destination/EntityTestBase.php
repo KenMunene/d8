@@ -7,7 +7,7 @@
 
 namespace Drupal\Tests\migrate\Unit\Plugin\migrate\destination;
 
-use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -33,10 +33,11 @@ class EntityTestBase extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityTypeInterface
    */
   protected $entityType;
+
   /**
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityFieldManager;
+  protected $entityManager;
 
   /**
    * {@inheritdoc}
@@ -52,7 +53,7 @@ class EntityTestBase extends UnitTestCase {
     $this->storage->getEntityType()->willReturn($this->entityType->reveal());
     $this->storage->getEntityTypeId()->willReturn('foo');
 
-    $this->entityFieldManager = $this->prophesize(EntityFieldManagerInterface::class);
+    $this->entityManager = $this->prophesize(EntityManagerInterface::class);
   }
 
 }

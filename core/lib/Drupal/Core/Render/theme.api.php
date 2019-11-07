@@ -725,7 +725,7 @@ function hook_theme_suggestions_HOOK_alter(array &$suggestions, array $variables
  * @param array $theme_list
  *   Array containing the names of the themes being installed.
  *
- * @see \Drupal\Core\Extension\ThemeInstallerInterface::install()
+ * @see \Drupal\Core\Extension\ThemeHandler::install()
  */
 function hook_themes_installed($theme_list) {
   foreach ($theme_list as $theme) {
@@ -739,7 +739,7 @@ function hook_themes_installed($theme_list) {
  * @param array $themes
  *   Array containing the names of the themes being uninstalled.
  *
- * @see \Drupal\Core\Extension\ThemeInstallerInterface::uninstall()
+ * @see \Drupal\Core\Extension\ThemeHandler::uninstall()
  */
 function hook_themes_uninstalled(array $themes) {
   // Remove some state entries depending on the theme.
@@ -808,24 +808,6 @@ function hook_element_info_alter(array &$info) {
   if (isset($info['textfield']['#size'])) {
     $info['textfield']['#size'] = 40;
   }
-}
-
-/**
- * Alter Element plugin definitions.
- *
- * Whenever possible, hook_element_info_alter() should be used to alter the
- * default properties of an element type. Use this hook only when the plugin
- * definition itself needs to be altered.
- *
- * @param array $definitions
- *   An array of Element plugin definitions.
- *
- * @see \Drupal\Core\Render\ElementInfoManager
- * @see \Drupal\Core\Render\Element\ElementInterface
- */
-function hook_element_plugin_alter(array &$definitions) {
-  // Use a custom class for the LayoutBuilder element.
-  $definitions['layout_builder']['class'] = '\Drupal\mymodule\Element\MyLayoutBuilderElement';
 }
 
 /**
@@ -1040,7 +1022,7 @@ function hook_css_alter(&$css, \Drupal\Core\Asset\AttachedAssetsInterface $asset
  */
 function hook_page_attachments(array &$attachments) {
   // Unconditionally attach an asset to the page.
-  $attachments['#attached']['library'][] = 'core/drupalSettings';
+  $attachments['#attached']['library'][] = 'core/domready';
 
   // Conditionally attach an asset to the page.
   if (!\Drupal::currentUser()->hasPermission('may pet kittens')) {

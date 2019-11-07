@@ -42,12 +42,12 @@ class Type extends StringArgument {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $entity_type_manager = $container->get('entity_type.manager');
+    $entity_manager = $container->get('entity.manager');
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $entity_type_manager->getStorage('node_type')
+      $entity_manager->getStorage('node_type')
     );
   }
 

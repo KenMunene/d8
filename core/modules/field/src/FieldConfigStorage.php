@@ -4,8 +4,7 @@ namespace Drupal\field;
 
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Config\Config;
-use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\DeletedFieldsRepositoryInterface;
 use Drupal\Core\Field\FieldConfigStorageBase;
@@ -19,19 +18,13 @@ use Drupal\Component\Uuid\UuidInterface;
  * Storage handler for field config.
  */
 class FieldConfigStorage extends FieldConfigStorageBase {
-  use DeprecatedServicePropertyTrait;
 
   /**
-   * {@inheritdoc}
-   */
-  protected $deprecatedProperties = ['entityManager' => 'entity.manager'];
-
-  /**
-   * The entity type manager.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityTypeManager;
+  protected $entityManager;
 
   /**
    * The field type plugin manager.
@@ -58,8 +51,8 @@ class FieldConfigStorage extends FieldConfigStorageBase {
    *   The UUID service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
    * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
    *   The field type plugin manager.
    * @param \Drupal\Core\Field\DeletedFieldsRepositoryInterface $deleted_fields_repository
@@ -67,9 +60,9 @@ class FieldConfigStorage extends FieldConfigStorageBase {
    * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
    *   The memory cache.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, EntityTypeManagerInterface $entity_type_manager, FieldTypePluginManagerInterface $field_type_manager, DeletedFieldsRepositoryInterface $deleted_fields_repository, MemoryCacheInterface $memory_cache) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, EntityManagerInterface $entity_manager, FieldTypePluginManagerInterface $field_type_manager, DeletedFieldsRepositoryInterface $deleted_fields_repository, MemoryCacheInterface $memory_cache) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager, $memory_cache);
-    $this->entityTypeManager = $entity_type_manager;
+    $this->entityManager = $entity_manager;
     $this->fieldTypeManager = $field_type_manager;
     $this->deletedFieldsRepository = $deleted_fields_repository;
   }
@@ -83,7 +76,7 @@ class FieldConfigStorage extends FieldConfigStorageBase {
       $container->get('config.factory'),
       $container->get('uuid'),
       $container->get('language_manager'),
-      $container->get('entity_type.manager'),
+      $container->get('entity.manager'),
       $container->get('plugin.manager.field.field_type'),
       $container->get('entity_field.deleted_fields_repository'),
       $container->get('entity.memory_cache')

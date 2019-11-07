@@ -10,6 +10,7 @@ description: ''
 tag: ''
 base_table: views_test_data
 base_field: nid
+core: 8.x
 display:
   default:
     display_plugin: default

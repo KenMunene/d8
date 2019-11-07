@@ -41,7 +41,7 @@ class UniqueFieldValueValidator extends ConstraintValidator {
     if ($value_taken) {
       $this->context->addViolation($constraint->message, [
         '%value' => $item->value,
-        '@entity_type' => $entity->getEntityType()->getSingularLabel(),
+        '@entity_type' => $entity->getEntityType()->getLowercaseLabel(),
         '@field_name' => mb_strtolower($items->getFieldDefinition()->getLabel()),
       ]);
     }

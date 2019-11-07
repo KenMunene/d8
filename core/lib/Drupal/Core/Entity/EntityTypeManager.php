@@ -229,7 +229,10 @@ class EntityTypeManager extends DefaultPluginManager implements EntityTypeManage
       ->setStringTranslation($this->stringTranslation)
       ->setModuleHandler($this->moduleHandler)
       ->setEntityTypeManager($this)
-      ->setOperation($operation);
+      ->setOperation($operation)
+      // The entity manager cannot be injected due to a circular dependency.
+      // @todo Remove this set call in https://www.drupal.org/node/2603542.
+      ->setEntityManager(\Drupal::entityManager());
   }
 
   /**

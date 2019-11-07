@@ -33,11 +33,9 @@ class EntityContentBaseTest extends EntityTestBase {
       $this->migration->reveal(),
       $this->storage->reveal(),
       $bundles,
-      $this->entityFieldManager->reveal(),
+      $this->entityManager->reveal(),
       $this->prophesize(FieldTypePluginManagerInterface::class)->reveal());
     $entity = $this->prophesize(ContentEntityInterface::class);
-    $entity->isValidationRequired()
-      ->shouldBeCalledTimes(1);
     // Assert that save is called.
     $entity->save()
       ->shouldBeCalledTimes(1);
@@ -62,11 +60,10 @@ class EntityContentBaseTest extends EntityTestBase {
       $this->migration->reveal(),
       $this->storage->reveal(),
       $bundles,
-      $this->entityFieldManager->reveal(),
+      $this->entityManager->reveal(),
       $this->prophesize(FieldTypePluginManagerInterface::class)->reveal());
     $destination->setEntity(FALSE);
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('Unable to get entity');
+    $this->setExpectedException(MigrateException::class, 'Unable to get entity');
     $destination->import(new Row());
   }
 
@@ -77,7 +74,7 @@ class EntityContentBaseTest extends EntityTestBase {
     // An entity type without a language.
     $this->entityType->getKey('langcode')->willReturn('');
     $this->entityType->getKey('id')->willReturn('id');
-    $this->entityFieldManager->getBaseFieldDefinitions('foo')
+    $this->entityManager->getBaseFieldDefinitions('foo')
       ->willReturn(['id' => BaseFieldDefinitionTest::create('integer')]);
 
     $destination = new EntityTestDestination(
@@ -87,11 +84,10 @@ class EntityContentBaseTest extends EntityTestBase {
       $this->migration->reveal(),
       $this->storage->reveal(),
       [],
-      $this->entityFieldManager->reveal(),
+      $this->entityManager->reveal(),
       $this->prophesize(FieldTypePluginManagerInterface::class)->reveal()
     );
-    $this->expectException(MigrateException::class);
-    $this->expectExceptionMessage('The "foo" entity type does not support translations.');
+    $this->setExpectedException(MigrateException::class, 'The "foo" entity type does not support translations.');
     $destination->getIds();
   }
 

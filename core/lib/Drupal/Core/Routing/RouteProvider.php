@@ -21,7 +21,7 @@ use Drupal\Core\Database\Connection;
 /**
  * A Route Provider front-end for all Drupal-stored routes.
  */
-class RouteProvider implements CacheableRouteProviderInterface, PreloadableRouteProviderInterface, PagedRouteProviderInterface, EventSubscriberInterface {
+class RouteProvider implements PreloadableRouteProviderInterface, PagedRouteProviderInterface, EventSubscriberInterface {
 
   /**
    * The database connection from which to read route information.
@@ -97,13 +97,6 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
    * Cache ID prefix used to load routes.
    */
   const ROUTE_LOAD_CID_PREFIX = 'route_provider.route_load:';
-
-  /**
-   * An array of cache key parts to be used for the route match cache.
-   *
-   * @var string[]
-   */
-  protected $extraCacheKeyParts = [];
 
   /**
    * Constructs a new PathMatcher.
@@ -450,13 +443,6 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function addExtraCacheKeyPart($cache_key_provider, $cache_key_part) {
-    $this->extraCacheKeyParts[$cache_key_provider] = $cache_key_part;
-  }
-
-  /**
    * Returns the cache ID for the route collection cache.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -469,17 +455,8 @@ class RouteProvider implements CacheableRouteProviderInterface, PreloadableRoute
     // Include the current language code in the cache identifier as
     // the language information can be elsewhere than in the path, for example
     // based on the domain.
-    $this->addExtraCacheKeyPart('language', $this->getCurrentLanguageCacheIdPart());
-
-    // Sort the cache key parts by their provider in order to have predictable
-    // cache keys.
-    ksort($this->extraCacheKeyParts);
-    $key_parts = [];
-    foreach ($this->extraCacheKeyParts as $provider => $key_part) {
-      $key_parts[] = '[' . $provider . ']=' . $key_part;
-    }
-
-    return 'route:' . implode(':', $key_parts) . ':' . $request->getPathInfo() . ':' . $request->getQueryString();
+    $language_part = $this->getCurrentLanguageCacheIdPart();
+    return 'route:' . $language_part . ':' . $request->getPathInfo() . ':' . $request->getQueryString();
   }
 
   /**

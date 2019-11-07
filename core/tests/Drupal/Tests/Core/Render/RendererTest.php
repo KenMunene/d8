@@ -11,7 +11,6 @@ use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Template\Attribute;
@@ -1036,7 +1035,7 @@ class RendererTest extends RendererTestBase {
 
 }
 
-class TestAccessClass implements TrustedCallbackInterface {
+class TestAccessClass {
 
   public static function accessTrue() {
     return TRUE;
@@ -1054,27 +1053,13 @@ class TestAccessClass implements TrustedCallbackInterface {
     return AccessResult::forbidden();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['accessTrue', 'accessFalse', 'accessResultAllowed', 'accessResultForbidden'];
-  }
-
 }
 
-class TestCallables implements TrustedCallbackInterface {
+class TestCallables {
 
   public function preRenderPrinted($elements) {
     $elements['#printed'] = TRUE;
     return $elements;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderPrinted'];
   }
 
 }

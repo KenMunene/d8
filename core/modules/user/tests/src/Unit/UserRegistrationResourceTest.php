@@ -39,21 +39,21 @@ class UserRegistrationResourceTest extends UnitTestCase {
   /**
    * A user settings config instance.
    *
-   * @var \Drupal\Core\Config\ImmutableConfig|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Config\ImmutableConfig|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $userSettings;
 
   /**
    * Logger service.
    *
-   * @var \Psr\Log\LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Psr\Log\LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $logger;
 
   /**
    * The current user.
    *
-   * @var \Drupal\Core\Session\AccountInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\Core\Session\AccountInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $currentUser;
 
@@ -77,7 +77,7 @@ class UserRegistrationResourceTest extends UnitTestCase {
    * Tests that an exception is thrown when no data provided for the account.
    */
   public function testEmptyPost() {
-    $this->expectException(BadRequestHttpException::class);
+    $this->setExpectedException(BadRequestHttpException::class);
     $this->testClass->post(NULL);
   }
 
@@ -87,7 +87,7 @@ class UserRegistrationResourceTest extends UnitTestCase {
   public function testExistedEntityPost() {
     $entity = $this->prophesize(User::class);
     $entity->isNew()->willReturn(FALSE);
-    $this->expectException(BadRequestHttpException::class);
+    $this->setExpectedException(BadRequestHttpException::class);
 
     $this->testClass->post($entity->reveal());
   }
@@ -106,7 +106,7 @@ class UserRegistrationResourceTest extends UnitTestCase {
     $entity = $this->prophesize(User::class);
     $entity->isNew()->willReturn(TRUE);
 
-    $this->expectException(AccessDeniedHttpException::class);
+    $this->setExpectedException(AccessDeniedHttpException::class);
 
     $this->testClass->post($entity->reveal());
   }
@@ -122,7 +122,7 @@ class UserRegistrationResourceTest extends UnitTestCase {
     $entity = $this->prophesize(User::class);
     $entity->isNew()->willReturn(TRUE);
 
-    $this->expectException(AccessDeniedHttpException::class);
+    $this->setExpectedException(AccessDeniedHttpException::class);
 
     $this->testClass->post($entity->reveal());
   }

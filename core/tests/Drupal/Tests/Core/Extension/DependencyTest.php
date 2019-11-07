@@ -77,8 +77,7 @@ class DependencyTest extends UnitTestCase {
    */
   public function testOffsetGetException() {
     $dependency = new Dependency('views', 'drupal', '>8.x-1.1');
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionMessage('The does_not_exist key is not supported');
+    $this->setExpectedException(\InvalidArgumentException::class, 'The does_not_exist key is not supported');
     $dependency['does_not_exist'];
   }
 
@@ -88,8 +87,7 @@ class DependencyTest extends UnitTestCase {
    */
   public function testOffsetUnset() {
     $dependency = new Dependency('views', 'drupal', '>8.x-1.1');
-    $this->expectException(\BadMethodCallException::class);
-    $this->expectExceptionMessage('Drupal\Core\Extension\Dependency::offsetUnset() is not supported');
+    $this->setExpectedException(\BadMethodCallException::class, 'Drupal\Core\Extension\Dependency::offsetUnset() is not supported');
     unset($dependency['name']);
   }
 
@@ -99,8 +97,7 @@ class DependencyTest extends UnitTestCase {
    */
   public function testOffsetSet() {
     $dependency = new Dependency('views', 'drupal', '>8.x-1.1');
-    $this->expectException(\BadMethodCallException::class);
-    $this->expectExceptionMessage('Drupal\Core\Extension\Dependency::offsetSet() is not supported');
+    $this->setExpectedException(\BadMethodCallException::class, 'Drupal\Core\Extension\Dependency::offsetSet() is not supported');
     $dependency['name'] = 'foo';
   }
 

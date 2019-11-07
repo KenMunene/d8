@@ -4,9 +4,7 @@ namespace Drupal\Tests\Traits;
 
 use Symfony\Bridge\PhpUnit\Legacy\SymfonyTestsListener as LegacySymfonyTestsListener;
 use Symfony\Bridge\PhpUnit\SymfonyTestsListener;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Util\Test;
 
 /**
  * Adds the ability to dynamically set expected deprecation messages in tests.
@@ -36,11 +34,19 @@ trait ExpectDeprecationTrait {
    *   The expected deprecation messages.
    */
   public function expectedDeprecations(array $messages) {
-    if ($this instanceof TestCase) {
+    if (class_exists('PHPUnit_Util_Test', FALSE)) {
+      $test_util = 'PHPUnit_Util_Test';
+      $assertion_failed_error = 'PHPUnit_Framework_AssertionFailedError';
+    }
+    else {
+      $test_util = 'PHPUnit\Util\Test';
+      $assertion_failed_error = 'PHPUnit\Framework\AssertionFailedError';
+    }
+    if ($this instanceof \PHPUnit_Framework_TestCase || $this instanceof TestCase) {
       // Ensure the class or method is in the legacy group.
-      $groups = Test::getGroups(get_class($this), $this->getName(FALSE));
+      $groups = $test_util::getGroups(get_class($this), $this->getName(FALSE));
       if (!in_array('legacy', $groups, TRUE)) {
-        throw new AssertionFailedError('Only tests with the `@group legacy` annotation can call `setExpectedDeprecation()`.');
+        throw new $assertion_failed_error('Only tests with the `@group legacy` annotation can call `setExpectedDeprecation()`.');
       }
 
       // If setting an expected deprecation there is no need to be strict about
@@ -83,7 +89,7 @@ trait ExpectDeprecationTrait {
       return;
     }
 
-    throw new AssertionFailedError('Can not set an expected deprecation message because the Symfony\Bridge\PhpUnit\SymfonyTestsListener is not registered as a PHPUnit test listener.');
+    throw new $assertion_failed_error('Can not set an expected deprecation message because the Symfony\Bridge\PhpUnit\SymfonyTestsListener is not registered as a PHPUnit test listener.');
   }
 
   /**

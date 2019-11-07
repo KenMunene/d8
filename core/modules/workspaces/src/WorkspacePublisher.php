@@ -2,10 +2,8 @@
 
 namespace Drupal\workspaces;
 
-use Drupal\Core\Access\AccessResultReasonInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Default implementation of the workspace publisher.
@@ -14,14 +12,19 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  */
 class WorkspacePublisher implements WorkspacePublisherInterface {
 
-  use StringTranslationTrait;
-
   /**
    * The source workspace entity.
    *
    * @var \Drupal\workspaces\WorkspaceInterface
    */
   protected $sourceWorkspace;
+
+  /**
+   * The target workspace entity.
+   *
+   * @var \Drupal\workspaces\WorkspaceInterface
+   */
+  protected $targetWorkspace;
 
   /**
    * The entity type manager.
@@ -38,18 +41,18 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
   protected $database;
 
   /**
+   * The workspace association storage.
+   *
+   * @var \Drupal\workspaces\WorkspaceAssociationStorageInterface
+   */
+  protected $workspaceAssociationStorage;
+
+  /**
    * The workspace manager.
    *
    * @var \Drupal\workspaces\WorkspaceManagerInterface
    */
   protected $workspaceManager;
-
-  /**
-   * The workspace association service.
-   *
-   * @var \Drupal\workspaces\WorkspaceAssociationInterface
-   */
-  protected $workspaceAssociation;
 
   /**
    * Constructs a new WorkspacePublisher.
@@ -60,27 +63,20 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
    *   Database connection.
    * @param \Drupal\workspaces\WorkspaceManagerInterface $workspace_manager
    *   The workspace manager.
-   * @param \Drupal\workspaces\WorkspaceAssociationInterface $workspace_association
-   *   The workspace association service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, WorkspaceManagerInterface $workspace_manager, WorkspaceAssociationInterface $workspace_association, WorkspaceInterface $source) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $database, WorkspaceManagerInterface $workspace_manager, WorkspaceInterface $source) {
     $this->entityTypeManager = $entity_type_manager;
     $this->database = $database;
+    $this->workspaceAssociationStorage = $entity_type_manager->getStorage('workspace_association');
     $this->workspaceManager = $workspace_manager;
-    $this->workspaceAssociation = $workspace_association;
     $this->sourceWorkspace = $source;
+    $this->targetWorkspace = $this->entityTypeManager->getStorage('workspace')->load(WorkspaceInterface::DEFAULT_WORKSPACE);
   }
 
   /**
    * {@inheritdoc}
    */
   public function publish() {
-    $publish_access = $this->sourceWorkspace->access('publish', NULL, TRUE);
-    if (!$publish_access->isAllowed()) {
-      $message = $publish_access instanceof AccessResultReasonInterface ? $publish_access->getReason() : '';
-      throw new WorkspaceAccessException($message);
-    }
-
     if ($this->checkConflictsOnTarget()) {
       throw new WorkspaceConflictException();
     }
@@ -89,7 +85,7 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
     try {
       // @todo Handle the publishing of a workspace with a batch operation in
       //   https://www.drupal.org/node/2958752.
-      $this->workspaceManager->executeOutsideWorkspace(function () {
+      $this->workspaceManager->executeInWorkspace($this->targetWorkspace->id(), function () {
         foreach ($this->getDifferringRevisionIdsOnSource() as $entity_type_id => $revision_difference) {
 
           $entity_revisions = $this->entityTypeManager->getStorage($entity_type_id)
@@ -104,11 +100,6 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
             // revisions.
             $entity->setSyncing(TRUE);
             $entity->isDefaultRevision(TRUE);
-
-            // The default revision is not workspace-specific anymore.
-            $field_name = $entity->getEntityType()->getRevisionMetadataKey('workspace');
-            $entity->{$field_name}->target_id = NULL;
-
             $entity->original = $default_revisions[$entity->id()];
             $entity->save();
           }
@@ -121,8 +112,9 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
       throw $e;
     }
 
-    // Notify the workspace association that a workspace has been published.
-    $this->workspaceAssociation->postPublish($this->sourceWorkspace);
+    // Notify the workspace association storage that a workspace has been
+    // pushed.
+    $this->workspaceAssociationStorage->postPush($this->sourceWorkspace);
   }
 
   /**
@@ -136,7 +128,7 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
    * {@inheritdoc}
    */
   public function getTargetLabel() {
-    return $this->t('Live');
+    return $this->targetWorkspace->label();
   }
 
   /**
@@ -154,7 +146,7 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
   public function getDifferringRevisionIdsOnTarget() {
     $target_revision_difference = [];
 
-    $tracked_entities = $this->workspaceAssociation->getTrackedEntities($this->sourceWorkspace->id());
+    $tracked_entities = $this->workspaceAssociationStorage->getTrackedEntities($this->sourceWorkspace->id());
     foreach ($tracked_entities as $entity_type_id => $tracked_revisions) {
       $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
 
@@ -184,7 +176,7 @@ class WorkspacePublisher implements WorkspacePublisherInterface {
    */
   public function getDifferringRevisionIdsOnSource() {
     // Get the Workspace association revisions which haven't been pushed yet.
-    return $this->workspaceAssociation->getTrackedEntities($this->sourceWorkspace->id());
+    return $this->workspaceAssociationStorage->getTrackedEntities($this->sourceWorkspace->id());
   }
 
   /**

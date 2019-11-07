@@ -109,7 +109,7 @@ class EntityRevisionParamConverterTest extends UnitTestCase {
     $entity_repository = $this->prophesize(EntityRepositoryInterface::class);
     $converter = new EntityRevisionParamConverter($entity_type_manager->reveal(), $entity_repository->reveal());
 
-    $this->expectException(InvalidPluginDefinitionException::class);
+    $this->setExpectedException(InvalidPluginDefinitionException::class);
     $converter->convert('valid_id', ['type' => 'entity_revision:invalid_entity_type_id'], 'foo', ['foo' => 'valid_id']);
   }
 
@@ -119,8 +119,7 @@ class EntityRevisionParamConverterTest extends UnitTestCase {
    * @covers ::convert
    */
   public function testConvertWithInvalidType() {
-    $this->expectException(ParamNotConvertedException::class);
-    $this->expectExceptionMessage('The type definition "entity_revision_{entity_type_id}" is invalid. The expected format is "entity_revision:<entity_type_id>".');
+    $this->setExpectedException(ParamNotConvertedException::class, 'The type definition "entity_revision_{entity_type_id}" is invalid. The expected format is "entity_revision:<entity_type_id>".');
     $this->converter->convert('valid_id', ['type' => 'entity_revision_{entity_type_id}'], 'foo', ['foo' => 'valid_id']);
   }
 
@@ -130,8 +129,7 @@ class EntityRevisionParamConverterTest extends UnitTestCase {
    * @covers ::convert
    */
   public function testConvertWithInvalidDynamicEntityType() {
-    $this->expectException(ParamNotConvertedException::class);
-    $this->expectExceptionMessage('The "foo" parameter was not converted because the "invalid_entity_type_id" parameter is missing.');
+    $this->setExpectedException(ParamNotConvertedException::class, 'The "foo" parameter was not converted because the "invalid_entity_type_id" parameter is missing.');
     $this->converter->convert('valid_id', ['type' => 'entity_revision:{invalid_entity_type_id}'], 'foo', ['foo' => 'valid_id']);
   }
 

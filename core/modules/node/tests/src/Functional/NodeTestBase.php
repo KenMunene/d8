@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\node\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\BrowserTestBase;
@@ -41,7 +40,7 @@ abstract class NodeTestBase extends BrowserTestBase {
       ]);
       $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     }
-    $this->accessHandler = \Drupal::entityTypeManager()->getAccessControlHandler('node');
+    $this->accessHandler = \Drupal::entityManager()->getAccessControlHandler('node');
   }
 
   /**
@@ -98,7 +97,7 @@ abstract class NodeTestBase extends BrowserTestBase {
    *   about the node access permission test that was performed.
    */
   public function nodeAccessAssertMessage($operation, $result, $langcode = NULL) {
-    return new FormattableMarkup(
+    return format_string(
       'Node access returns @result with operation %op, language code %langcode.',
       [
         '@result' => $result ? 'true' : 'false',

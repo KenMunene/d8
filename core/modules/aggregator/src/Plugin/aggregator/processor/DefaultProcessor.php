@@ -208,7 +208,7 @@ class DefaultProcessor extends AggregatorPluginSettingsBase implements Processor
       }
 
       // Try to load an existing entry.
-      if ($entry = $this->itemStorage->loadByProperties($values)) {
+      if ($entry = entity_load_multiple_by_properties('aggregator_item', $values)) {
         $entry = reset($entry);
       }
       else {

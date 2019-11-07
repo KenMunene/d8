@@ -60,8 +60,7 @@ class ConfigImporterTest extends KernelTestBase {
       $this->container->get('module_handler'),
       $this->container->get('module_installer'),
       $this->container->get('theme_handler'),
-      $this->container->get('string_translation'),
-      $this->container->get('extension.list.module')
+      $this->container->get('string_translation')
     );
   }
 
@@ -245,7 +244,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Import.
     $this->configImporter->reset()->import();
 
-    $entity_storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $entity_storage = \Drupal::entityManager()->getStorage('config_test');
     $primary = $entity_storage->load('primary');
     $this->assertEqual($primary->id(), 'primary');
     $this->assertEqual($primary->uuid(), $values_primary['uuid']);
@@ -291,7 +290,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Import.
     $this->configImporter->reset()->import();
 
-    $entity_storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $entity_storage = \Drupal::entityManager()->getStorage('config_test');
     $primary = $entity_storage->load('primary');
     $this->assertEqual($primary->id(), 'primary');
     $this->assertEqual($primary->uuid(), $values_primary['uuid']);
@@ -368,7 +367,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Import.
     $this->configImporter->import();
 
-    $entity_storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $entity_storage = \Drupal::entityManager()->getStorage('config_test');
     $deleter = $entity_storage->load('deleter');
     $this->assertEqual($deleter->id(), 'deleter');
     $this->assertEqual($deleter->uuid(), $values_deleter['uuid']);
@@ -428,7 +427,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Import.
     $this->configImporter->reset()->import();
 
-    $entity_storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $entity_storage = \Drupal::entityManager()->getStorage('config_test');
     // Both entities are deleted. ConfigTest::postSave() causes updates of the
     // deleter entity to delete the deletee entity. Since the deleter depends on
     // the deletee, removing the deletee causes the deleter to be removed.
@@ -470,7 +469,7 @@ class ConfigImporterTest extends KernelTestBase {
     // Import.
     $this->configImporter->reset()->import();
 
-    $entity_storage = \Drupal::entityTypeManager()->getStorage('config_test');
+    $entity_storage = \Drupal::entityManager()->getStorage('config_test');
     $this->assertFalse($entity_storage->load('deleter'));
     $this->assertFalse($entity_storage->load('deletee'));
     // The deletee entity does not exist as the delete worked and although the
@@ -749,18 +748,15 @@ class ConfigImporterTest extends KernelTestBase {
 
   /**
    * Tests config_get_config_directory().
-   *
-   * @group legacy
-   * @expectedDeprecation config_get_config_directory() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Site\Settings::get('config_sync_directory') instead. See https://www.drupal.org/node/3018145
    */
   public function testConfigGetConfigDirectory() {
     global $config_directories;
-    // Ensure the global and the setting matches.
-    $this->assertSame(config_get_config_directory(CONFIG_SYNC_DIRECTORY), $config_directories[CONFIG_SYNC_DIRECTORY]);
+    $directory = config_get_config_directory(CONFIG_SYNC_DIRECTORY);
+    $this->assertEqual($config_directories[CONFIG_SYNC_DIRECTORY], $directory);
 
-    $message = 'Calling config_get_config_directory() with an invalid key results in an exception.';
+    $message = 'Calling config_get_config_directory() with CONFIG_ACTIVE_DIRECTORY results in an exception.';
     try {
-      config_get_config_directory('does_not_exist');
+      config_get_config_directory(CONFIG_ACTIVE_DIRECTORY);
       $this->fail($message);
     }
     catch (\Exception $e) {

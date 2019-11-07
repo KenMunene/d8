@@ -143,9 +143,7 @@ class FieldLayoutBuilderTest extends UnitTestCase {
             '#markup' => 'Test1',
           ],
         ],
-        '#settings' => [
-          'label' => '',
-        ],
+        '#settings' => [],
         '#layout' => $this->pluginDefinition,
         '#theme' => 'layout__twocol',
         '#attached' => [
@@ -243,9 +241,7 @@ class FieldLayoutBuilderTest extends UnitTestCase {
           '#process' => ['\Drupal\Core\Render\Element\RenderElement::processGroup'],
           '#pre_render' => ['\Drupal\Core\Render\Element\RenderElement::preRenderGroup'],
         ],
-        '#settings' => [
-          'label' => '',
-        ],
+        '#settings' => [],
         '#layout' => $this->pluginDefinition,
         '#theme' => 'layout__twocol',
         '#attached' => [

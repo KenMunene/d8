@@ -30,9 +30,7 @@ class LayoutDefaultTest extends UnitTestCase {
       ],
     ]);
     $expected += [
-      '#settings' => [
-        'label' => '',
-      ],
+      '#settings' => [],
       '#layout' => $definition,
       '#theme' => 'layout',
       '#attached' => [
